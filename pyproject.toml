@@ -1,8 +1,144 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "geoinsight"
+version = "1.20.2"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+classifiers = ["Private :: Do Not Upload"]
+dependencies = [
+  # Runtime dependencies, always needed
+  "celery",
+  "channels-redis",
+  "channels[daphne]",
+  "django[argon2]",
+  "django-allauth",
+  "django-auth-style",
+  "django-cors-headers",
+  "django-environ",
+  "django-extensions",
+  "django-filter",
+  "django-guardian",
+  "django-large-image",
+  "django-oauth-toolkit",
+  "django-resonant-settings[allauth,celery]",
+  "django-resonant-utils[allauth,s3_storage]",
+  "django-stubs-ext",
+  "djangorestframework",
+  "drf-yasg",
+  # Needed for GeoDjango and "large-image[gdal]"
+  # gdal 3.10 is the newest supported by Django: https://docs.djangoproject.com/en/5.0/ref/contrib/gis/install/geolibs/
+  'gdal==3.10.*',
+  "geopandas",
+  "large-image-converter",
+  "large-image[gdal]",
+  "matplotlib", # for raster colormaps
+  "networkx",
+  "numpy",
+  "pooch[progress]",
+  "psycopg[binary,pool]",
+  # Needed by "large-image-converter"
+  "pylibtiff",
+  "pyshp",
+  "rasterio",
+  "rich",
+  "urllib3",
+  "webcolors",
+  "whitenoise[brotli]",
+  # Production-only
+  "django-s3-file-field[s3]",
+  "django-storages[s3]",
+  "sentry-sdk[celery,django,pure_eval]",
+  "uvicorn",
+]
+
+[project.optional-dependencies]
+development = [
+  # Runtime dependencies, only needed with "development" settings
+  "daphne",
+  "django-browser-reload",
+  "django-debug-toolbar",
+  "django-minio-storage",
+  "django-resonant-utils[minio_storage]",
+  "django-s3-file-field[minio]",
+  "ipython",
+  "watchdog",
+  "werkzeug",
+]
+tasks = [
+  "geoai-py",
+  "osmnx",
+  # Needed by "uvdat-flood-sim[large-image-writer]"
+  "pyvips",
+  "uvdat-flood-sim[large-image-writer]",
+]
+
+[dependency-groups]
+dev = [
+  # Additional developer tools
+  # The "dev" dependency group is installed by default,
+  # so use this to install "development" extras by default too
+  "geoinsight[development]",
+  "pre-commit",
+  "tox",
+  "tox-uv",
+]
+lint = [
+  "flake8",
+  "flake8-black",
+  "flake8-bugbear",
+  "flake8-docstrings",
+  "flake8-isort",
+  "flake8-quotes",
+  "pep8-naming",
+]
+format = [
+  "black",
+  "isort",
+]
+type = [
+  "mypy",
+  "celery-types",
+  "django-stubs[compatible-mypy]",
+  "djangorestframework-stubs",
+  "pandas-stubs",
+]
+test = [
+  "django-s3-file-field-client",
+  "factory-boy",
+  "pytest",
+  "pytest-django",
+  "pytest-mock",
+  # Enable with "pytest --random-order ..."
+  "pytest-random-order",
+  # Enable with "pytest --count=... ..."
+  "pytest-repeat",
+]
+
+[[tool.uv.index]]
+name = "large_image_wheels"
+url = "https://girder.github.io/large_image_wheels/"
+explicit = true
+
+[tool.uv.sources]
+# These are only respected for top-level dependencies: https://github.com/astral-sh/uv/issues/8253
+gdal = { index = "large_image_wheels" }
+pylibtiff = { index = "large_image_wheels" }
+pyvips = { index = "large_image_wheels" }
+uvdat-flood-sim = { git = "https://github.com/OpenGeoscience/uvdat-flood-sim", lfs = true  }
+
+[tool.hatch.build]
+packages = [
+  "geoinsight",
+]
+
 [tool.black]
 line-length = 100
 skip-string-normalization = true
 target-version = ["py310"]
-exclude='\.eggs|\.git|\.mypy_cache|\.tox|\.venv|_build|buck-out|build|dist'
 
 [tool.isort]
 profile = "black"
@@ -12,17 +148,40 @@ force_sort_within_sections = true
 # Combines "as" imports on the same line
 combine_as_imports = true
 
+[tool.mypy]
+files = [
+  "geoinsight",
+]
+check_untyped_defs = true
+ignore_missing_imports = true
+show_error_codes = true
+warn_redundant_casts = true
+warn_unused_configs = true
+warn_unused_ignores = true
+plugins = [
+    "mypy_django_plugin.main",
+]
 
-[tool.ruff]
-line-length = 100
-target-version = "py310"
+[tool.django-stubs]
+django_settings_module = "geoinsight.settings.testing"
 
-[tool.ruff.format]
-quote-style = "single"
-
-[tool.ruff.lint.isort]
-force-sort-within-sections = true # Sort by name, don't cluster "from" vs "import"
-combine-as-imports = true # Combines "as" imports on the same line
-
-[tool.semantic_release]
-version_variables = ["setup.py:__version__", "web/package.json:version"]
+[tool.pytest.ini_options]
+addopts = [
+  # Test utilities should be imported absolutely from the pythonpath,
+  # so use the Pytest-recommended "importlib" mode
+  "--import-mode=importlib",
+  "--strict-config",
+  "--strict-markers",
+  "--showlocals",
+  "--verbose",
+  # Specifying as "--ds" will override any value in the environment
+  "--ds=geoinsight.settings.testing",
+]
+markers = [
+    "slow: mark test as slow",
+]
+filterwarnings = [
+  "error",
+  # pytest often causes unclosed socket warnings
+  "ignore:unclosed <socket\\.socket:ResourceWarning",
+]

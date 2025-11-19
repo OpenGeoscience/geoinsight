@@ -1,0 +1,9 @@
+_commit: v0.44.0
+_src_path: gh:kitware-resonant/cookiecutter-resonant
+core_app_name: core
+include_example_code: false
+project_name: GeoInsight
+project_slug: geoinsight
+python_package_name: geoinsight
+site_domain: api.geoinsight.kitware.com
+use_asgi: true
