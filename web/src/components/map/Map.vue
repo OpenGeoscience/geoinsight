@@ -91,7 +91,7 @@ function createMap() {
    * this only has a real effect when the base map is clicked, as that means that no other
    * feature layer can "catch" the event, and the tooltip stays hidden.
    */
-  newMap.on("click", () => {mapStore.clickedFeature = undefined});
+  newMap.on("click", () => { mapStore.clickedFeature = undefined });
 
   // Order is important as the following function relies on the ref being set
   mapStore.map = newMap;
@@ -119,16 +119,25 @@ function createMapControls() {
 }
 
 onMounted(() => {
-  createMap();
-  mapStore.setMapCenter(undefined, true);
+  mapStore.fetchAvailableBasemaps().then(() => {
+    createMap();
+    mapStore.setMapCenter(undefined, true);
+  })
 });
+
+watch(() => mapStore.currentBasemap, () => {
+  if (mapStore.map && mapStore.currentBasemap) {
+    const map = mapStore.getMap();
+    map.setStyle(mapStore.currentBasemap.style);
+  }
+})
 
 watch(() => appStore.theme, () => {
   const map = mapStore.getMap();
   map.once('idle', () => {
     layerStore.updateLayersShown();
   });
-  map.setStyle(THEMES[appStore.theme].mapStyle);
+  mapStore.setBasemapToDefault();
   setAttributionControlStyle();
   layerStore.updateLayersShown();
 });

@@ -20,10 +20,15 @@ import {
   LayerFrame,
   TaskResult,
   Colormap,
+  Basemap,
 } from "@/types";
 
 export async function getUsers(): Promise<User[]> {
   return (await apiClient.get('users/')).data.results;
+}
+
+export async function getBasemaps(): Promise<Basemap[]> {
+  return (await apiClient.get('basemaps/')).data;
 }
 
 export async function getProjects(): Promise<Project[]> {

@@ -9,6 +9,12 @@ export interface User {
   is_superuser: boolean;
 }
 
+export interface Basemap {
+  id: number;
+  name: string;
+  style: any;
+}
+
 export interface Dataset {
   id: number;
   name?: string;

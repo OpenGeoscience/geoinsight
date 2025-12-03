@@ -11,16 +11,17 @@ import {
   MapLibreLayerMetadata,
   Layer,
   StyleFilter,
+  Basemap,
 } from '@/types';
 import {
   Map, MapLayerMouseEvent,
   Popup, Source,
-  LayerSpecification, VectorSourceSpecification,
+  LayerSpecification,
 } from "maplibre-gl";
-import { getRasterDataValues } from '@/api/rest';
+import { getBasemaps, getRasterDataValues } from '@/api/rest';
 import { baseURL } from '@/api/auth';
 import proj4 from 'proj4';
-import { useStyleStore, useLayerStore } from '.';
+import { useStyleStore, useLayerStore, useAppStore } from '.';
 
 function getLayerIsVisible(layer: MapLibreLayerWithMetadata) {
   // Since visibility must be 'visible' for a feature click to even be registered,
@@ -39,7 +40,6 @@ function getLayerIsVisible(layer: MapLibreLayerWithMetadata) {
 
   return opaque;
 }
-
 
 function sourceIdFromMapLayerId(mapLayerId: string) {
   return mapLayerId.split('.').slice(0, -1).join('.');
@@ -73,7 +73,6 @@ function sourceIdFromLayerFrame(layer: Layer, frame: LayerFrame) {
   return parts.join('.');
 }
 
-
 type SourceType = 'vector' | 'raster' | 'bounds';
 interface SourceDescription {
   layerId: number;
@@ -102,7 +101,6 @@ function parseSourceString(sourceId: string): SourceDescription {
   }
 }
 
-
 interface LayerDescription extends SourceDescription {
   layerType: LayerSpecification['type']
 }
@@ -128,6 +126,8 @@ function parseLayerString(layerId: string): LayerDescription {
 
 export const useMapStore = defineStore('map', () => {
   const map = shallowRef<Map>();
+  const availableBasemaps = ref<Basemap[]>([]);
+  const currentBasemap = ref<Basemap>();
   const showMapBaseLayer = ref(true);
   const tooltipOverlay = ref<Popup>();
   const clickedFeature = ref<ClickedFeatureData>();
@@ -136,6 +136,20 @@ export const useMapStore = defineStore('map', () => {
 
   const styleStore = useStyleStore();
   const layerStore = useLayerStore();
+  const appStore = useAppStore();
+
+  async function fetchAvailableBasemaps() {
+    availableBasemaps.value = await getBasemaps();
+    setBasemapToDefault();
+  }
+
+  function setBasemapToDefault() {
+    if (!currentBasemap.value || currentBasemap.value.name.toLowerCase().includes('basic')) {
+      currentBasemap.value = availableBasemaps.value.find((basemap) => {
+        return basemap.name.toLowerCase() === 'basic ' + appStore.theme
+      })
+    }
+  }
 
   function handleLayerClick(e: MapLayerMouseEvent) {
     const map = getMap();
@@ -201,17 +215,10 @@ export const useMapStore = defineStore('map', () => {
   }
 
   function getBaseLayerSourceIds() {
-    const map = getMap();
     return getMapSources()
-      .map((sourceId) => map.getSource(sourceId))
-      .filter((source) => {
-        if (source === undefined) return false;
-        const vectorSource = source as VectorSourceSpecification;
-        if (vectorSource?.url) {
-          return vectorSource.url.includes('demo.kitware.com');
-        }
-        return false;
-      }).map((source) => source?.id);
+      .filter((sourceId) => (
+        !sourceId || !(sourceId.includes('.vector.') || sourceId.includes('.raster.'))
+      ));
   }
 
   function getUserMapLayers() {
@@ -500,12 +507,16 @@ export const useMapStore = defineStore('map', () => {
   return {
     // Data
     map,
+    availableBasemaps,
+    currentBasemap,
     showMapBaseLayer,
     tooltipOverlay,
     clickedFeature,
     rasterTooltipDataCache,
     rasterSourceTileURLs,
     // Functions
+    fetchAvailableBasemaps,
+    setBasemapToDefault,
     handleLayerClick,
     toggleBaseLayer,
     getMap,
