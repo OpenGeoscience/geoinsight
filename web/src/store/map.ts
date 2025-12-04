@@ -128,7 +128,6 @@ export const useMapStore = defineStore('map', () => {
   const map = shallowRef<Map>();
   const availableBasemaps = ref<Basemap[]>([]);
   const currentBasemap = ref<Basemap>();
-  const showMapBaseLayer = ref(true);
   const tooltipOverlay = ref<Popup>();
   const clickedFeature = ref<ClickedFeatureData>();
   const rasterTooltipDataCache = ref<Record<number, RasterDataValues | undefined>>({});
@@ -139,7 +138,10 @@ export const useMapStore = defineStore('map', () => {
   const appStore = useAppStore();
 
   async function fetchAvailableBasemaps() {
-    availableBasemaps.value = await getBasemaps();
+    availableBasemaps.value = [
+      {name: 'None'},
+      ...await getBasemaps()
+    ];
     setBasemapToDefault();
   }
 
@@ -149,6 +151,21 @@ export const useMapStore = defineStore('map', () => {
         return basemap.name.toLowerCase() === 'basic ' + appStore.theme
       })
     }
+  }
+
+  function setBasemapVisibility(visible: boolean) {
+    const map = getMap();
+    const baseLayerSourceIds = getBaseLayerSourceIds();
+    map.getLayersOrder().forEach((id) => {
+      const layer = map.getLayer(id);
+      if (layer && baseLayerSourceIds.includes(layer.source)) {
+        map.setLayoutProperty(
+          id,
+          "visibility",
+          visible ? "visible" : "none"
+        );
+      }
+    });
   }
 
   function handleLayerClick(e: MapLayerMouseEvent) {
@@ -180,26 +197,6 @@ export const useMapStore = defineStore('map', () => {
         pos: e.lngLat,
       };
     }
-  }
-
-  // Update the base layer visibility
-  watch(showMapBaseLayer, () => {
-    const map = getMap();
-    const baseLayerSourceIds = getBaseLayerSourceIds();
-    map.getLayersOrder().forEach((id) => {
-      const layer = map.getLayer(id);
-      if (layer && baseLayerSourceIds.includes(layer.source)) {
-        map.setLayoutProperty(
-          id,
-          "visibility",
-          showMapBaseLayer.value ? "visible" : "none"
-        );
-      }
-    });
-  });
-
-  function toggleBaseLayer() {
-    showMapBaseLayer.value = !showMapBaseLayer.value;
   }
 
   function getMap() {
@@ -509,7 +506,6 @@ export const useMapStore = defineStore('map', () => {
     map,
     availableBasemaps,
     currentBasemap,
-    showMapBaseLayer,
     tooltipOverlay,
     clickedFeature,
     rasterTooltipDataCache,
@@ -517,8 +513,8 @@ export const useMapStore = defineStore('map', () => {
     // Functions
     fetchAvailableBasemaps,
     setBasemapToDefault,
+    setBasemapVisibility,
     handleLayerClick,
-    toggleBaseLayer,
     getMap,
     getMapSources,
     getCurrentMapPosition,

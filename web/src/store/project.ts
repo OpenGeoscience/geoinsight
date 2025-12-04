@@ -66,7 +66,7 @@ export const useProjectStore = defineStore('project', () => {
 
     function clearState() {
         clearProjectState();
-        mapStore.showMapBaseLayer = true;
+        mapStore.setBasemapToDefault();
         appStore.currentError = undefined;
 
         panelStore.resetPanels();

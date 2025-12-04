@@ -10,9 +10,9 @@ export interface User {
 }
 
 export interface Basemap {
-  id: number;
+  id?: number;
   name: string;
-  style: any;
+  style?: any;
 }
 
 export interface Dataset {

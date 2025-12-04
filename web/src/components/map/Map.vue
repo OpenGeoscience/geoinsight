@@ -60,10 +60,11 @@ function createMap() {
     preserveDrawingBuffer: true, // allows screenshots
     // transformRequest adds auth headers to tile requests
     transformRequest: (url) => {
-      return {
-        url,
-        headers: oauthClient?.authHeaders,
-      };
+      let headers = {}
+      if (url.includes(import.meta.env.VITE_APP_API_ROOT)) {
+        headers = oauthClient?.authHeaders
+      }
+      return { url, headers };
     },
     style: THEMES[appStore.theme].mapStyle,
     center: [0, 0],
@@ -127,19 +128,21 @@ onMounted(() => {
 
 watch(() => mapStore.currentBasemap, () => {
   if (mapStore.map && mapStore.currentBasemap) {
-    const map = mapStore.getMap();
-    map.setStyle(mapStore.currentBasemap.style);
+    const visible = mapStore.currentBasemap.id !== undefined
+    mapStore.setBasemapVisibility(visible);
+    if (visible) {
+      const map = mapStore.getMap();
+      map.setStyle(mapStore.currentBasemap.style);
+      map.once('idle', () => {
+        layerStore.updateLayersShown();
+      });
+    }
   }
 })
 
 watch(() => appStore.theme, () => {
-  const map = mapStore.getMap();
-  map.once('idle', () => {
-    layerStore.updateLayersShown();
-  });
   mapStore.setBasemapToDefault();
   setAttributionControlStyle();
-  layerStore.updateLayersShown();
 });
 
 watch(() => appStore.openSidebars, () => {

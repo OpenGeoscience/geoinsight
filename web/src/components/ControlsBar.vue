@@ -64,10 +64,25 @@ function takeScreenshot(save: boolean) {
 </script>
 
 <template>
-  <div id="controls-bar" :class="appStore.openSidebars.includes('left') ? 'controls-bar shifted' : 'controls-bar'
-    ">
-    <v-btn color="primary" class="control-btn" @click="mapStore.toggleBaseLayer" variant="flat">
-      <v-icon icon="mdi-layers" v-tooltip="'Toggle Base Layer'"></v-icon>
+  <div id="controls-bar" :class="appStore.openSidebars.includes('left') ? 'controls-bar shifted' : 'controls-bar'">
+    <v-btn color="primary" class="control-btn" variant="flat">
+      <v-icon>mdi-map-outline</v-icon>
+      <v-menu activator="parent" :close-on-content-click="false" open-on-hover>
+        <v-card style="max-height: 400px; overflow-y: auto;">
+          <v-list :selected="[mapStore.currentBasemap]"
+            @update:selected="(selected) => mapStore.currentBasemap = selected[0]" class="basemap-list"
+            density="compact" mandatory>
+            <v-list-subheader>Base Map Options</v-list-subheader>
+            <v-list-item v-for="basemap in mapStore.availableBasemaps" :key="basemap.id" :value="basemap" class="px-2">
+              {{ basemap.name }}
+              <template v-slot:prepend>
+                <v-icon :icon="basemap.id === mapStore.currentBasemap?.id ? 'mdi-check' : 'none'" color="success"
+                  class="pa-0"></v-icon>
+              </template>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-menu>
     </v-btn>
     <v-btn class="control-btn" @click="fitMap" variant="flat">
       <v-progress-circular v-if="loadingBounds" indeterminate />
@@ -160,5 +175,9 @@ function takeScreenshot(save: boolean) {
   display: flex;
   justify-content: space-between;
   margin-bottom: 5px;
+}
+
+.basemap-list .v-list-item__prepend>.v-icon~.v-list-item__spacer {
+  width: 5px;
 }
 </style>
