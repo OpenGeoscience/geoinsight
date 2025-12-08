@@ -152,6 +152,7 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
             return flatList;
         }
         const baseLayerSourceIds = getBaseLayerSourceIds();
+        
         layerStore.selectedLayers.forEach((layer) => {
             if (displayLayers.value.mapLayerA.find((l) => l.displayName === layer.name)?.state === false) {
                 return;

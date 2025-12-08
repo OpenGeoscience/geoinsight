@@ -57,8 +57,7 @@ function setAttributionControlStyle() {
   });
 }
 
-const handleMapReady = (newMap: Map) => {
-    console.log("Compare maps ready");
+const handleMapAReady = (newMap: Map) => {
     newMap.addControl(attributionControl);
     newMap.on('error', (response) => {
         // AbortErrors are raised when updating style of raster layers; ignore these
@@ -77,9 +76,29 @@ const handleMapReady = (newMap: Map) => {
     mapStore.setMapCenter(undefined, true);
     createMapControls();
     newMap.once('idle', () => {
-    //layerStore.updateLayersShown();
-  });
+      layerStore.updateLayersShown();
+    });
+}
 
+const handleMapBReady = (newMap: Map) => {
+    newMap.addControl(attributionControl);
+    newMap.on('error', (response) => {
+        // AbortErrors are raised when updating style of raster layers; ignore these
+        if (response.error.message !== 'AbortError') console.error(response.error)
+    });
+
+    /**
+     * This is called on every click, and technically hides the tooltip on every click.
+     * However, if a feature layer is clicked, that event is fired after this one, and the
+     * tooltip is re-enabled and rendered with the desired contents. The net result is that
+     * this only has a real effect when the base map is clicked, as that means that no other
+     * feature layer can "catch" the event, and the tooltip stays hidden.
+     */
+    newMap.on("click", () => {mapStore.clickedFeature = undefined});
+    createMapControls();
+    newMap.once('idle', () => {
+      layerStore.updateLayersShown();
+    });
 }
 
 
@@ -182,11 +201,13 @@ const swiperColor = computed(() => {
                 handleColor: swiperColor
             }"
             layer-order="bottommost"
+            :attribution-control="false"
             @panend="compareStore.updateMapStats($event)"
             @zoomend="compareStore.updateMapStats($event)"
             @pitchend="compareStore.updateMapStats($event)"
             @rotateend="compareStore.updateMapStats($event)"
-            @map-ready="handleMapReady"
+            @map-ready-a="handleMapAReady"
+            @map-ready-b="handleMapBReady"
             class="map"
         />
 

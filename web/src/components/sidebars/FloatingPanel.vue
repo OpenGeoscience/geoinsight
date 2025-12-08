@@ -110,7 +110,7 @@ function panelUpdated() {
               v-tooltip="'Compare Layers'"
               icon="mdi-compare"
               :color="compareStore.isComparing ? 'primary' : ''"
-              @mousedown="compareStore.isComparing = !compareStore.isComparing"
+              @click="compareStore.isComparing = !compareStore.isComparing"
             />
 
             <v-icon
