@@ -151,14 +151,14 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
         if (!mapStore.map) {
             return flatList;
         }
-        const baseLayerSourceIds = getBaseLayerSourceIds();
+        const baseLayerSourceIds = getBaseLayerSourceIds().reverse();
         
         layerStore.selectedLayers.forEach((layer) => {
             if (displayLayers.value.mapLayerA.find((l) => l.displayName === layer.name)?.state === false) {
                 return;
             }
             const mapLayerIds = layerStore.getMapLayersFromLayerObject(layer);
-            flatList.push(...mapLayerIds);
+            flatList.push(...(mapLayerIds.reverse()));
         });
         if (mapStore.showMapBaseLayer) {
         baseLayerSourceIds.forEach((sourceId: string) => {
@@ -176,13 +176,13 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
         if (!mapStore.map) {
             return flatList;
         }
-        const baseLayerSourceIds = getBaseLayerSourceIds();
+        const baseLayerSourceIds = getBaseLayerSourceIds().reverse();
         layerStore.selectedLayers.forEach((layer) => {
             if (displayLayers.value.mapLayerB.find((l) => l.displayName === layer.name)?.state === false) {
                 return;
             }
             const mapLayerIds = layerStore.getMapLayersFromLayerObject(layer);
-            flatList.push(...mapLayerIds);
+            flatList.push(...(mapLayerIds.reverse()));
         });
         if (mapStore.showMapBaseLayer) {
             baseLayerSourceIds.forEach((sourceId: string) => {
