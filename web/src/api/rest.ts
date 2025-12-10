@@ -28,7 +28,7 @@ export async function getUsers(): Promise<User[]> {
 }
 
 export async function getBasemaps(): Promise<Basemap[]> {
-  return (await apiClient.get('basemaps/')).data;
+  return (await apiClient.get('basemaps/')).data.results;
 }
 
 export async function getProjects(): Promise<Project[]> {
