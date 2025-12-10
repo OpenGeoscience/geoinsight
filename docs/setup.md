@@ -38,13 +38,18 @@ While the containers are running, open a **separate terminal** and run:
 docker compose run --rm django python manage.py migrate
 
 # Create an admin user (you will be prompted for email and password)
-docker compose run --rm django python manage.py createsuperuser
+docker compose run --rm -it django python manage.py createsuperuser
 
 # Create OAuth client for authentication
 docker compose run --rm django python manage.py makeclient
 ```
 
 > **Note:** The `createsuperuser` command prompts you to create login credentials (email and password). Use these credentials to sign into both the Admin Panel and User Interface. If you forget your password, run `createsuperuser` again to create a new admin account.
+
+> **Windows Users:** If the `createsuperuser` command hangs or doesn't show prompts, prefix the command with `winpty`:
+> ```bash
+> winpty docker compose run --rm -it django python manage.py createsuperuser
+> ```
 
 ### 4. Load Sample Data (Optional)
 
@@ -157,3 +162,23 @@ docker compose up
 ```
 
 GPU acceleration is optional and only needed for accelerated inferencing.
+
+### Windows-Specific Issues
+
+**Interactive commands don't work or hang:**
+
+On Windows (especially Git Bash/MINGW), interactive Docker commands like `createsuperuser` may hang or fail to display prompts. Prefix the command with `winpty`:
+
+```bash
+winpty docker compose run --rm -it django python manage.py createsuperuser
+```
+
+**"No such container" errors:**
+
+If you see errors like `No such container: django` when trying to attach to a running container, use `docker compose run` instead:
+
+```bash
+docker compose run --rm -it django python manage.py <command>
+```
+
+This creates a new container instance rather than attaching to an existing one.
