@@ -53,9 +53,11 @@ function createBasemapPreviews(menuOpen: boolean) {
 
 function cancelBasemapCreate() {
   showBasemapCreation.value = false;
+  newBasemapTab.value = 'url';
   newBasemapName.value = undefined;
   newBasemapTileURL.value = undefined;
   newBasemapStyleJSON.value = undefined;
+  newBasemapPreview.value = undefined;
 }
 
 function switchBasemapCreateTab() {
