@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import html2canvas from "html2canvas";
+import { Map } from "maplibre-gl";
 
 import { useAppStore, useLayerStore, useMapStore } from "@/store";
 const appStore = useAppStore();
@@ -11,6 +12,35 @@ const copyMenuShown = ref(false);
 const screenOverlayShown = ref(false);
 const mapOnly = ref(false);
 const loadingBounds = ref(false);
+
+let basemapPreviews: Map[] = [];
+
+function getBasemapThumbnails(menuOpen: boolean) {
+  if (menuOpen) {
+    const map = mapStore.getMap();
+    const center = map.getCenter();
+    const zoom = map.getZoom();
+
+    // Wait for menu opening animation to complete so map containers exist
+    setTimeout(() => {
+      basemapPreviews = mapStore.availableBasemaps.map((basemap) => {
+        if (basemap.id !== undefined) {
+          const newMap = new Map({
+            container: 'basemap-preview-' + basemap.id,
+            attributionControl: false,
+            center,
+            zoom,
+          });
+          newMap.setStyle(basemap.style);
+          return newMap;
+        }
+      }).filter((preview) => preview !== undefined)
+    }, 10)
+  } else {
+    basemapPreviews.forEach((preview) => preview.remove())
+    basemapPreviews = []
+  }
+}
 
 async function fitMap() {
   loadingBounds.value = true;
@@ -67,7 +97,8 @@ function takeScreenshot(save: boolean) {
   <div id="controls-bar" :class="appStore.openSidebars.includes('left') ? 'controls-bar shifted' : 'controls-bar'">
     <v-btn color="primary" class="control-btn" variant="flat">
       <v-icon>mdi-map-outline</v-icon>
-      <v-menu activator="parent" :close-on-content-click="false" open-on-hover>
+      <v-menu activator="parent" :close-on-content-click="false" open-on-hover
+        @update:model-value="getBasemapThumbnails">
         <v-card style="max-height: 400px; overflow-y: auto;">
           <v-list :selected="[mapStore.currentBasemap]"
             @update:selected="(selected) => mapStore.currentBasemap = selected[0]" class="basemap-list"
@@ -78,6 +109,10 @@ function takeScreenshot(save: boolean) {
               <template v-slot:prepend>
                 <v-icon :icon="basemap.id === mapStore.currentBasemap?.id ? 'mdi-check' : 'none'" color="success"
                   class="pa-0"></v-icon>
+              </template>
+              <template v-slot:append>
+                <div v-if="basemap.id !== undefined" class="basemap-preview" :id="'basemap-preview-' + basemap.id">
+                </div>
               </template>
             </v-list-item>
           </v-list>
@@ -179,5 +214,12 @@ function takeScreenshot(save: boolean) {
 
 .basemap-list .v-list-item__prepend>.v-icon~.v-list-item__spacer {
   width: 5px;
+}
+
+.basemap-preview {
+  margin: 0px 10px;
+  border: 1px solid black;
+  height: 50px;
+  width: 50px;
 }
 </style>
