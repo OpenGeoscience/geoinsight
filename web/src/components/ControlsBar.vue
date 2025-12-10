@@ -12,10 +12,9 @@ const copyMenuShown = ref(false);
 const screenOverlayShown = ref(false);
 const mapOnly = ref(false);
 const loadingBounds = ref(false);
+const basemapPreviews = ref<Record<number, Map>>({});
 
-let basemapPreviews: Map[] = [];
-
-function getBasemapThumbnails(menuOpen: boolean) {
+function createBasemapPreviews(menuOpen: boolean) {
   if (menuOpen) {
     const map = mapStore.getMap();
     const center = map.getCenter();
@@ -23,22 +22,21 @@ function getBasemapThumbnails(menuOpen: boolean) {
 
     // Wait for menu opening animation to complete so map containers exist
     setTimeout(() => {
-      basemapPreviews = mapStore.availableBasemaps.map((basemap) => {
-        if (basemap.id !== undefined) {
-          const newMap = new Map({
-            container: 'basemap-preview-' + basemap.id,
-            attributionControl: false,
-            center,
-            zoom,
-          });
-          newMap.setStyle(basemap.style);
-          return newMap;
+      mapStore.availableBasemaps.forEach((basemap) => {
+        if (basemap.id === undefined) return;
+        if (basemapPreviews.value[basemap.id]) {
+          basemapPreviews.value[basemap.id].remove()
         }
-      }).filter((preview) => preview !== undefined)
+        const preview = new Map({
+          container: 'basemap-preview-' + basemap.id,
+          attributionControl: false,
+        });
+        preview.setZoom(zoom);
+        preview.setCenter(center);
+        preview.setStyle(basemap.style);
+        basemapPreviews.value[basemap.id] = preview;
+      })
     }, 10)
-  } else {
-    basemapPreviews.forEach((preview) => preview.remove())
-    basemapPreviews = []
   }
 }
 
@@ -98,7 +96,7 @@ function takeScreenshot(save: boolean) {
     <v-btn color="primary" class="control-btn" variant="flat">
       <v-icon>mdi-map-outline</v-icon>
       <v-menu activator="parent" :close-on-content-click="false" open-on-hover
-        @update:model-value="getBasemapThumbnails">
+        @update:model-value="createBasemapPreviews">
         <v-card style="max-height: 400px; overflow-y: auto;">
           <v-list :selected="[mapStore.currentBasemap]"
             @update:selected="(selected) => mapStore.currentBasemap = selected[0]" class="basemap-list"
