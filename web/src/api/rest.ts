@@ -31,6 +31,10 @@ export async function getBasemaps(): Promise<Basemap[]> {
   return (await apiClient.get('basemaps/')).data.results;
 }
 
+export async function createBasemap(basemap: Basemap): Promise<Basemap> {
+  return (await apiClient.post('basemaps/', basemap)).data;
+}
+
 export async function getProjects(): Promise<Project[]> {
   return (await apiClient.get('projects/')).data.results;
 }

@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import html2canvas from "html2canvas";
 import { Map } from "maplibre-gl";
 
+import JsonEditorVue from 'json-editor-vue'
+import 'vanilla-jsoneditor/themes/jse-theme-dark.css'
+import { Mode } from 'vanilla-jsoneditor'
+
 import { useAppStore, useLayerStore, useMapStore } from "@/store";
+import { createBasemap } from "@/api/rest";
 const appStore = useAppStore();
 const layerStore = useLayerStore();
 const mapStore = useMapStore();
@@ -13,6 +18,12 @@ const screenOverlayShown = ref(false);
 const mapOnly = ref(false);
 const loadingBounds = ref(false);
 const basemapPreviews = ref<Record<number, Map>>({});
+const showBasemapCreation = ref(false);
+const newBasemapTab = ref<'url' | 'json'>('url')
+const newBasemapName = ref();
+const newBasemapTileURL = ref();
+const newBasemapStyleJSON = ref();
+const newBasemapPreview = ref<Map | undefined>();
 
 function createBasemapPreviews(menuOpen: boolean) {
   if (menuOpen) {
@@ -38,6 +49,77 @@ function createBasemapPreviews(menuOpen: boolean) {
       })
     }, 10)
   }
+}
+
+function cancelBasemapCreate() {
+  showBasemapCreation.value = false;
+  newBasemapName.value = undefined;
+  newBasemapTileURL.value = undefined;
+  newBasemapStyleJSON.value = undefined;
+}
+
+function switchBasemapCreateTab() {
+  newBasemapTileURL.value = undefined;
+  newBasemapStyleJSON.value = undefined;
+  createNewBasemapPreview()
+}
+
+function setNewBasemapStyleFromTileURL() {
+  if (newBasemapTileURL.value) {
+    newBasemapStyleJSON.value = {
+      version: 8,
+      sources: {
+        "base-source": {
+          type: "raster",
+          tiles: [newBasemapTileURL.value],
+          tileSize: 256,
+        }
+      },
+      layers: [
+        {
+          id: "base-layer",
+          type: "raster",
+          source: "base-source"
+        }
+      ]
+    }
+  } else {
+    newBasemapStyleJSON.value = undefined
+  }
+}
+
+function createNewBasemapPreview() {
+  if (!newBasemapPreview.value) {
+    const map = mapStore.getMap();
+    const center = map.getCenter();
+    const zoom = map.getZoom();
+    newBasemapPreview.value = new Map({
+      container: 'basemap-preview-new',
+      attributionControl: false,
+      center,
+      zoom,
+    })
+  }
+  if (newBasemapStyleJSON.value) {
+    newBasemapPreview.value.setStyle(newBasemapStyleJSON.value);
+  } else {
+    newBasemapPreview.value.setStyle({
+      version: 8,
+      sources: {},
+      layers: []
+    })
+  }
+}
+
+function submitBasemapCreate() {
+  createBasemap({
+    name: newBasemapName.value,
+    style: newBasemapStyleJSON.value,
+  }).then((basemap) => {
+    cancelBasemapCreate();
+    mapStore.fetchAvailableBasemaps();
+    mapStore.currentBasemap = basemap;
+  })
 }
 
 async function fitMap() {
@@ -89,6 +171,10 @@ function takeScreenshot(save: boolean) {
     });
   }
 }
+
+watch(newBasemapTab, switchBasemapCreateTab)
+watch(newBasemapTileURL, setNewBasemapStyleFromTileURL)
+watch(newBasemapStyleJSON, createNewBasemapPreview)
 </script>
 
 <template>
@@ -111,6 +197,11 @@ function takeScreenshot(save: boolean) {
               <template v-slot:append>
                 <div v-if="basemap.id !== undefined" class="basemap-preview" :id="'basemap-preview-' + basemap.id">
                 </div>
+              </template>
+            </v-list-item>
+            <v-list-item key="new" title="New" @click="showBasemapCreation = true">
+              <template v-slot:prepend>
+                <v-icon icon="mdi-plus" class="pa-0"></v-icon>
               </template>
             </v-list-item>
           </v-list>
@@ -164,6 +255,54 @@ function takeScreenshot(save: boolean) {
     </v-btn>
     <v-overlay :model-value="screenOverlayShown" absolute persistent :opacity="0.8" scrim="white">
     </v-overlay>
+    <v-dialog :model-value="showBasemapCreation" width="500">
+      <v-card>
+        <v-card-title class="pa-3">
+          New Basemap
+          <v-btn class="close-button transparent" variant="flat" icon @click="cancelBasemapCreate">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text class="d-flex" style="flex-direction: column; row-gap: 5px">
+          <v-text-field v-model="newBasemapName" label="Name" hide-details density="compact" autofocus />
+          <v-tabs v-model="newBasemapTab" color="primary">
+            <v-tab value="url">Tile URL</v-tab>
+            <v-tab value="json">MapLibre Style JSON</v-tab>
+          </v-tabs>
+          <v-window v-model="newBasemapTab">
+            <v-window-item value="url">
+              <div>Supply a tile URL</div>
+              <div>(e.g. https://a.tile.openstreetmap.org/{z}/{x}/{y}.png)</div>
+              <v-text-field v-model="newBasemapTileURL" label="Tile URL" hide-details density="compact" />
+            </v-window-item>
+            <v-window-item value="json">
+              <div>
+                Supply a JSON that adheres to the
+                <a href="https://maplibre.org/maplibre-style-spec/">Maplibre Style Spec</a>.
+              </div>
+              <div>
+                Style spec can be supplied directly as JSON or as a URL string that references a publicly accessible
+                JSON file (e.g. "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json").
+              </div>
+              <json-editor-vue v-model="newBasemapStyleJSON" :mode="Mode.text" :stringified="false"
+                :main-menu-bar="false" :ask-to-format="false" :indentation="4"
+                :class="appStore.theme === 'dark' ? 'jse-theme-dark' : ''" />
+            </v-window-item>
+          </v-window>
+          <v-spacer />
+          <div>Map Preview:</div>
+          <div id="basemap-preview-new"></div>
+        </v-card-text>
+        <v-card-actions style="text-align: right;">
+          <v-btn @click="cancelBasemapCreate" variant="tonal">
+            Cancel
+          </v-btn>
+          <v-btn color="primary" :disabled="!newBasemapName || !newBasemapStyleJSON" @click="submitBasemapCreate">
+            Create
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -216,8 +355,13 @@ function takeScreenshot(save: boolean) {
 
 .basemap-preview {
   margin: 0px 10px;
-  border: 1px solid black;
   height: 50px;
   width: 50px;
+}
+
+#basemap-preview-new {
+  width: 100%;
+  height: 150px;
+  border: 1px solid rgb(var(--v-theme-on-surface-variant))
 }
 </style>
