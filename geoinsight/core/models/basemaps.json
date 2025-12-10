@@ -1,16 +1,13 @@
 [
     {
-        "id": 0,
         "name": "Basic Light",
         "style": "https://demo.kitware.com/vector-maps/tiles/style/openstreetmap-openmaptiles-openfreemap-positron.json"
     },
     {
-        "id": 1,
         "name": "Basic Dark",
         "style": "https://demo.kitware.com/vector-maps/tiles/style/openstreetmap-openmaptiles-openmaptiles-dark-matter.json"
     },
     {
-        "id": 2,
         "name": "NAIP Imagery",
         "style": {
             "version": 8,
@@ -34,7 +31,6 @@
         }
     },
     {
-        "id": 3,
         "name": "OSM",
         "style": {
             "version": 8,
@@ -58,37 +54,30 @@
         }
     },
     {
-        "id": 12,
         "name": "ArcGIS Hybrid",
         "style": "https://raw.githubusercontent.com/go2garret/maps/main/src/assets/json/arcgis_hybrid.json"
     },
     {
-        "id": 13,
         "name": "CartoCDN Voyager",
         "style": "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json"
     },
     {
-        "id": 5,
         "name": "ICGC Dark",
         "style": "https://geoserveis.icgc.cat/contextmaps/icgc_mapa_base_fosc.json"
     },
     {
-        "id": 7,
         "name": "ICGC Dark Shadow",
         "style": "https://geoserveis.icgc.cat/contextmaps/icgc_ombra_fosca.json"
     },
     {
-        "id": 8,
         "name": "ICGC Standard Orthophoto",
         "style": "https://geoserveis.icgc.cat/contextmaps/icgc_orto_estandard.json"
     },
     {
-        "id": 9,
         "name": "ICGC Standard Orthophoto Gray",
         "style": "https://geoserveis.icgc.cat/contextmaps/icgc_orto_estandard_gris.json"
     },
     {
-        "id": 10,
         "name": "ICGC Hybrid Orthophoto",
         "style": "https://geoserveis.icgc.cat/contextmaps/icgc_orto_hibrida.json"
     }

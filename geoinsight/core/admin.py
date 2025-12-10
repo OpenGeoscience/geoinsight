@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from geoinsight.core.models import (
+    Basemap,
     Chart,
     ColorConfig,
     Colormap,
@@ -23,6 +24,11 @@ from geoinsight.core.models import (
     VectorData,
     VectorFeature,
 )
+
+
+@admin.register(Basemap)
+class BasemapAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name']
 
 
 @admin.register(Project)

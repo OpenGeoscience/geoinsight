@@ -1,3 +1,4 @@
+from .basemap import Basemap
 from .chart import Chart
 from .colormap import Colormap
 from .data import RasterData, VectorData, VectorFeature
@@ -18,6 +19,7 @@ from .styles import (
 from .task_result import TaskResult
 
 __all__ = [
+    'Basemap',
     'TaskResult',
     'Chart',
     'Colormap',
