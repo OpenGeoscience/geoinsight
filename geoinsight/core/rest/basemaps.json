@@ -68,19 +68,9 @@
         "style": "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json"
     },
     {
-        "id": 4,
-        "name": "ICGC Main",
-        "style": "https://geoserveis.icgc.cat/contextmaps/icgc.json"
-    },
-    {
         "id": 5,
         "name": "ICGC Dark",
         "style": "https://geoserveis.icgc.cat/contextmaps/icgc_mapa_base_fosc.json"
-    },
-    {
-        "id": 6,
-        "name": "ICGC Shadow Hypsometry Contours",
-        "style": "https://geoserveis.icgc.cat/contextmaps/icgc_ombra_hipsometria_corbes.json"
     },
     {
         "id": 7,
@@ -101,10 +91,5 @@
         "id": 10,
         "name": "ICGC Hybrid Orthophoto",
         "style": "https://geoserveis.icgc.cat/contextmaps/icgc_orto_hibrida.json"
-    },
-    {
-        "id": 11,
-        "name": "ICGC Geological Risks",
-        "style": "https://geoserveis.icgc.cat/contextmaps/icgc_geologic_riscos.json"
     }
 ]
