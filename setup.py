@@ -63,7 +63,7 @@ setup(
         'pooch[progress]==1.8.2',
         'psycopg[pool]',
         'pyshp==2.3.1',
-        'rasterio==1.3.10',
+        'rasterio==1.3.11',
         'urllib3==1.26.15',
         'webcolors==24.6.0',
         # Production only

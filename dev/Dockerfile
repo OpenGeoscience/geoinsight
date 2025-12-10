@@ -2,11 +2,13 @@ FROM python:3.11-slim
 # Install system libraries for Python packages:
 RUN apt-get update && \
     apt-get install --no-install-recommends --yes \
-    libpq-dev libvips-dev gcc libc6-dev gdal-bin git libgl1 libglx-mesa0 && \
+    libpq-dev libvips-dev gcc g++ libc6-dev gdal-bin libgdal-dev git libgl1 libglx-mesa0 && \
     rm -rf /var/lib/apt/lists/*
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+# Use system gdal-config instead of Python GDAL's version (which requires osgeo module)
+ENV GDAL_CONFIG=/usr/bin/gdal-config
 
 ARG TASKS
 
