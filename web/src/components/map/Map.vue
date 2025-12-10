@@ -66,7 +66,7 @@ function createMap() {
       }
       return { url, headers };
     },
-    style: THEMES[appStore.theme].mapStyle,
+    style: mapStore.currentBasemap?.style,
     center: [0, 0],
     zoom: 1, // Initial zoom level
   });
