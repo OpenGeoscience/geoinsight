@@ -132,7 +132,9 @@ watch(() => mapStore.currentBasemap, () => {
     mapStore.setBasemapVisibility(visible);
     if (visible) {
       const map = mapStore.getMap();
-      map.setStyle(mapStore.currentBasemap.style);
+      if (mapStore.currentBasemap.style) {
+        map.setStyle(mapStore.currentBasemap.style);
+      }
       map.once('idle', () => {
         layerStore.updateLayersShown();
       });
