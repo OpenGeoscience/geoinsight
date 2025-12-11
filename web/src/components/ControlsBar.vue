@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import html2canvas from "html2canvas";
 import { Map } from "maplibre-gl";
 
 import JsonEditorVue from 'json-editor-vue'
 import 'vanilla-jsoneditor/themes/jse-theme-dark.css'
 import { Mode } from 'vanilla-jsoneditor'
+import { validateStyleMin } from '@maplibre/maplibre-gl-style-spec';
 
 import { useAppStore, useLayerStore, useMapStore } from "@/store";
 import { createBasemap } from "@/api/rest";
@@ -24,7 +25,13 @@ const newBasemapTab = ref<'url' | 'json'>('url')
 const newBasemapName = ref();
 const newBasemapTileURL = ref();
 const newBasemapStyleJSON = ref();
+const jsonErrors = ref();
 const newBasemapPreview = ref<Map | undefined>();
+const newBasemapValid = computed(() => (
+  newBasemapName.value?.length &&
+  newBasemapStyleJSON.value &&
+  !jsonErrors.value.length
+))
 
 function createBasemapPreviews() {
   if (basemapList.value) {
@@ -57,12 +64,14 @@ function cancelBasemapCreate() {
   newBasemapName.value = undefined;
   newBasemapTileURL.value = undefined;
   newBasemapStyleJSON.value = undefined;
+  jsonErrors.value = []
   newBasemapPreview.value = undefined;
 }
 
 function switchBasemapCreateTab() {
   newBasemapTileURL.value = undefined;
   newBasemapStyleJSON.value = undefined;
+  jsonErrors.value = []
   createNewBasemapPreview()
 }
 
@@ -91,37 +100,42 @@ function setNewBasemapStyleFromTileURL() {
 }
 
 function createNewBasemapPreview() {
+  const map = mapStore.getMap();
+  const center = map.getCenter();
+  const zoom = map.getZoom();
   if (!newBasemapPreview.value) {
-    const map = mapStore.getMap();
-    const center = map.getCenter();
-    const zoom = map.getZoom();
     newBasemapPreview.value = new Map({
       container: 'basemap-preview-new',
       attributionControl: false,
-      center,
-      zoom,
     })
   }
+  newBasemapPreview.value.setCenter(center);
+  newBasemapPreview.value.setZoom(zoom);
   if (newBasemapStyleJSON.value) {
-    newBasemapPreview.value.setStyle(newBasemapStyleJSON.value);
-  } else {
-    newBasemapPreview.value.setStyle({
-      version: 8,
-      sources: {},
-      layers: []
-    })
+    jsonErrors.value = validateStyleMin(newBasemapStyleJSON.value);
+    if (!jsonErrors.value?.length) {
+      newBasemapPreview.value.setStyle(newBasemapStyleJSON.value);
+      return;
+    }
   }
+  newBasemapPreview.value.setStyle({
+    version: 8,
+    sources: {},
+    layers: []
+  })
 }
 
 function submitBasemapCreate() {
-  createBasemap({
-    name: newBasemapName.value,
-    style: newBasemapStyleJSON.value,
-  }).then((basemap) => {
-    cancelBasemapCreate();
-    mapStore.fetchAvailableBasemaps();
-    mapStore.currentBasemap = basemap;
-  })
+  if (newBasemapValid.value) {
+    createBasemap({
+      name: newBasemapName.value,
+      style: newBasemapStyleJSON.value,
+    }).then((basemap) => {
+      cancelBasemapCreate();
+      mapStore.fetchAvailableBasemaps();
+      mapStore.currentBasemap = basemap;
+    })
+  }
 }
 
 async function fitMap() {
@@ -292,14 +306,15 @@ watch(newBasemapStyleJSON, createNewBasemapPreview)
             </v-window-item>
           </v-window>
           <v-spacer />
-          <div>Map Preview:</div>
-          <div id="basemap-preview-new"></div>
+          <div v-for="err in jsonErrors">Error: {{ err.message }}</div>
+          <div v-if="!jsonErrors?.length">Map Preview:</div>
+          <div id="basemap-preview-new" :style="jsonErrors?.length ? 'display: none' : ''"></div>
         </v-card-text>
         <v-card-actions style="text-align: right;">
           <v-btn @click="cancelBasemapCreate" variant="tonal">
             Cancel
           </v-btn>
-          <v-btn color="primary" :disabled="!newBasemapName || !newBasemapStyleJSON" @click="submitBasemapCreate">
+          <v-btn color="primary" :disabled="!newBasemapValid" @click="submitBasemapCreate">
             Create
           </v-btn>
         </v-card-actions>
