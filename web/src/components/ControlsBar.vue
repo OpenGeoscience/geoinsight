@@ -17,6 +17,7 @@ const copyMenuShown = ref(false);
 const screenOverlayShown = ref(false);
 const mapOnly = ref(false);
 const loadingBounds = ref(false);
+const basemapList = ref();
 const basemapPreviews = ref<Record<number, Map>>({});
 const showBasemapCreation = ref(false);
 const newBasemapTab = ref<'url' | 'json'>('url')
@@ -25,29 +26,25 @@ const newBasemapTileURL = ref();
 const newBasemapStyleJSON = ref();
 const newBasemapPreview = ref<Map | undefined>();
 
-function createBasemapPreviews(menuOpen: boolean) {
-  if (menuOpen) {
+function createBasemapPreviews() {
+  if (basemapList.value) {
     const map = mapStore.getMap();
     const center = map.getCenter();
     const zoom = map.getZoom();
-
-    // Wait for menu opening animation to complete so map containers exist
-    setTimeout(() => {
-      mapStore.availableBasemaps.forEach((basemap) => {
-        if (basemap.id === undefined) return;
-        if (basemapPreviews.value[basemap.id]) {
-          basemapPreviews.value[basemap.id].remove()
-        }
-        const preview = new Map({
-          container: 'basemap-preview-' + basemap.id,
-          attributionControl: false,
-        });
-        preview.setZoom(zoom);
-        preview.setCenter(center);
-        preview.setStyle(basemap.style);
-        basemapPreviews.value[basemap.id] = preview;
-      })
-    }, 10)
+    mapStore.availableBasemaps.forEach((basemap) => {
+      if (basemap.id === undefined) return;
+      if (basemapPreviews.value[basemap.id]) {
+        basemapPreviews.value[basemap.id].remove()
+      }
+      const preview = new Map({
+        container: 'basemap-preview-' + basemap.id,
+        attributionControl: false,
+      });
+      preview.setZoom(zoom);
+      preview.setCenter(center);
+      preview.setStyle(basemap.style);
+      basemapPreviews.value[basemap.id] = preview;
+    })
   }
 }
 
@@ -174,6 +171,7 @@ function takeScreenshot(save: boolean) {
   }
 }
 
+watch(basemapList, createBasemapPreviews)
 watch(newBasemapTab, switchBasemapCreateTab)
 watch(newBasemapTileURL, setNewBasemapStyleFromTileURL)
 watch(newBasemapStyleJSON, createNewBasemapPreview)
@@ -183,12 +181,11 @@ watch(newBasemapStyleJSON, createNewBasemapPreview)
   <div id="controls-bar" :class="appStore.openSidebars.includes('left') ? 'controls-bar shifted' : 'controls-bar'">
     <v-btn color="primary" class="control-btn" variant="flat">
       <v-icon>mdi-map-outline</v-icon>
-      <v-menu activator="parent" :close-on-content-click="false" open-on-hover
-        @update:model-value="createBasemapPreviews">
+      <v-menu activator="parent" :close-on-content-click="false" open-on-hover>
         <v-card style="max-height: 400px; overflow-y: auto;">
           <v-list :selected="[mapStore.currentBasemap]"
             @update:selected="(selected) => mapStore.currentBasemap = selected[0]" class="basemap-list"
-            density="compact" mandatory>
+            ref="basemapList" density="compact" mandatory>
             <v-list-subheader>Base Map Options</v-list-subheader>
             <v-list-item v-for="basemap in mapStore.availableBasemaps" :key="basemap.id" :value="basemap" class="px-2">
               {{ basemap.name }}
