@@ -204,6 +204,12 @@ watch(newBasemapStyleJSON, createNewBasemapPreview)
             @update:selected="(selected) => mapStore.currentBasemap = selected[0]" class="basemap-list"
             ref="basemapList" density="compact" mandatory>
             <v-list-subheader>Base Map Options</v-list-subheader>
+            <v-list-item key="new" title="Create Custom Basemap" @click="showBasemapCreation = true" class="px-2"
+              style="color: rgb(var(--v-theme-primary))">
+              <template v-slot:prepend>
+                <v-icon icon="mdi-plus" class="pa-0" color="primary"></v-icon>
+              </template>
+            </v-list-item>
             <v-list-item v-for="basemap in mapStore.availableBasemaps" :key="basemap.id" :value="basemap" class="px-2">
               {{ basemap.name }}
               <template v-slot:prepend>
@@ -213,11 +219,6 @@ watch(newBasemapStyleJSON, createNewBasemapPreview)
               <template v-slot:append>
                 <div v-if="basemap.id !== undefined" class="basemap-preview" :id="'basemap-preview-' + basemap.id">
                 </div>
-              </template>
-            </v-list-item>
-            <v-list-item key="new" title="New" @click="showBasemapCreation = true">
-              <template v-slot:prepend>
-                <v-icon icon="mdi-plus" class="pa-0"></v-icon>
               </template>
             </v-list-item>
           </v-list>
@@ -364,6 +365,10 @@ watch(newBasemapStyleJSON, createNewBasemapPreview)
   display: flex;
   justify-content: space-between;
   margin-bottom: 5px;
+}
+
+.basemap-list .v-list-item {
+  height: 60px;
 }
 
 .basemap-list .v-list-item__prepend>.v-icon~.v-list-item__spacer {
