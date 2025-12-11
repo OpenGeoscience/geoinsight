@@ -32,7 +32,7 @@ function createBasemapPreviews() {
     const center = map.getCenter();
     const zoom = map.getZoom();
     mapStore.availableBasemaps.forEach((basemap) => {
-      if (basemap.id === undefined) return;
+      if (basemap.id === undefined || basemap.style === undefined) return;
       if (basemapPreviews.value[basemap.id]) {
         basemapPreviews.value[basemap.id].remove()
       }
@@ -42,6 +42,9 @@ function createBasemapPreviews() {
       });
       preview.setZoom(zoom);
       preview.setCenter(center);
+
+      // Ignore typing due to "Type instantiation is excessively deep and possibly infinite"
+      // @ts-ignore
       preview.setStyle(basemap.style);
       basemapPreviews.value[basemap.id] = preview;
     })

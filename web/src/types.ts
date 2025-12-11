@@ -1,4 +1,4 @@
-import { MapGeoJSONFeature } from "maplibre-gl";
+import { MapGeoJSONFeature, StyleSpecification } from "maplibre-gl";
 
 export interface User {
   id: number;
@@ -12,7 +12,7 @@ export interface User {
 export interface Basemap {
   id?: number;
   name: string;
-  style?: any;
+  style?: string | StyleSpecification;
 }
 
 export interface Dataset {
