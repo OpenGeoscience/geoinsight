@@ -1,8 +1,7 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
 import { useAppStore, useLayerStore, useMapStore } from "@/store";
 import { useMapCompareStore } from "@/store/compare";
-import { computed, onMounted, Ref, ref, watch } from "vue";
+import { computed, Ref, ref, watch } from "vue";
 import { ToggleCompare } from "vue-maplibre-compare";
 import { oauthClient } from "@/api/auth";
 import 'vue-maplibre-compare/dist/vue-maplibre-compare.css'
@@ -12,6 +11,7 @@ import { baseURL } from "@/api/auth";
 import { useTheme } from 'vuetify';
 import { Protocol } from "pmtiles";
 import { THEMES } from "@/themes";
+import { storeToRefs } from "pinia";
 
 const ATTRIBUTION = [
   "<a target='_blank' href='https://maplibre.org/'>© MapLibre</a>",
@@ -25,6 +25,15 @@ const appStore = useAppStore();
 const mapStore = useMapStore();
 const compareStore = useMapCompareStore();
 const layerStore = useLayerStore();
+const theme = useTheme();
+const {
+  isComparing,
+  mapStats,
+  mapLayersA,
+  mapLayersB,
+  mapAStyle,
+  mapBStyle,
+} = storeToRefs(compareStore);
 
 // MapLibre refs
 const tooltip = ref<HTMLElement>();
@@ -146,10 +155,8 @@ const transformRequest = (url: string, _resourceType?: ResourceType) => {
     return { url };
 }
 
-const computedCompare = computed(() => compareStore.isComparing);
-const mapStats = computed(() => compareStore.mapStats);
 const mapStyleA: Ref<StyleSpecification> = ref(THEMES[appStore.theme].mapStyle);
-watch(computedCompare, (newVal) => {
+watch(isComparing, (newVal) => {
    if (!newVal && mapStore.map) {
         mapStore.getMap()?.jumpTo({
             center: mapStats.value?.center,
@@ -162,21 +169,17 @@ watch(computedCompare, (newVal) => {
     }
 });
 
-watch(() => compareStore.mapAStyle, (newStyle) => {
-    if (compareStore.isComparing && mapStore.map) {
-        mapStyleA.value = newStyle;
+watch(mapAStyle, (newStyle) => {
+    if (isComparing.value && mapStore.map) {
+        mapStyleA.value = newStyle as StyleSpecification;
     }
 }, { deep: true});
 
-
-
-const mapStyleB = computed(() => compareStore.mapBStyle);
-const mapLayersA = computed(() => compareStore.mapLayersA);
-const mapLayersB = computed(() => compareStore.mapLayersB);
-
 const swiperColor = computed(() => {
-    const theme = useTheme();
-    return theme.global.current.value.colors.primary
+    return {
+      swiper: theme.global.current.value.colors.primary,
+      arrow: theme.global.current.value.colors['button-text'],
+    };
 });
 </script>
 
@@ -184,7 +187,7 @@ const swiperColor = computed(() => {
     <div>
         <ToggleCompare
             :map-style-a="mapStyleA"
-            :map-style-b="mapStyleB"
+            :map-style-b="mapBStyle"
             :map-layers-a="mapLayersA"
             :map-layers-b="mapLayersB"
             :compare-enabled="compareStore.isComparing"
@@ -194,11 +197,11 @@ const swiperColor = computed(() => {
             }"
             :transform-request="transformRequest"
             :swiper-options="{
-                darkMode: appStore.theme !== 'dark',
                 orientation: compareStore.orientation,
                 grabThickness: 20,
-                lineColor: swiperColor,
-                handleColor: swiperColor
+                lineColor: swiperColor.swiper,
+                handleColor: swiperColor.swiper,
+                arrowColor: swiperColor.arrow,
             }"
             layer-order="bottommost"
             :attribution-control="false"
