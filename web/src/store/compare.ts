@@ -12,7 +12,7 @@ interface DisplayCompareMapLayerItem {
     layerIds: string[];
 }
 
-interface DisplaycompareMapLayer {
+interface DisplayCompareMapLayer {
     mapLayerA: DisplayCompareMapLayerItem[];
     mapLayerB: DisplayCompareMapLayerItem[];
 }
@@ -31,7 +31,7 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
     const layerStore = useLayerStore();
     const isComparing = ref<boolean>(false);
     const orientation = ref<'horizontal' | 'vertical'>('vertical');
-    const displayLayers = ref<DisplaycompareMapLayer>({
+    const displayLayers = ref<DisplayCompareMapLayer>({
         mapLayerA: [],
         mapLayerB: [],
     });
@@ -67,7 +67,7 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
     }
 
     const generateDisplayLayers = () => {
-        const localDisplayLayers: DisplaycompareMapLayer = {
+        const localDisplayLayers: DisplayCompareMapLayer = {
             mapLayerA: [],
             mapLayerB: [],
         };
