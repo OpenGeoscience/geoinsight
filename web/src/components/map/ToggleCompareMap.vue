@@ -135,17 +135,17 @@ const transformRequest = (url: string, _resourceType?: ResourceType) => {
     return { url };
 }
 
-const mapStyleA: Ref<StyleSpecification> = ref(THEMES[appStore.theme].mapStyle);
+const mapStyleA: Ref<StyleSpecification | string> = ref(THEMES[appStore.theme].mapStyle);
 watch(isComparing, (newVal) => {
    if (!newVal && mapStore.map) {
-        mapStore.getMap()?.jumpTo({
+        mapStore.map.jumpTo({
             center: mapStats.value?.center,
             zoom: mapStats.value?.zoom,
             bearing: mapStats.value?.bearing,
             pitch: mapStats.value?.pitch,
         });
-    } else if (newVal) {
-        mapStyleA.value = mapStore.getMap()!.getStyle();
+    } else if (newVal && mapStore.map) {
+        mapStyleA.value = mapStore.map.getStyle();
     }
 });
 
