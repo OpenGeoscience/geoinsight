@@ -52,7 +52,7 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
     });
     
 
-    const initlizeComparing = () => {
+    const initializeComparing = () => {
         const map = mapStore.getMap();
         const style = map.getStyle();
         mapStats.value = {
@@ -197,7 +197,7 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
 
     watch(isComparing, (newVal) => {
         if (newVal) {
-            initlizeComparing();
+            initializeComparing();
         }
     });
 
