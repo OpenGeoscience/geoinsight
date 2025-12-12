@@ -1,0 +1,84 @@
+[
+    {
+        "name": "Basic Light",
+        "style": "https://demo.kitware.com/vector-maps/tiles/style/openstreetmap-openmaptiles-openfreemap-positron.json"
+    },
+    {
+        "name": "Basic Dark",
+        "style": "https://demo.kitware.com/vector-maps/tiles/style/openstreetmap-openmaptiles-openmaptiles-dark-matter.json"
+    },
+    {
+        "name": "NAIP Imagery",
+        "style": {
+            "version": 8,
+            "name": "NAIP",
+            "sources": {
+                "naip": {
+                    "type": "raster",
+                    "tiles": [
+                        "https://gis.apfo.usda.gov/arcgis/rest/services/NAIP/USDA_CONUS_PRIME/ImageServer/tile/{z}/{y}/{x}?blankTile=false"
+                    ],
+                    "tileSize": 256
+                }
+            },
+            "layers": [
+                {
+                    "id": "naip-tiles",
+                    "type": "raster",
+                    "source": "naip"
+                }
+            ]
+        }
+    },
+    {
+        "name": "OSM",
+        "style": {
+            "version": 8,
+            "sources": {
+                "osm": {
+                    "type": "raster",
+                    "tiles": [
+                        "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    ],
+                    "tileSize": 256,
+                    "maxzoom": 19
+                }
+            },
+            "layers": [
+                {
+                    "id": "osm",
+                    "type": "raster",
+                    "source": "osm"
+                }
+            ]
+        }
+    },
+    {
+        "name": "ArcGIS Hybrid",
+        "style": "https://raw.githubusercontent.com/go2garret/maps/main/src/assets/json/arcgis_hybrid.json"
+    },
+    {
+        "name": "CartoCDN Voyager",
+        "style": "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json"
+    },
+    {
+        "name": "ICGC Dark",
+        "style": "https://geoserveis.icgc.cat/contextmaps/icgc_mapa_base_fosc.json"
+    },
+    {
+        "name": "ICGC Dark Shadow",
+        "style": "https://geoserveis.icgc.cat/contextmaps/icgc_ombra_fosca.json"
+    },
+    {
+        "name": "ICGC Standard Orthophoto",
+        "style": "https://geoserveis.icgc.cat/contextmaps/icgc_orto_estandard.json"
+    },
+    {
+        "name": "ICGC Standard Orthophoto Gray",
+        "style": "https://geoserveis.icgc.cat/contextmaps/icgc_orto_estandard_gris.json"
+    },
+    {
+        "name": "ICGC Hybrid Orthophoto",
+        "style": "https://geoserveis.icgc.cat/contextmaps/icgc_orto_hibrida.json"
+    }
+]

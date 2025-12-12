@@ -60,12 +60,13 @@ function createMap() {
     preserveDrawingBuffer: true, // allows screenshots
     // transformRequest adds auth headers to tile requests
     transformRequest: (url) => {
-      return {
-        url,
-        headers: oauthClient?.authHeaders,
-      };
+      let headers = {}
+      if (url.includes(import.meta.env.VITE_APP_API_ROOT)) {
+        headers = oauthClient?.authHeaders
+      }
+      return { url, headers };
     },
-    style: THEMES[appStore.theme].mapStyle,
+    style: mapStore.currentBasemap?.style,
     center: [0, 0],
     zoom: 1, // Initial zoom level
   });
@@ -91,7 +92,7 @@ function createMap() {
    * this only has a real effect when the base map is clicked, as that means that no other
    * feature layer can "catch" the event, and the tooltip stays hidden.
    */
-  newMap.on("click", () => {mapStore.clickedFeature = undefined});
+  newMap.on("click", () => { mapStore.clickedFeature = undefined });
 
   // Order is important as the following function relies on the ref being set
   mapStore.map = newMap;
@@ -119,18 +120,31 @@ function createMapControls() {
 }
 
 onMounted(() => {
-  createMap();
-  mapStore.setMapCenter(undefined, true);
+  mapStore.fetchAvailableBasemaps().then(() => {
+    createMap();
+    mapStore.setMapCenter(undefined, true);
+  })
 });
 
+watch(() => mapStore.currentBasemap, () => {
+  if (mapStore.map && mapStore.currentBasemap) {
+    const visible = mapStore.currentBasemap.id !== undefined
+    mapStore.setBasemapVisibility(visible);
+    if (visible) {
+      const map = mapStore.getMap();
+      if (mapStore.currentBasemap.style) {
+        map.setStyle(mapStore.currentBasemap.style);
+      }
+      map.once('idle', () => {
+        layerStore.updateLayersShown();
+      });
+    }
+  }
+})
+
 watch(() => appStore.theme, () => {
-  const map = mapStore.getMap();
-  map.once('idle', () => {
-    layerStore.updateLayersShown();
-  });
-  map.setStyle(THEMES[appStore.theme].mapStyle);
+  mapStore.setBasemapToDefault();
   setAttributionControlStyle();
-  layerStore.updateLayersShown();
 });
 
 watch(() => appStore.openSidebars, () => {

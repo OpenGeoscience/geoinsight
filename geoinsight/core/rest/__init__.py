@@ -1,4 +1,5 @@
 from .analytics import AnalyticsViewSet
+from .basemap import BasemapViewSet
 from .chart import ChartViewSet
 from .colormap import ColormapViewSet
 from .data import RasterDataViewSet, VectorDataViewSet
@@ -12,6 +13,7 @@ from .user import UserViewSet
 
 __all__ = [
     'AnalyticsViewSet',
+    'BasemapViewSet',
     'ChartViewSet',
     'ColormapViewSet',
     'LayerViewSet',

@@ -4,6 +4,7 @@ from django.contrib.gis.serializers import geojson
 from rest_framework import serializers
 
 from geoinsight.core.models import (
+    Basemap,
     Chart,
     Colormap,
     Dataset,
@@ -27,6 +28,12 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'first_name', 'last_name', 'is_superuser']
+
+
+class BasemapSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Basemap
+        fields = '__all__'
 
 
 class ProjectPermissionsSerializer(serializers.Serializer):
