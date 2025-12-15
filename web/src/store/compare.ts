@@ -73,14 +73,17 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
         };
         layerStore.selectedLayers.forEach(layer => {
             const layerIds = layerStore.getMapLayersFromLayerObject(layer).flat();
+            // Preserve existing visibility state if it exists, otherwise use layer.visible
+            const existingLayerA = displayLayers.value.mapLayerA.find((l) => l.displayName === layer.name);
+            const existingLayerB = displayLayers.value.mapLayerB.find((l) => l.displayName === layer.name);
             const layerItemA: DisplayCompareMapLayerItem = {
                 displayName: layer.name,
-                state: layer.visible,
+                state: existingLayerA?.state ?? layer.visible,
                 layerIds: [...layerIds]
             };
             const layerItemB: DisplayCompareMapLayerItem = {
                 displayName: layer.name,
-                state: layer.visible,
+                state: existingLayerB?.state ?? layer.visible,
                 layerIds: [...layerIds]
             };
             localDisplayLayers.mapLayerA.push(layerItemA);
@@ -271,45 +274,6 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
                         }
                     }
                 });
-                // Determine Layer order and adjust if needed
-                const layerOrderA: string[] = [];
-                const layerOrderB: string[] = [];
-                layerStore.selectedLayers.forEach((layer) => {
-                    const mapLayerIds = layerStore.getMapLayersFromLayerObject(layer);
-                    layerOrderA.push(...mapLayerIds);
-                    layerOrderB.push(...mapLayerIds);
-                });
-                if (mapStore.showMapBaseLayer) {
-                    const baseLayerSourceIds = getBaseLayerSourceIds();
-                    baseLayerSourceIds.forEach((sourceId: string) => {
-                        if (sourceId) {
-                            layerOrderA.push(sourceId);
-                            layerOrderB.push(sourceId);
-                        }
-                    });
-                }
-                // Reorder layers in mapAStyle
-                if (mapAStyle.value) {
-                    const reorderedLayersA: any[] = [];
-                    layerOrderA.forEach((layerId) => {
-                        const layer = mapAStyle.value!.layers.find((l: any) => l.id === layerId);
-                        if (layer) {
-                            reorderedLayersA.push(layer);
-                        }
-                    });
-                    mapAStyle.value.layers = reorderedLayersA;
-                }
-                // Reorder layers in mapBStyle
-                if (mapBStyle.value) {
-                    const reorderedLayersB: any[] = [];
-                    layerOrderB.forEach((layerId) => {
-                        const layer = mapBStyle.value!.layers.find((l: any) => l.id === layerId);
-                        if (layer) {
-                            reorderedLayersB.push(layer);
-                        }
-                    });
-                    mapBStyle.value.layers = reorderedLayersB;
-                }
             } else {
                 mapAStyle.value = mapStore.getMap()?.getStyle();
                 mapBStyle.value = mapStore.getMap()?.getStyle();
