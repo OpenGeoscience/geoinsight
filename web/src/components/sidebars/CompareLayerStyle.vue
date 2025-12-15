@@ -204,16 +204,6 @@ const debouncedStyleSpecUpdated = (panel: 'A' | 'B', opacity: number) => {
                             </div>
                             <table class="aligned-controls px-2">
                                 <tbody>
-                                    <tr v-if="frames.length > 1">
-                                        <td><v-label>Default Frame</v-label></td>
-                                        <td>
-                                            <SliderNumericInput
-                                                :model="currentStyleSpecs.A.default_frame + 1"
-                                                :max="frames.length"
-                                                @update="(v: number) => {if (currentStyleSpecs.A) currentStyleSpecs.A.default_frame = v - 1}"
-                                            />
-                                        </td>
-                                    </tr>
                                     <tr>
                                         <td><v-label color="primary-text">Opacity</v-label></td>
                                         <td>
