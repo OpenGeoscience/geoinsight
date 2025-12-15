@@ -27,12 +27,21 @@ const styleKey = computed(() => {
     return `${props.layer.id}.${props.layer.copy_id}`;
 })
 
+
 const currentLayerStyles = computed(() => {
-    return {
-        A: compareStore.compareLayerStyles.A[styleKey.value],
-        B: compareStore.compareLayerStyles.B[styleKey.value],
+    let A = compareStore.compareLayerStyles.A[styleKey.value];
+    let B = compareStore.compareLayerStyles.B[styleKey.value];
+    if (!A) {
+        A = styleStore.selectedLayerStyles[styleKey.value];
     }
-})
+    if (!B) {
+        B = styleStore.selectedLayerStyles[styleKey.value];
+    }
+    return {
+        A,
+        B,
+    }
+});
 
 const appliedStyleText = computed(() => {
     const text = {

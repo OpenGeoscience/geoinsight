@@ -45,7 +45,7 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
     const mapBStyle = ref<ReturnType<maplibregl.Map['getStyle']> | undefined>(undefined);
     const compareLayerStyles = ref<{
         A: Record<string, LayerStyle>,
-        B :Record<string, LayerStyle>,
+        B: Record<string, LayerStyle>,
     }>({
         A: {},
         B: {},
