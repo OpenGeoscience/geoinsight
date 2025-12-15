@@ -2,7 +2,7 @@ from pathlib import Path
 
 from setuptools import find_packages, setup
 
-__version__ = '1.18.2'
+__version__ = '1.19.0'
 
 readme_file = Path(__file__).parent / 'README.md'
 if readme_file.exists():
@@ -63,7 +63,7 @@ setup(
         'pooch[progress]==1.8.2',
         'psycopg[pool]',
         'pyshp==2.3.1',
-        'rasterio==1.3.10',
+        'rasterio==1.3.11',
         'urllib3==1.26.15',
         'webcolors==24.6.0',
         # Production only
