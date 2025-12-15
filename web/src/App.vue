@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { watch, onMounted, computed } from "vue";
 import { oauthClient } from "./api/auth";
-import MapWrapper from "./components/map/MapWrapper.vue";
 import ToggleCompareMap from "./components/map/ToggleCompareMap.vue";
 import SideBars from "./components/sidebars/SideBars.vue";
 import ControlsBar from "./components/ControlsBar.vue";
