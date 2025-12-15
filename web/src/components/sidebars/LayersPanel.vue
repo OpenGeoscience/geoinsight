@@ -175,7 +175,6 @@ function setLayerActive(layer: Layer, active: boolean) {
                                         <v-icon icon="mdi-dots-horizontal"/>
                                         <v-icon :icon="element.hideFrameMenu ? 'mdi-menu-down' :'mdi-menu-up'" />
                                     </span>
-                                    <!--TODO: Once support for style changes is implemented add this backin-->
                                     <LayerStyle v-if="!isComparing" :layer="element" :activeLayer="activeLayer" @setLayerActive="(v: boolean) => setLayerActive(element, v)"/>
                                     <CompareLayerStyle v-if="isComparing" :layer="element" :activeLayer="activeLayer" @setLayerActive="(v: boolean) => setLayerActive(element, v)"/>
                                     <span class="v-icon material-symbols-outlined" style="cursor: grab;">
