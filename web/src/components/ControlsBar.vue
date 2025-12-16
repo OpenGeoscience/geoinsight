@@ -36,8 +36,7 @@ const newBasemapValid = computed(() => (
 function createBasemapPreviews() {
   if (basemapList.value) {
     const map = mapStore.getMap();
-    const center = map.getCenter();
-    const zoom = map.getZoom();
+    const bounds = map.getBounds();
     mapStore.availableBasemaps.forEach((basemap) => {
       if (basemap.id === undefined || basemap.style === undefined) return;
       if (basemapPreviews.value[basemap.id]) {
@@ -46,9 +45,8 @@ function createBasemapPreviews() {
       const preview = new Map({
         container: 'basemap-preview-' + basemap.id,
         attributionControl: false,
+        bounds,
       });
-      preview.setZoom(zoom);
-      preview.setCenter(center);
 
       // Ignore typing due to "Type instantiation is excessively deep and possibly infinite"
       // @ts-ignore
