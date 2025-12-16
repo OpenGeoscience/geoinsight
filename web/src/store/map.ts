@@ -218,6 +218,11 @@ export const useMapStore = defineStore('map', () => {
       ));
   }
 
+  function getBaseLayerIds() {
+    const map = getMap();
+    return [...new Set(map.getLayersOrder().filter((layerId) => !layerId.includes('.vector.') && !layerId.includes('.raster.')))];
+  }
+
   function getUserMapLayers() {
     const map = getMap();
     const baseLayerSourceIds = getBaseLayerSourceIds();
@@ -501,6 +506,23 @@ export const useMapStore = defineStore('map', () => {
     }
   }
 
+  watch(currentBasemap, () => {
+    if (map.value && currentBasemap.value) {
+      const visible = currentBasemap.value.id !== undefined
+      setBasemapVisibility(visible);
+      if (visible) {
+        const map = getMap();
+        if (currentBasemap.value.style) {
+          map.setStyle(currentBasemap.value.style);
+        }
+        map.once('idle', () => {
+          layerStore.updateLayersShown();
+        });
+      }
+    }
+  });
+
+
   return {
     // Data
     map,
@@ -511,6 +533,8 @@ export const useMapStore = defineStore('map', () => {
     rasterTooltipDataCache,
     rasterSourceTileURLs,
     // Functions
+    getBaseLayerSourceIds,
+    getBaseLayerIds,
     fetchAvailableBasemaps,
     setBasemapToDefault,
     setBasemapVisibility,

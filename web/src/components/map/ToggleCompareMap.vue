@@ -7,10 +7,8 @@ import { oauthClient } from "@/api/auth";
 import 'vue-maplibre-compare/dist/vue-maplibre-compare.css'
 import { addProtocol, AttributionControl, Popup } from "maplibre-gl";
 import type { StyleSpecification, Map, ResourceType } from "maplibre-gl";
-import { baseURL } from "@/api/auth";
 import { useTheme } from 'vuetify';
 import { Protocol } from "pmtiles";
-import { THEMES } from "@/themes";
 import { storeToRefs } from "pinia";
 
 const ATTRIBUTION = [
@@ -66,13 +64,15 @@ function setAttributionControlStyle() {
   });
 }
 
-const handleMapReady = (newMap: Map, mapId: 'A' | 'B') => {
+const handleMapReady = async (newMap: Map, mapId: 'A' | 'B') => {
+  if (mapStore.availableBasemaps.length === 0) {
+    await mapStore.fetchAvailableBasemaps();
+  }
     newMap.addControl(attributionControl);
     newMap.on('error', (response) => {
         // AbortErrors are raised when updating style of raster layers; ignore these
         if (response.error.message !== 'AbortError') console.error(response.error)
     });
-
     /**
      * This is called on every click, and technically hides the tooltip on every click.
      * However, if a feature layer is clicked, that event is fired after this one, and the
@@ -82,6 +82,7 @@ const handleMapReady = (newMap: Map, mapId: 'A' | 'B') => {
      */
     newMap.on("click", () => {mapStore.clickedFeature = undefined});
     if (mapId === 'A') {
+        newMap.setStyle(mapStore.currentBasemap?.style as StyleSpecification);
         mapStore.map = newMap;
         mapStore.setMapCenter(undefined, true);
     }
@@ -111,11 +112,9 @@ function createMapControls(map: Map) {
   mapStore.tooltipOverlay = popup;
 }
 
-
 watch(() => appStore.theme, () => {
   if (!mapStore.map) return;
-  const map = mapStore.getMap();
-  map.setStyle(THEMES[appStore.theme].mapStyle);
+  mapStore.setBasemapToDefault();
   setAttributionControlStyle();
   //layerStore.updateLayersShown();
 });
@@ -126,7 +125,7 @@ watch(() => appStore.openSidebars, () => {
 
 const transformRequest = (url: string, _resourceType?: ResourceType) => {
     // Only add auth headers to our own tile requests
-    if (url.startsWith(baseURL)) {
+    if (url.includes(import.meta.env.VITE_APP_API_ROOT)) {
         return {
             url,
             headers: oauthClient?.authHeaders,
@@ -135,7 +134,7 @@ const transformRequest = (url: string, _resourceType?: ResourceType) => {
     return { url };
 }
 
-const mapStyleA: Ref<StyleSpecification | string> = ref(THEMES[appStore.theme].mapStyle);
+const mapStyleA: Ref<StyleSpecification | string> = ref(mapStore.currentBasemap?.style as StyleSpecification);
 watch(isComparing, (newVal) => {
    if (!newVal && mapStore.map) {
         mapStore.map.jumpTo({

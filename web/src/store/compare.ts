@@ -118,14 +118,6 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
         mapStats.value.pitch = event.pitch;  
     }
 
-    const getBaseLayerSourceIds = () => {
-        const map = mapStore.getMap();
-        if (!map) return [];
-        return map.getStyle().layers.filter((layer: any) => {
-            const layerWithSource = layer as { source?: string };
-            return layerWithSource.source?.includes('openstreetmap');
-        }).map((layer: any) => layer.id);
-    }
 
 
     const updateMapLayerStyle = (map: 'A' | 'B', mapLayerId: string, style: MapLayerStyleRaw) => {
@@ -154,7 +146,7 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
         if (!mapStore.map) {
             return flatList;
         }
-        const baseLayerSourceIds = getBaseLayerSourceIds().reverse();
+        const baseLayerSourceIds = mapStore.getBaseLayerIds().reverse();
         
         layerStore.selectedLayers.forEach((layer) => {
             if (displayLayers.value.mapLayerA.find((l) => l.displayName === layer.name)?.state === false) {
@@ -163,7 +155,7 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
             const mapLayerIds = layerStore.getMapLayersFromLayerObject(layer);
             flatList.push(...(mapLayerIds.reverse()));
         });
-        if (mapStore.showMapBaseLayer) {
+        if (mapStore.currentBasemap?.name !== 'None') {
         baseLayerSourceIds.forEach((sourceId: string) => {
                 if (sourceId) {
                     flatList.push(sourceId);
@@ -179,7 +171,8 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
         if (!mapStore.map) {
             return flatList;
         }
-        const baseLayerSourceIds = getBaseLayerSourceIds().reverse();
+        // Need to watch on currentBasemap changes as well
+        const baseLayerSourceIds = mapStore.getBaseLayerIds().reverse();
         layerStore.selectedLayers.forEach((layer) => {
             if (displayLayers.value.mapLayerB.find((l) => l.displayName === layer.name)?.state === false) {
                 return;
@@ -187,7 +180,7 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
             const mapLayerIds = layerStore.getMapLayersFromLayerObject(layer);
             flatList.push(...(mapLayerIds.reverse()));
         });
-        if (mapStore.showMapBaseLayer) {
+        if (mapStore.currentBasemap?.name !== 'None') {
             baseLayerSourceIds.forEach((sourceId: string) => {
                 if (sourceId) {
                     flatList.push(sourceId);
@@ -202,25 +195,29 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
         if (newVal) {
             initializeComparing();
         }
-    });
+    }); 
 
-
-    watch(() => layerStore.selectedLayers, () => {
+    watch([() => layerStore.selectedLayers, () => mapStore.currentBasemap], async () => {
         if (isComparing.value) {
             // We only need to update layers and sources that are added or removed
             const newStyle = mapStore.getMap()?.getStyle();
             if (newStyle && mapAStyle.value && mapBStyle.value) {
                 // find if there are new sources
-                const existingSources = new Set<string>();
+                const existingSourcesA = new Set<string>();
                 mapAStyle.value?.sources && Object.keys(mapAStyle.value.sources).forEach((sourceId) => {
-                    existingSources.add(sourceId);
+                    existingSourcesA.add(sourceId);
+                });
+                const existingSourcesB = new Set<string>();
+                mapBStyle.value?.sources && Object.keys(mapBStyle.value.sources).forEach((sourceId) => {
+                    existingSourcesB.add(sourceId);
                 });
                 Object.keys(newStyle.sources).forEach((sourceId) => {
-                    if (!existingSources.has(sourceId)) {
+                    if (!existingSourcesA.has(sourceId)) {
                         // New source found, add to both styles
                         if (mapAStyle.value) {
                             mapAStyle.value.sources[sourceId] = cloneDeep(newStyle.sources[sourceId]);
                         }
+                    } else if (!existingSourcesB.has(sourceId)) {
                         if (mapBStyle.value) {
                             mapBStyle.value.sources[sourceId] = cloneDeep(newStyle.sources[sourceId]);
                         }
@@ -231,28 +228,38 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
                 Object.keys(newStyle.sources).forEach((sourceId) => {
                     newSources.add(sourceId);
                 });
-                existingSources.forEach((sourceId) => {
+                existingSourcesA.forEach((sourceId) => {
                     if (!newSources.has(sourceId)) {
                         // Source removed, remove from both styles
                         if (mapAStyle.value && mapAStyle.value.sources[sourceId]) {
                             delete mapAStyle.value.sources[sourceId];
                         }
+                    }
+                });
+                existingSourcesB.forEach((sourceId) => {
+                    if (!newSources.has(sourceId)) {
+                        // Source removed, remove from both styles
                         if (mapBStyle.value && mapBStyle.value.sources[sourceId]) {
                             delete mapBStyle.value.sources[sourceId];
                         }
                     }
                 });
                 // Now we do the same for layers
-                const existingLayerIds = new Set<string>();
+                const existingLayerIdsA = new Set<string>();
                 mapAStyle.value?.layers.forEach((layer: any) => {
-                    existingLayerIds.add(layer.id);
+                    existingLayerIdsA.add(layer.id);
+                });
+                const existingLayerIdsB = new Set<string>();
+                mapBStyle.value?.layers.forEach((layer: any) => {
+                    existingLayerIdsB.add(layer.id);
                 });
                 newStyle.layers.forEach((layer: any) => {
-                    if (!existingLayerIds.has(layer.id)) {
+                    if (!existingLayerIdsA.has(layer.id)) {
                         // New layer found, add to both styles
                         if (mapAStyle.value) {
                             mapAStyle.value.layers.push(cloneDeep(layer));
                         }
+                    } else if (!existingLayerIdsB.has(layer.id)) {
                         if (mapBStyle.value) {
                             mapBStyle.value.layers.push(cloneDeep(layer));
                         }
@@ -263,12 +270,17 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
                     newLayerIds.add(layer.id);
                 });
                 // find removed layers
-                existingLayerIds.forEach((layerId) => {
+                existingLayerIdsA.forEach((layerId) => {
                     if (!newLayerIds.has(layerId)) {
                         // Layer removed, remove from both styles
                         if (mapAStyle.value) {
                             mapAStyle.value.layers = mapAStyle.value.layers.filter((layer: any) => layer.id !== layerId);
                         }
+                    }
+                });
+                existingLayerIdsB.forEach((layerId) => {
+                    if (!newLayerIds.has(layerId)) {
+                        // Layer removed, remove from both styles   
                         if (mapBStyle.value) {
                             mapBStyle.value.layers = mapBStyle.value.layers.filter((layer: any) => layer.id !== layerId);
                         }
