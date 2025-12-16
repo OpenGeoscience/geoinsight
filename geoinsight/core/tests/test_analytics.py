@@ -5,8 +5,12 @@ import pytest
 
 
 @pytest.mark.django_db
-def test_rest_list_analysis_types(authenticated_api_client, project):
+def test_rest_list_analysis_types(user, authenticated_api_client, project):
     from geoinsight.core.tasks.analytics import analysis_types
+
+    # TODO: remove this when analytics are no longer hidden from non-superusers
+    user.is_superuser = True
+    user.save()
 
     analysis_type_instances = [at() for at in analysis_types]
     resp = authenticated_api_client.get(f'/api/v1/analytics/project/{project.id}/types/')
