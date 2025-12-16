@@ -56,7 +56,7 @@ function defaultPanelArrangement(): FloatingPanelConfig[] {
         {
             id: "analytics",
             label: "Analytics",
-            visible: true,
+            visible: false,
             closeable: true,
             collapsed: true,
             dock: 'right',
