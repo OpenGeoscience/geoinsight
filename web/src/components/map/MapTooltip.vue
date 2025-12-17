@@ -105,7 +105,7 @@ function zoomToFeature() {
   let offset = window.innerWidth * compareStore.sliderEnd.percentage * 0.01;
   // Offsets for the sidebars
   if (!props.compareMap) {
-    padding.right = offset; // account for sidebar
+    padding.right = window.innerWidth -offset; // account for sidebar
     padding.left += appStore.openSidebars.includes("left") ? 300 : 0;
   } else {
     padding.left = offset; // account for sidebar

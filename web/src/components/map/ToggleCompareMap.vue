@@ -82,14 +82,20 @@ const handleMapReady = async (newMap: Map, mapId: 'A' | 'B') => {
      * this only has a real effect when the base map is clicked, as that means that no other
      * feature layer can "catch" the event, and the tooltip stays hidden.
      */
-    newMap.on("click", () => {mapStore.clickedFeature = undefined});
+    newMap.on("click", (e) => {
+      // check if click is in the compare map and it's enabled
+      if (e.point.x > compareStore.sliderEnd.position && isComparing.value) {
+        return; // let the compare map handle this click
+      } 
+      mapStore.clickedFeature = undefined;
+    });
     if (mapId === 'A') {
         newMap.setStyle(mapStore.currentBasemap?.style as StyleSpecification);
         mapStore.map = newMap;
         mapStore.setMapCenter(undefined, true);
     } else if (mapId === 'B') {
         mapStore.compareMap = newMap;
-        newMap.on("click", () => { mapStore.compareClickedFeature = undefined });
+        newMap.on("click", () => {mapStore.compareClickedFeature = undefined });
         createMapControls(newMap, 'B');
         // the B map style is compared implicitly we need to add click handlers for features here as well
         if (mapBStyle.value && mapBStyle.value?.sources)
