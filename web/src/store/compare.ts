@@ -30,6 +30,8 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
     const mapStore = useMapStore();
     const layerStore = useLayerStore();
     const isComparing = ref<boolean>(false);
+    const mapLayersA = ref<string[]>([]);
+    const mapLayersB = ref<string[]>([]);
     const orientation = ref<'horizontal' | 'vertical'>('vertical');
     const displayLayers = ref<DisplayCompareMapLayer>({
         mapLayerA: [],
@@ -140,41 +142,15 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
         }
     }
 
-    // Array of Enabled map layer IDs for Map A in order
-    const mapLayersA = computed(() => {
+    const updateCompareLayersList = (mapType: 'A' | 'B') => {
+        const mapDisplayLayers = mapType === 'A' ? displayLayers.value.mapLayerA : displayLayers.value.mapLayerB;
         const flatList: string[] = [];
         if (!mapStore.map) {
             return flatList;
         }
         const baseLayerSourceIds = mapStore.getBaseLayerIds().reverse();
-        
         layerStore.selectedLayers.forEach((layer) => {
-            if (displayLayers.value.mapLayerA.find((l) => l.displayName === layer.name)?.state === false) {
-                return;
-            }
-            const mapLayerIds = layerStore.getMapLayersFromLayerObject(layer);
-            flatList.push(...(mapLayerIds.reverse()));
-        });
-        if (mapStore.currentBasemap?.name !== 'None') {
-        baseLayerSourceIds.forEach((sourceId: string) => {
-                if (sourceId) {
-                    flatList.push(sourceId);
-                }
-            });
-        }
-        return flatList;
-    });
-
-    // Array of enabled Layers for Map B in order
-    const mapLayersB = computed(() => {
-        const flatList: string[] = [];
-        if (!mapStore.map) {
-            return flatList;
-        }
-        // Need to watch on currentBasemap changes as well
-        const baseLayerSourceIds = mapStore.getBaseLayerIds().reverse();
-        layerStore.selectedLayers.forEach((layer) => {
-            if (displayLayers.value.mapLayerB.find((l) => l.displayName === layer.name)?.state === false) {
+            if (mapDisplayLayers.find((l) => l.displayName === layer.name)?.state === false) {
                 return;
             }
             const mapLayerIds = layerStore.getMapLayersFromLayerObject(layer);
@@ -188,8 +164,14 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
             });
         }
         return flatList;
-    });
+    }
 
+    watch(displayLayers, () => {
+        if (isComparing.value) {
+            mapLayersA.value = updateCompareLayersList('A');
+            mapLayersB.value = updateCompareLayersList('B');
+        }
+    }, { deep: true, immediate: true });
 
     watch(isComparing, (newVal) => {
         if (newVal) {
@@ -302,6 +284,7 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
         setVisibility,
         setAllVisibility,
         generateDisplayLayers,
+        updateCompareLayersList,
         updateMapStats,
         updateMapLayerStyle,
         compareLayerStyles,

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAppStore, useLayerStore, useMapStore } from "@/store";
 import { useMapCompareStore } from "@/store/compare";
-import { computed, Ref, ref, watch } from "vue";
+import { computed, Ref, ref, shallowRef, watch } from "vue";
 import { ToggleCompare } from "vue-maplibre-compare";
 import { oauthClient } from "@/api/auth";
 import 'vue-maplibre-compare/dist/vue-maplibre-compare.css'
@@ -35,6 +35,7 @@ const {
 
 // MapLibre refs
 const tooltip = ref<HTMLElement>();
+const mapB = shallowRef<Map>();
 const attributionControl = new AttributionControl({
   compact: true,
   customAttribution: ATTRIBUTION,
@@ -85,6 +86,8 @@ const handleMapReady = async (newMap: Map, mapId: 'A' | 'B') => {
         newMap.setStyle(mapStore.currentBasemap?.style as StyleSpecification);
         mapStore.map = newMap;
         mapStore.setMapCenter(undefined, true);
+    } else if (mapId === 'B') {
+        mapB.value = newMap;
     }
     createMapControls(newMap);
     newMap.once('idle', () => {
@@ -153,6 +156,38 @@ watch(mapAStyle, (newStyle) => {
         mapStyleA.value = newStyle as StyleSpecification;
     }
 }, { deep: true});
+
+// Updating the basemap for either map should update both maps
+// Maps need to load their style if is a direct url string before updating mapStyleA
+// Then if comparing we need to do another idle until mapB is updated and then set the order
+const updateBasemap = () => {
+  const map  = mapStore.map;
+  if (map && mapStore.currentBasemap) {
+    const visible = mapStore.currentBasemap.id !== undefined
+    mapStore.setBasemapVisibility(visible);
+    if (visible) {
+      if (mapStore.currentBasemap.style) {
+        map.setStyle(mapStore.currentBasemap.style);
+        map.once('idle', () => {
+          layerStore.updateLayersShown();
+          if (isComparing.value) {
+            mapBStyle.value = map.getStyle();
+            compareStore.mapLayersA = compareStore.updateCompareLayersList('A');
+            if (mapB.value) {
+              mapB.value.once('idle', () => {
+                compareStore.mapLayersB = compareStore.updateCompareLayersList('B');
+              });
+            }
+          } 
+        });  
+      }
+    }
+  }
+}
+
+watch(() => mapStore.currentBasemap, () => {
+    updateBasemap();
+});
 
 const swiperColor = computed(() => {
     return {

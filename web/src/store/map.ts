@@ -506,23 +506,6 @@ export const useMapStore = defineStore('map', () => {
     }
   }
 
-  watch(currentBasemap, () => {
-    if (map.value && currentBasemap.value) {
-      const visible = currentBasemap.value.id !== undefined
-      setBasemapVisibility(visible);
-      if (visible) {
-        const map = getMap();
-        if (currentBasemap.value.style) {
-          map.setStyle(currentBasemap.value.style);
-        }
-        map.once('idle', () => {
-          layerStore.updateLayersShown();
-        });
-      }
-    }
-  });
-
-
   return {
     // Data
     map,
