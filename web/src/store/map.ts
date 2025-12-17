@@ -126,10 +126,13 @@ function parseLayerString(layerId: string): LayerDescription {
 
 export const useMapStore = defineStore('map', () => {
   const map = shallowRef<Map>();
+  const compareMap = shallowRef<Map>();
   const availableBasemaps = ref<Basemap[]>([]);
   const currentBasemap = ref<Basemap>();
   const tooltipOverlay = ref<Popup>();
+  const compareTooltipOverlay = ref<Popup>();
   const clickedFeature = ref<ClickedFeatureData>();
+  const compareClickedFeature = ref<ClickedFeatureData>();
   const rasterTooltipDataCache = ref<Record<number, RasterDataValues | undefined>>({});
   const rasterSourceTileURLs = ref<Record<string, string>>({});
 
@@ -168,8 +171,16 @@ export const useMapStore = defineStore('map', () => {
     });
   }
 
-  function handleLayerClick(e: MapLayerMouseEvent) {
-    const map = getMap();
+  function handleBaseLayerClick(e: MapLayerMouseEvent) {
+    handleLayerClick(e);
+  }
+
+  function handleCompareLayerClick(e: MapLayerMouseEvent) {
+    handleLayerClick(e, true);
+  }
+
+  function handleLayerClick(e: MapLayerMouseEvent, compare=false) {
+    const map = getMap(compare);
     const clickedFeatures = map.queryRenderedFeatures(e.point).filter(
       (feat) => getLayerIsVisible(feat.layer as MapLibreLayerWithMetadata)
     );
@@ -189,21 +200,28 @@ export const useMapStore = defineStore('map', () => {
 
     // Select the first feature in this ordering, since this is the one that should be clicked on
     const feature = featQuery[0];
-
+    const clickedFeatureRef = compare ? compareClickedFeature : clickedFeature;
     // Perform this check to prevent unnecessary repeated assignment
-    if (feature !== clickedFeature.value?.feature) {
-      clickedFeature.value = {
+    if (feature !== clickedFeatureRef.value?.feature) {
+      clickedFeatureRef.value = {
         feature,
         pos: e.lngLat,
       };
     }
   }
 
-  function getMap() {
-    if (map.value === undefined) {
-      throw new Error("Map not yet initialized!");
+  function getMap(compare = false) {
+    if (compare) {
+      if (compareMap.value === undefined) {
+        throw new Error("Compare map not yet initialized!");
+      }
+      return compareMap.value;
+    } else {
+      if (map.value === undefined) {
+        throw new Error("Map not yet initialized!");
+      }
+      return map.value;
     }
-    return map.value;
   }
 
   function getMapSources() {
@@ -242,7 +260,13 @@ export const useMapStore = defineStore('map', () => {
     };
   }
 
-  function getTooltip() {
+  function getTooltip(compare = false) {
+    if (compare) {
+      if (compareTooltipOverlay.value === undefined) {
+        throw new Error("Compare tooltip not yet initialized!");
+      }
+      return compareTooltipOverlay.value;
+    }
     if (tooltipOverlay.value === undefined) {
       throw new Error("Tooltip not yet initialized!");
     }
@@ -376,9 +400,9 @@ export const useMapStore = defineStore('map', () => {
       },
     });
 
-    map.on("click", source.id + '.fill', handleLayerClick);
-    map.on("click", source.id + '.line', handleLayerClick);
-    map.on("click", source.id + '.circle', handleLayerClick);
+    map.on("click", source.id + '.fill', handleBaseLayerClick);
+    map.on("click", source.id + '.line', handleBaseLayerClick);
+    map.on("click", source.id + '.circle', handleBaseLayerClick);
   }
 
   function createRasterFeatureMapLayers(tileSource: Source, boundsSource: Source, multiFrame: boolean) {
@@ -509,10 +533,13 @@ export const useMapStore = defineStore('map', () => {
   return {
     // Data
     map,
+    compareMap,
     availableBasemaps,
     currentBasemap,
     tooltipOverlay,
+    compareTooltipOverlay,
     clickedFeature,
+    compareClickedFeature,
     rasterTooltipDataCache,
     rasterSourceTileURLs,
     // Functions
@@ -522,6 +549,8 @@ export const useMapStore = defineStore('map', () => {
     setBasemapToDefault,
     setBasemapVisibility,
     handleLayerClick,
+    handleBaseLayerClick,
+    handleCompareLayerClick,
     getMap,
     getMapSources,
     getCurrentMapPosition,

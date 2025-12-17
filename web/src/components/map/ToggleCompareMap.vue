@@ -10,6 +10,7 @@ import type { StyleSpecification, Map, ResourceType } from "maplibre-gl";
 import { useTheme } from 'vuetify';
 import { Protocol } from "pmtiles";
 import { storeToRefs } from "pinia";
+import { map } from "lodash";
 
 const ATTRIBUTION = [
   "<a target='_blank' href='https://maplibre.org/'>© MapLibre</a>",
@@ -35,7 +36,7 @@ const {
 
 // MapLibre refs
 const tooltip = ref<HTMLElement>();
-const mapB = shallowRef<Map>();
+const compareTooltip = ref<HTMLElement>();
 const attributionControl = new AttributionControl({
   compact: true,
   customAttribution: ATTRIBUTION,
@@ -87,7 +88,18 @@ const handleMapReady = async (newMap: Map, mapId: 'A' | 'B') => {
         mapStore.map = newMap;
         mapStore.setMapCenter(undefined, true);
     } else if (mapId === 'B') {
-        mapB.value = newMap;
+        mapStore.compareMap = newMap;
+        newMap.on("click", () => { mapStore.compareClickedFeature = undefined });
+        createMapControls(newMap, 'B');
+        // the B map style is compared implicitly we need to add click handlers for features here as well
+        if (mapBStyle.value && mapBStyle.value?.sources)
+        Object.entries(mapBStyle.value.sources).forEach(([key,source]) => {
+          if (source.type === 'vector') {
+            newMap.on("click", key + '.fill', mapStore.handleCompareLayerClick);
+            newMap.on("click", key + '.line', mapStore.handleCompareLayerClick);
+            newMap.on("click", key + '.circle', mapStore.handleCompareLayerClick);
+          }
+        });
     }
     createMapControls(newMap);
     newMap.once('idle', () => {
@@ -95,9 +107,10 @@ const handleMapReady = async (newMap: Map, mapId: 'A' | 'B') => {
     });
 }
 
-function createMapControls(map: Map) {
-  if (!map || !tooltip.value) {
-    throw new Error("Map or refs not initialized!");
+function createMapControls(map: Map, mapType: 'A' | 'B' = 'A') {
+  const currentTooltip = mapType === 'A' ? tooltip : compareTooltip;
+  if (!map || !currentTooltip.value) {
+    throw new Error("Map or tooltip not initialized!");
   }
 
   // Add tooltip overlay
@@ -109,10 +122,16 @@ function createMapControls(map: Map) {
   });
 
   // Link overlay ref to dom, allowing for modification elsewhere
-  popup.setDOMContent(tooltip.value);
-
-  // Set store value
-  mapStore.tooltipOverlay = popup;
+    popup.setDOMContent(currentTooltip.value);
+  if (mapType === 'A') {
+    // Set store value
+    mapStore.tooltipOverlay = popup;
+    return;
+  } else if (mapType === 'B') {
+    // Set store value
+    mapStore.compareTooltipOverlay = popup;
+    return;
+  }
 }
 
 watch(() => appStore.theme, () => {
@@ -146,8 +165,10 @@ watch(isComparing, (newVal) => {
             bearing: mapStats.value?.bearing,
             pitch: mapStats.value?.pitch,
         });
+        mapStore.compareMap = undefined;
     } else if (newVal && mapStore.map) {
         mapStyleA.value = mapStore.map.getStyle();
+        compareStore.updateSlider({percentage: 50, position: window.innerWidth * 0.5});
     }
 });
 
@@ -170,11 +191,12 @@ const updateBasemap = () => {
         map.setStyle(mapStore.currentBasemap.style);
         map.once('idle', () => {
           layerStore.updateLayersShown();
-          if (isComparing.value) {
-            mapBStyle.value = map.getStyle();
+          if (isComparing.value && mapStore.compareMap && mapStore.currentBasemap?.style) {
+            mapStore.compareMap.setStyle(mapStore.currentBasemap.style);
             compareStore.mapLayersA = compareStore.updateCompareLayersList('A');
-            if (mapB.value) {
-              mapB.value.once('idle', () => {
+            if (mapStore.compareMap) {
+              mapStore.compareMap.once('idle', () => {
+                compareStore.updateCompareLayerStyle();
                 compareStore.mapLayersB = compareStore.updateCompareLayersList('B');
               });
             }
@@ -223,6 +245,7 @@ const swiperColor = computed(() => {
             @zoomend="compareStore.updateMapStats($event)"
             @pitchend="compareStore.updateMapStats($event)"
             @rotateend="compareStore.updateMapStats($event)"
+            @sliderend="compareStore.updateSlider($event)"
             @map-ready-a="handleMapReady($event, 'A')"
             @map-ready-b="handleMapReady($event, 'B')"
             class="map"
@@ -230,6 +253,9 @@ const swiperColor = computed(() => {
 
         <div id="map-tooltip" ref="tooltip" class="tooltip pa-0">
         <MapTooltip />
+        </div>
+        <div id="map-tooltip" ref="compareTooltip" class="tooltip pa-0">
+        <MapTooltip compare-map />
         </div>
     </div>
 </template>

@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia';
 import { computed, ref, watch } from 'vue';
 import { useLayerStore } from './layer';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, map } from 'lodash';
 import { useMapStore } from './map';
 import { MapLayerStyleRaw } from './style';
 import { LayerStyle } from '@/types';
+import { SourceSpecification } from 'maplibre-gl';
 
 interface DisplayCompareMapLayerItem {
     displayName: string;
@@ -43,6 +44,7 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
         bearing: 0,
         pitch: 0,
     });
+    const sliderEnd = ref<{percentage: number, position: number}>({ percentage: 0, position: 0 });
     const mapAStyle = ref<ReturnType<maplibregl.Map['getStyle']> | undefined>(undefined);
     const mapBStyle = ref<ReturnType<maplibregl.Map['getStyle']> | undefined>(undefined);
     const compareLayerStyles = ref<{
@@ -119,8 +121,10 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
         mapStats.value.bearing = event.bearing;
         mapStats.value.pitch = event.pitch;  
     }
-
-
+    function updateSlider(event: { percentage: number, position: number }) {
+        console.log('Updated Slider', event);
+        sliderEnd.value = event;
+    }
 
     const updateMapLayerStyle = (map: 'A' | 'B', mapLayerId: string, style: MapLayerStyleRaw) => {
         const mapStyle = map === 'A' ? mapAStyle.value : mapBStyle.value;
@@ -179,7 +183,8 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
         }
     }); 
 
-    watch([() => layerStore.selectedLayers, () => mapStore.currentBasemap], async () => {
+    function updateCompareLayerStyle() {
+        const compareMapAddedSources: {sourceId: string, sourceType: SourceSpecification['type']}[] = [];
         if (isComparing.value) {
             // We only need to update layers and sources that are added or removed
             const newStyle = mapStore.getMap()?.getStyle();
@@ -202,6 +207,7 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
                     } else if (!existingSourcesB.has(sourceId)) {
                         if (mapBStyle.value) {
                             mapBStyle.value.sources[sourceId] = cloneDeep(newStyle.sources[sourceId]);
+                            compareMapAddedSources.push({ sourceId, sourceType: newStyle.sources[sourceId].type });
                         }
                     }
                 });
@@ -274,6 +280,21 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
             }
             generateDisplayLayers();
         }
+        return compareMapAddedSources;
+    }
+
+    watch([() => layerStore.selectedLayers, () => mapStore.currentBasemap], async () => {
+        const compareMapAddedSources = updateCompareLayerStyle();
+        // Any new sources we need to add click handlers for
+        compareMapAddedSources.forEach(({ sourceId, sourceType }) => {
+            if (isComparing.value && mapStore.compareMap) {
+                if (sourceType === 'vector') {
+                    mapStore.compareMap.on("click", sourceId + '.fill', mapStore.handleCompareLayerClick);
+                    mapStore.compareMap.on("click", sourceId + '.line', mapStore.handleCompareLayerClick);
+                    mapStore.compareMap.on("click", sourceId + '.circle', mapStore.handleCompareLayerClick);
+                } 
+            }
+        });
     }, { deep: true });
 
     return {
@@ -281,12 +302,15 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
         orientation,
         displayLayers,
         mapStats,
+        sliderEnd,
         setVisibility,
         setAllVisibility,
         generateDisplayLayers,
         updateCompareLayersList,
         updateMapStats,
+        updateSlider,
         updateMapLayerStyle,
+        updateCompareLayerStyle,
         compareLayerStyles,
         mapAStyle,
         mapBStyle,
