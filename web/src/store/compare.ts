@@ -48,8 +48,8 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
     const mapAStyle = ref<ReturnType<maplibregl.Map['getStyle']> | undefined>(undefined);
     const mapBStyle = ref<ReturnType<maplibregl.Map['getStyle']> | undefined>(undefined);
     const compareLayerStyles = ref<{
-        A: Record<string, LayerStyle>,
-        B: Record<string, LayerStyle>,
+        A: Record<string, {style: LayerStyle, opacity: number}>,
+        B: Record<string, {style: LayerStyle, opacity: number}>,
     }>({
         A: {},
         B: {},
@@ -122,7 +122,6 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
         mapStats.value.pitch = event.pitch;  
     }
     function updateSlider(event: { percentage: number, position: number }) {
-        console.log('Updated Slider', event);
         sliderEnd.value = event;
     }
 

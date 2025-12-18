@@ -32,10 +32,10 @@ const currentLayerStyles = computed(() => {
     let A = compareStore.compareLayerStyles.A[styleKey.value];
     let B = compareStore.compareLayerStyles.B[styleKey.value];
     if (!A) {
-        A = styleStore.selectedLayerStyles[styleKey.value];
+        A = {style: styleStore.selectedLayerStyles[styleKey.value], opacity: styleStore.selectedLayerStyles[styleKey.value]?.style_spec?.opacity || 1};
     }
     if (!B) {
-        B = styleStore.selectedLayerStyles[styleKey.value];
+        B = {style: styleStore.selectedLayerStyles[styleKey.value], opacity: styleStore.selectedLayerStyles[styleKey.value]?.style_spec?.opacity || 1};
     }
     return {
         A,
@@ -45,8 +45,8 @@ const currentLayerStyles = computed(() => {
 
 const appliedStyleText = computed(() => {
     const text = {
-        A: currentLayerStyles.value.A?.name ? `Style: ${currentLayerStyles.value.A.name}` : 'Configure styling',
-        B: currentLayerStyles.value.B?.name ? `Style: ${currentLayerStyles.value.B.name}` : 'Configure styling',
+        A: currentLayerStyles.value.A?.style.name ? `Style: ${currentLayerStyles.value.A.style.name}` : 'Configure styling',
+        B: currentLayerStyles.value.B?.style.name ? `Style: ${currentLayerStyles.value.B.style.name}` : 'Configure styling',
     }
     const prependText = {
         A: compareStore.orientation === 'vertical' ? 'Left' : 'Top',
@@ -79,16 +79,17 @@ async function init() {
         if (foundLayerIds.length) {
             mapLayerIds.value = foundLayerIds;
         }
-        getLayerStyles(props.layer.id).then((styles) => availableStyles.value = styles)
+        getLayerStyles(props.layer.id).then((styles) => availableStyles.value = styles);
+
     }
 }
 
 function resetCurrentStyle() {
     // When copying styles, use deep copies via cloneDeep
     // so that changes to the current style do not affect the original copy
-    if (currentLayerStyles.value.A?.id) {
+    if (currentLayerStyles.value.A?.style.id) {
         // keep current style selected but discard any unsaved changes
-        currentStyleSpecs.value.A = cloneDeep(currentLayerStyles.value.A.style_spec)
+        currentStyleSpecs.value.A = cloneDeep(currentLayerStyles.value.A.style.style_spec)
     } else {
         // no current style selected, set one
         if (props.layer.default_style) {
@@ -99,9 +100,9 @@ function resetCurrentStyle() {
             currentStyleSpecs.value.A = styleStore.getDefaultStyleSpec(currentFrame.value?.raster);
         }
     }
-    if (currentLayerStyles.value.B?.id) {
+    if (currentLayerStyles.value.B?.style.id) {
         // keep current style selected but discard any unsaved changes
-        currentStyleSpecs.value.B = cloneDeep(currentLayerStyles.value.B.style_spec)
+        currentStyleSpecs.value.B = cloneDeep(currentLayerStyles.value.B.style.style_spec)
     } else {
         // no current style selected, set one
         if (props.layer.default_style) {
@@ -119,7 +120,8 @@ function selectStyle(style: LayerStyle, panel: 'A' | 'B') {
     mapLayerIds.value.forEach((mapLayerId) => {
         if (!currentFrame.value) return;
         if (!style.style_spec) return;
-        compareStore.compareLayerStyles[panel][styleKey.value] = cloneDeep(style);
+        currentStyleSpecs.value[panel] = cloneDeep(style.style_spec);
+        compareStore.compareLayerStyles[panel][styleKey.value]= { style: cloneDeep(style), opacity: currentStyleSpecs.value[panel]?.opacity || 1};
         const visibileLayers = panel === 'A' ? compareStore.mapLayersA : compareStore.mapLayersB;
         const visibility = visibileLayers.includes(mapLayerId) ? 'visible' : 'none';
         const result = styleStore.returnMapLayerStyle(mapLayerId, style.style_spec, currentFrame.value, currentFrame.value.vector, visibility);
@@ -142,11 +144,18 @@ const debouncedStyleSpecUpdated = (panel: 'A' | 'B', opacity: number) => {
     const localCurrentStyleSpecs = currentStyleSpecs.value[panel];
     if (localCurrentStyleSpecs) {
         localCurrentStyleSpecs.opacity = opacity;
-        compareStore.compareLayerStyles[panel][styleKey.value] = {
-            ...currentLayerStyles.value[panel],
+        if (!compareStore.compareLayerStyles[panel][styleKey.value]) {
+            compareStore.compareLayerStyles[panel][styleKey.value] = {
+                style: styleStore.selectedLayerStyles[styleKey.value],
+                opacity: opacity,
+            }
+        }
+        compareStore.compareLayerStyles[panel][styleKey.value].style = {
+            ...currentLayerStyles.value[panel].style,
             style_spec: localCurrentStyleSpecs
         }
-        const styleSpec = compareStore.compareLayerStyles[panel][styleKey.value].style_spec
+        compareStore.compareLayerStyles[panel][styleKey.value].opacity = opacity;
+        const styleSpec = compareStore.compareLayerStyles[panel][styleKey.value].style.style_spec
         mapLayerIds.value.forEach((mapLayerId) => {
             if (!currentFrame.value) return;
             if (!styleSpec) return;
@@ -198,7 +207,7 @@ const debouncedStyleSpecUpdated = (panel: 'A' | 'B', opacity: number) => {
                         <v-card-text>
                             <div class="d-flex mb-1 mt-4 mx-2" style="align-items: center; column-gap: 5px;">
                                 <v-select
-                                    :model-value="currentLayerStyles.A"
+                                    :model-value="currentLayerStyles.A.style"
                                     :items="availableStyles"
                                     item-value="id"
                                     :item-props="(item) => ({title: item.is_default ? item.name + ' (default)' : item.name})"
@@ -236,7 +245,7 @@ const debouncedStyleSpecUpdated = (panel: 'A' | 'B', opacity: number) => {
                         <v-card-text>
                             <div class="d-flex mb-1 mt-4 mx-2" style="align-items: center; column-gap: 5px;">
                                 <v-select
-                                    :model-value="currentLayerStyles.B"
+                                    :model-value="currentLayerStyles.B.style"
                                     :items="availableStyles"
                                     item-value="id"
                                     :item-props="(item) => ({title: item.is_default ? item.name + ' (default)' : item.name})"
