@@ -36,8 +36,7 @@ const newBasemapValid = computed(() => (
 function createBasemapPreviews() {
   if (basemapList.value) {
     const map = mapStore.getMap();
-    const center = map.getCenter();
-    const zoom = map.getZoom();
+    const bounds = map.getBounds();
     mapStore.availableBasemaps.forEach((basemap) => {
       if (basemap.id === undefined || basemap.style === undefined) return;
       if (basemapPreviews.value[basemap.id]) {
@@ -46,9 +45,8 @@ function createBasemapPreviews() {
       const preview = new Map({
         container: 'basemap-preview-' + basemap.id,
         attributionControl: false,
+        bounds,
       });
-      preview.setZoom(zoom);
-      preview.setCenter(center);
 
       // Ignore typing due to "Type instantiation is excessively deep and possibly infinite"
       // @ts-ignore
@@ -215,10 +213,8 @@ watch(newBasemapStyleJSON, createNewBasemapPreview)
               <template v-slot:prepend>
                 <v-icon :icon="basemap.id === mapStore.currentBasemap?.id ? 'mdi-check' : 'none'" color="success"
                   class="pa-0"></v-icon>
-              </template>
-              <template v-slot:append>
-                <div v-if="basemap.id !== undefined" class="basemap-preview" :id="'basemap-preview-' + basemap.id">
-                </div>
+                <div v-if="basemap.id !== undefined" class="basemap-preview" :id="'basemap-preview-' + basemap.id" />
+                <div v-else style="width: 90px" />
               </template>
             </v-list-item>
           </v-list>
@@ -378,7 +374,7 @@ watch(newBasemapStyleJSON, createNewBasemapPreview)
 .basemap-preview {
   margin: 0px 10px;
   height: 50px;
-  width: 50px;
+  width: 70px;
 }
 
 #basemap-preview-new {
