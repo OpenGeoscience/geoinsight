@@ -173,7 +173,6 @@ function toggleNodeHandler() {
 
 <template>
   <div v-if="clickedFeature && clickedFeatureSourceType === 'vector'" style="max-height: 40vh; overflow: auto">
-    <h1>CompareMap:{{ compareMap }}</h1>
     <RecursiveTable :data="clickedFeatureProperties" />
 
 

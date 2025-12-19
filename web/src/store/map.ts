@@ -407,11 +407,15 @@ export const useMapStore = defineStore('map', () => {
         visibility: "visible",
       },
     });
-
-    map.on("click", source.id + '.fill', handleBaseLayerClick);
-    map.on("click", source.id + '.line', handleBaseLayerClick);
-    map.on("click", source.id + '.circle', handleBaseLayerClick);
+    setupVectorLayerClickHandlers(map, source.id, handleBaseLayerClick);
   }
+
+  function setupVectorLayerClickHandlers(map: Map,sourceId: string, handler: (e: MapLayerMouseEvent) => void) {
+      map.on("click", sourceId + '.fill', handler);
+      map.on("click", sourceId + '.line', handler);
+      map.on("click", sourceId + '.circle', handler);
+  }
+
 
   function createRasterFeatureMapLayers(tileSource: Source, boundsSource: Source, multiFrame: boolean) {
     const map = getMap();
@@ -579,5 +583,6 @@ export const useMapStore = defineStore('map', () => {
     uniqueLayerIdFromLayer,
     getLatestLayerInstance,
     getUserMapLayers,
+    setupVectorLayerClickHandlers,
   }
 });

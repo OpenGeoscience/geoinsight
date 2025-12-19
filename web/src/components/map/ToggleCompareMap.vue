@@ -66,6 +66,7 @@ function setAttributionControlStyle() {
   });
 }
 
+
 const handleMapReady = async (newMap: Map, mapId: 'A' | 'B') => {
   if (mapStore.availableBasemaps.length === 0) {
     await mapStore.fetchAvailableBasemaps();
@@ -101,9 +102,7 @@ const handleMapReady = async (newMap: Map, mapId: 'A' | 'B') => {
         if (mapBStyle.value && mapBStyle.value?.sources)
         Object.entries(mapBStyle.value.sources).forEach(([key,source]) => {
           if (source.type === 'vector') {
-            newMap.on("click", key + '.fill', mapStore.handleCompareLayerClick);
-            newMap.on("click", key + '.line', mapStore.handleCompareLayerClick);
-            newMap.on("click", key + '.circle', mapStore.handleCompareLayerClick);
+            mapStore.setupVectorLayerClickHandlers(newMap, key, mapStore.handleCompareLayerClick);
           }
         });
     }

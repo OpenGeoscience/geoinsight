@@ -71,7 +71,7 @@ async function init() {
     resetCurrentStyle();
     if (props.activeLayer === props.layer) {
         const foundLayerIds = mapStore.getUserMapLayers().filter((layer) => {
-            const { layerId, layerCopyId, frameId } = mapStore.parseLayerString(layer);
+            const { layerId, layerCopyId } = mapStore.parseLayerString(layer);
             if (layerId === props.layer.id && layerCopyId === props.layer.copy_id) {
                 return true;
             }
@@ -84,37 +84,23 @@ async function init() {
     }
 }
 
-function resetCurrentStyle() {
-    // When copying styles, use deep copies via cloneDeep
-    // so that changes to the current style do not affect the original copy
-    if (currentLayerStyles.value.A?.style.id) {
-        // keep current style selected but discard any unsaved changes
-        currentStyleSpecs.value.A = cloneDeep(currentLayerStyles.value.A.style.style_spec)
+function resetCurrentStyleForPanel(panel: 'A' | 'B') {
+    const currentStyle = currentLayerStyles.value[panel]?.style;
+    if (currentStyle?.id) {
+        currentStyleSpecs.value[panel] = cloneDeep(currentStyle.style_spec);
     } else {
-        // no current style selected, set one
         if (props.layer.default_style) {
-            // apply layer's default style
-            currentStyleSpecs.value.A = cloneDeep(props.layer.default_style.style_spec)
+            currentStyleSpecs.value[panel] = cloneDeep(props.layer.default_style.style_spec);
         } else {
-            // layer has no default style; apply None style
-            currentStyleSpecs.value.A = styleStore.getDefaultStyleSpec(currentFrame.value?.raster);
-        }
-    }
-    if (currentLayerStyles.value.B?.style.id) {
-        // keep current style selected but discard any unsaved changes
-        currentStyleSpecs.value.B = cloneDeep(currentLayerStyles.value.B.style.style_spec)
-    } else {
-        // no current style selected, set one
-        if (props.layer.default_style) {
-            // apply layer's default style
-            currentStyleSpecs.value.B = cloneDeep(props.layer.default_style.style_spec)
-        } else {
-            // layer has no default style; apply None style
-            currentStyleSpecs.value.B = styleStore.getDefaultStyleSpec(currentFrame.value?.raster);
+            currentStyleSpecs.value[panel] = styleStore.getDefaultStyleSpec(currentFrame.value?.raster);
         }
     }
 }
 
+function resetCurrentStyle() {
+    resetCurrentStyleForPanel('A');
+    resetCurrentStyleForPanel('B');
+}
 
 function selectStyle(style: LayerStyle, panel: 'A' | 'B') {
     mapLayerIds.value.forEach((mapLayerId) => {
@@ -169,7 +155,11 @@ const debouncedStyleSpecUpdated = (panel: 'A' | 'B', opacity: number) => {
     }
 }
 
+const getPanelLabel = (panel: 'A' | 'B') => {
+    return compareStore.orientation === 'vertical' ? panel === 'A' ? 'Left Map' : 'Right Map' : panel === 'A' ? 'Top Map' : 'Bottom Map';
+}
 
+const panels = ref(['A', 'B'] as const);
 </script>
 
 <template>
@@ -201,13 +191,13 @@ const debouncedStyleSpecUpdated = (panel: 'A' | 'B', opacity: number) => {
             </div>
 
             <v-card-text class="pa-2">
-                <v-row>
+                <v-row v-for="panel in panels" :key="panel">
                     <v-card width="400" flat color="transparent">
-                        <v-card-title>{{ compareStore.orientation === 'vertical' ? 'Left Map' : 'Top Map' }}</v-card-title>
+                        <v-card-title>{{ getPanelLabel(panel) }}</v-card-title>
                         <v-card-text>
                             <div class="d-flex mb-1 mt-4 mx-2" style="align-items: center; column-gap: 5px;">
                                 <v-select
-                                    :model-value="currentLayerStyles.A.style"
+                                    :model-value="currentLayerStyles[panel].style"
                                     :items="availableStyles"
                                     item-value="id"
                                     :item-props="(item) => ({title: item.is_default ? item.name + ' (default)' : item.name})"
@@ -217,7 +207,7 @@ const debouncedStyleSpecUpdated = (panel: 'A' | 'B', opacity: number) => {
                                     no-data-text="No saved styles exist yet."
                                     return-object
                                     hide-details
-                                    @update:model-value="selectStyle($event, 'A')"
+                                    @update:model-value="selectStyle($event, panel)"
                                 ></v-select>
                             </div>
                             <table class="aligned-controls px-2">
@@ -226,59 +216,11 @@ const debouncedStyleSpecUpdated = (panel: 'A' | 'B', opacity: number) => {
                                         <td><v-label color="primary-text">Opacity</v-label></td>
                                         <td>
                                             <SliderNumericInput
-                                                :model="currentStyleSpecs.A.opacity"
+                                                :model="currentStyleSpecs[panel]?.opacity || 1"
                                                 :min="0.1"
                                                 :max="1"
                                                 :step="0.1"
-                                                @update="(v: number) => debouncedStyleSpecUpdated('A', v)"
-                                            />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </v-card-text>
-                    </v-card>
-                </v-row>
-                <v-row>
-                    <v-card width="400" flat color="transparent">
-                        <v-card-title>{{ compareStore.orientation === 'vertical' ? 'Right Map' : 'Bottom Map' }}</v-card-title>
-                        <v-card-text>
-                            <div class="d-flex mb-1 mt-4 mx-2" style="align-items: center; column-gap: 5px;">
-                                <v-select
-                                    :model-value="currentLayerStyles.B.style"
-                                    :items="availableStyles"
-                                    item-value="id"
-                                    :item-props="(item) => ({title: item.is_default ? item.name + ' (default)' : item.name})"
-                                    label="Layer Style"
-                                    density="compact"
-                                    variant="outlined"
-                                    no-data-text="No saved styles exist yet."
-                                    return-object
-                                    hide-details
-                                    @update:model-value="selectStyle($event, 'B')"
-                                ></v-select>
-                            </div>
-                            <table class="aligned-controls px-2">
-                                <tbody>
-                                    <tr v-if="frames.length > 1">
-                                        <td><v-label>Default Frame</v-label></td>
-                                        <td>
-                                            <SliderNumericInput
-                                                :model="currentStyleSpecs.B.default_frame + 1"
-                                                :max="frames.length"
-                                                @update="(v: number) => {if (currentStyleSpecs.A) currentStyleSpecs.A.default_frame = v - 1}"
-                                            />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><v-label color="primary-text">Opacity</v-label></td>
-                                        <td>
-                                            <SliderNumericInput
-                                                :model="currentStyleSpecs.B.opacity"
-                                                :min="0.1"
-                                                :max="1"
-                                                :step="0.1"
-                                                @update="(v: number) => debouncedStyleSpecUpdated('B', v)"
+                                                @update="(v: number) => debouncedStyleSpecUpdated(panel, v)"
                                             />
                                         </td>
                                     </tr>
