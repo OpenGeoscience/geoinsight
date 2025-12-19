@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue';
 import { useLayerStore } from './layer';
 import { cloneDeep, map } from 'lodash';
 import { useMapStore } from './map';
+import { useStyleStore } from './style';
 import { MapLayerStyleRaw } from './style';
 import { LayerStyle } from '@/types';
 import { SourceSpecification } from 'maplibre-gl';
@@ -30,6 +31,7 @@ export interface MapStats {
 export const useMapCompareStore = defineStore('mapCompare', () => {
     const mapStore = useMapStore();
     const layerStore = useLayerStore();
+    const styleStore = useStyleStore();
     const isComparing = ref<boolean>(false);
     const mapLayersA = ref<string[]>([]);
     const mapLayersB = ref<string[]>([]);
@@ -182,6 +184,77 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
         }
     }); 
 
+    /**
+     * Reapply stored opacity values to all layers in compare mode
+     * This ensures opacity values remain consistent when layers are added/removed/reordered
+     */
+    const reapplyStoredOpacityValues = () => {
+        if (!isComparing.value) return;
+
+        // Process both map A and map B
+        (['A', 'B'] as const).forEach((panel) => {
+            const storedStyles = compareLayerStyles.value[panel];
+            
+            // Iterate through all stored layer styles
+            Object.entries(storedStyles).forEach(([styleKey, storedStyle]) => {
+                // Parse the style key to get layer id and copy_id
+                const [layerIdStr, copyIdStr] = styleKey.split('.');
+                const layerId = parseInt(layerIdStr);
+                const copyId = parseInt(copyIdStr);
+                
+                // Find the layer object
+                const layer = layerStore.selectedLayers.find(
+                    (l) => l.id === layerId && l.copy_id === copyId
+                );
+                
+                if (!layer) return;
+                
+                // Get all map layer IDs for this layer
+                const mapLayerIds = layerStore.getMapLayersFromLayerObject(layer).flat();
+                
+                // Get the current frame
+                const frames = layerStore.layerFrames(layer);
+                const currentFrame = frames.find(
+                    (f) => f.index === layer.current_frame_index
+                );
+                
+                if (!currentFrame) return;
+                
+                // Get the stored style spec with the stored opacity
+                const styleSpec = storedStyle.style?.style_spec;
+                if (!styleSpec) return;
+                
+                // Update the opacity in the style spec to match stored value
+                const styleSpecWithOpacity = cloneDeep(styleSpec);
+                styleSpecWithOpacity.opacity = storedStyle.opacity;
+                
+                // Apply the style to all map layers for this layer
+                mapLayerIds.forEach((mapLayerId) => {
+                    // Check if the map layer exists in the main map (required for returnMapLayerStyle)
+                    const mainMap = mapStore.getMap();
+                    if (!mainMap || !mainMap.getLayer(mapLayerId)) {
+                        return;
+                    }
+                    
+                    const visibileLayers = panel === 'A' ? mapLayersA.value : mapLayersB.value;
+                    const visibility = visibileLayers.includes(mapLayerId) ? 'visible' : 'none';
+                    
+                    const result = styleStore.returnMapLayerStyle(
+                        mapLayerId,
+                        styleSpecWithOpacity,
+                        currentFrame,
+                        currentFrame.vector,
+                        visibility
+                    );
+                    
+                    if (result) {
+                        updateMapLayerStyle(panel, mapLayerId, result);
+                    }
+                });
+            });
+        });
+    };
+
     function updateCompareLayerStyle() {
         const compareMapAddedSources: {sourceId: string, sourceType: SourceSpecification['type']}[] = [];
         if (isComparing.value) {
@@ -203,7 +276,8 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
                         if (mapAStyle.value) {
                             mapAStyle.value.sources[sourceId] = cloneDeep(newStyle.sources[sourceId]);
                         }
-                    } else if (!existingSourcesB.has(sourceId)) {
+                    } 
+                    if (!existingSourcesB.has(sourceId)) {
                         if (mapBStyle.value) {
                             mapBStyle.value.sources[sourceId] = cloneDeep(newStyle.sources[sourceId]);
                             compareMapAddedSources.push({ sourceId, sourceType: newStyle.sources[sourceId].type });
@@ -246,7 +320,8 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
                         if (mapAStyle.value) {
                             mapAStyle.value.layers.push(cloneDeep(layer));
                         }
-                    } else if (!existingLayerIdsB.has(layer.id)) {
+                    } 
+                    if (!existingLayerIdsB.has(layer.id)) {
                         if (mapBStyle.value) {
                             mapBStyle.value.layers.push(cloneDeep(layer));
                         }
@@ -278,6 +353,9 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
                 mapBStyle.value = mapStore.getMap()?.getStyle();
             }
             generateDisplayLayers();
+            
+            // Reapply stored opacity values after updating layers
+            reapplyStoredOpacityValues();
         }
         return compareMapAddedSources;
     }
