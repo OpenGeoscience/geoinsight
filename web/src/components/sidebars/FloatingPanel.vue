@@ -105,8 +105,44 @@ function panelUpdated() {
               color="primary"
               @mousedown="projectStore.projectConfigMode = 'existing'"
             />
+            <v-menu
+              v-if="panel.id === 'layers' && projectStore.currentProject && compareStore.isComparing"
+              :open-on-hover="true"
+              location="bottom"
+              :close-on-content-click="true"
+            >
+              <template v-slot:activator="{ props: menuProps }">
+                <div v-bind="menuProps" style="position: relative; display: inline-block;">
+                  <v-icon
+                    v-tooltip="'Compare Layers'"
+                    icon="mdi-compare"
+                    color="primary"
+                    @click="compareStore.isComparing = !compareStore.isComparing"
+                  />
+                  <v-icon
+                    :icon="compareStore.orientation === 'vertical' ? 'mdi-compare-vertical' : 'mdi-compare-horizontal'"
+                    size="small"
+                    style="position: absolute; bottom: -10px; right: -10px; background-color: rgb(var(--v-theme-background)); border-radius: 50%; padding: 1px;"
+                  />
+                </div>
+              </template>
+              <v-list>
+                <v-list-item
+                  :prepend-icon="'mdi-compare-vertical'"
+                  title="Horizontal"
+                  :active="compareStore.orientation === 'horizontal'"
+                  @click="compareStore.setOrientation('horizontal')"
+                />
+                <v-list-item
+                  :prepend-icon="'mdi-compare-horizontal'"
+                  title="Vertical"
+                  :active="compareStore.orientation === 'vertical'"
+                  @click="compareStore.setOrientation('vertical')"
+                />
+              </v-list>
+            </v-menu>
             <v-icon
-              v-if="panel.id === 'layers' && projectStore.currentProject"
+              v-else-if="panel.id === 'layers' && projectStore.currentProject"
               v-tooltip="'Compare Layers'"
               icon="mdi-compare"
               :color="compareStore.isComparing ? 'primary' : ''"

@@ -352,6 +352,10 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
         });
     }, { deep: true });
 
+    const setOrientation = (newOrientation: 'horizontal' | 'vertical') => {
+        orientation.value = newOrientation;
+    };
+
     return {
         isComparing,
         orientation,
@@ -371,5 +375,6 @@ export const useMapCompareStore = defineStore('mapCompare', () => {
         mapBStyle,
         mapLayersA,
         mapLayersB,
+        setOrientation,
     }
 });

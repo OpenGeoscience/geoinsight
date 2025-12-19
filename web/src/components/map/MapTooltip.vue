@@ -2,6 +2,7 @@
 import { computed, watch } from "vue";
 import * as turf from "@turf/turf";
 import proj4 from "proj4";
+import { Popup } from "maplibre-gl";
 
 import RecursiveTable from "../RecursiveTable.vue";
 
@@ -101,17 +102,35 @@ function zoomToFeature() {
   if (bbox.length !== 4) {
     throw new Error("Returned bbox should have 4 elements!");
   }
-  const padding = { left: 0, right: 0};
-  let offset = window.innerWidth * compareStore.sliderEnd.percentage * 0.01;
-  // Offsets for the sidebars
-  if (!props.compareMap) {
-    padding.right = window.innerWidth -offset; // account for sidebar
-    padding.left += appStore.openSidebars.includes("left") ? 300 : 0;
+  
+  // Handle padding based on orientation
+  if (compareStore.isComparing && compareStore.orientation === 'horizontal') {
+    // Horizontal orientation: top/bottom split
+    const padding = { top: 0, bottom: 0 };
+    let offset = window.innerHeight * compareStore.sliderEnd.percentage * 0.01;
+    // Offsets for the sidebars
+    if (!props.compareMap) {
+      padding.bottom = window.innerHeight - offset; // account for split
+      padding.top += appStore.openSidebars.includes("left") ? 0 : 0;
+    } else {
+      padding.top = offset; // account for split
+      padding.bottom += appStore.openSidebars.includes("right") ? 0 : 0;
+    }
+    map.fitBounds(bbox, {maxZoom: map.getZoom(), padding});
   } else {
-    padding.left = offset; // account for sidebar
-    padding.right += appStore.openSidebars.includes("right") ? 300 : 0;
+    // Vertical orientation: left/right split (existing logic)
+    const padding = { left: 0, right: 0};
+    let offset = window.innerWidth * compareStore.sliderEnd.percentage * 0.01;
+    // Offsets for the sidebars
+    if (!props.compareMap) {
+      padding.right = window.innerWidth -offset; // account for sidebar
+      padding.left += appStore.openSidebars.includes("left") ? 300 : 0;
+    } else {
+      padding.left = offset; // account for sidebar
+      padding.right += appStore.openSidebars.includes("right") ? 300 : 0;
+    }
+    map.fitBounds(bbox, {maxZoom: map.getZoom(), padding});
   }
-  map.fitBounds(bbox, {maxZoom: map.getZoom(), padding});
 }
 
 // Check if the layer associated with the clicked feature is still selected and visible
@@ -136,7 +155,7 @@ watch(
     if (clickedFeature.value === undefined) {
       tooltip.remove();
       return;
-    }
+    }    
     // Set tooltip position. Give feature clicks priority
     const centroid = turf.centroid(clickedFeature.value.feature)
     const center = centroid.geometry.coordinates as [number, number]

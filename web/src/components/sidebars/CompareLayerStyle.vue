@@ -191,44 +191,90 @@ const panels = ref(['A', 'B'] as const);
             </div>
 
             <v-card-text class="pa-2">
-                <v-row v-for="panel in panels" :key="panel">
-                    <v-card width="400" flat color="transparent">
-                        <v-card-title>{{ getPanelLabel(panel) }}</v-card-title>
-                        <v-card-text>
-                            <div class="d-flex mb-1 mt-4 mx-2" style="align-items: center; column-gap: 5px;">
-                                <v-select
-                                    :model-value="currentLayerStyles[panel].style"
-                                    :items="availableStyles"
-                                    item-value="id"
-                                    :item-props="(item) => ({title: item.is_default ? item.name + ' (default)' : item.name})"
-                                    label="Layer Style"
-                                    density="compact"
-                                    variant="outlined"
-                                    no-data-text="No saved styles exist yet."
-                                    return-object
-                                    hide-details
-                                    @update:model-value="selectStyle($event, panel)"
-                                ></v-select>
-                            </div>
-                            <table class="aligned-controls px-2">
-                                <tbody>
-                                    <tr>
-                                        <td><v-label color="primary-text">Opacity</v-label></td>
-                                        <td>
-                                            <SliderNumericInput
-                                                :model="currentStyleSpecs[panel]?.opacity || 1"
-                                                :min="0.1"
-                                                :max="1"
-                                                :step="0.1"
-                                                @update="(v: number) => debouncedStyleSpecUpdated(panel, v)"
-                                            />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </v-card-text>
-                    </v-card>
+                <v-row v-if="compareStore.orientation === 'vertical'">
+                    <v-col v-for="(panel, index) in panels" :key="panel" cols="6" style="position: relative;">
+                        <v-card flat color="transparent">
+                            <v-card-title>{{ getPanelLabel(panel) }}</v-card-title>
+                            <v-card-text>
+                                <div class="d-flex mb-1 mt-4 mx-2" style="align-items: center; column-gap: 5px;">
+                                    <v-select
+                                        :model-value="currentLayerStyles[panel].style"
+                                        :items="availableStyles"
+                                        item-value="id"
+                                        :item-props="(item) => ({title: item.is_default ? item.name + ' (default)' : item.name})"
+                                        label="Layer Style"
+                                        density="compact"
+                                        variant="outlined"
+                                        no-data-text="No saved styles exist yet."
+                                        return-object
+                                        hide-details
+                                        @update:model-value="selectStyle($event, panel)"
+                                    ></v-select>
+                                </div>
+                                <table class="aligned-controls px-2">
+                                    <tbody>
+                                        <tr>
+                                            <td><v-label color="primary-text">Opacity</v-label></td>
+                                            <td>
+                                                <SliderNumericInput
+                                                    :model="currentStyleSpecs[panel]?.opacity || 1"
+                                                    :min="0.1"
+                                                    :max="1"
+                                                    :step="0.1"
+                                                    @update="(v: number) => debouncedStyleSpecUpdated(panel, v)"
+                                                />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </v-card-text>
+                        </v-card>
+                        <v-divider v-if="index === 0" vertical style="position: absolute; right: 0; top: 0; bottom: 0; height: 100%;"></v-divider>
+                    </v-col>
                 </v-row>
+                <template v-else>
+                    <template v-for="(panel, index) in panels" :key="panel">
+                        <v-row>
+                            <v-card width="400" flat color="transparent">
+                                <v-card-title>{{ getPanelLabel(panel) }}</v-card-title>
+                                <v-card-text>
+                                    <div class="d-flex mb-1 mt-4 mx-2" style="align-items: center; column-gap: 5px;">
+                                        <v-select
+                                            :model-value="currentLayerStyles[panel].style"
+                                            :items="availableStyles"
+                                            item-value="id"
+                                            :item-props="(item) => ({title: item.is_default ? item.name + ' (default)' : item.name})"
+                                            label="Layer Style"
+                                            density="compact"
+                                            variant="outlined"
+                                            no-data-text="No saved styles exist yet."
+                                            return-object
+                                            hide-details
+                                            @update:model-value="selectStyle($event, panel)"
+                                        ></v-select>
+                                    </div>
+                                    <table class="aligned-controls px-2">
+                                        <tbody>
+                                            <tr>
+                                                <td><v-label color="primary-text">Opacity</v-label></td>
+                                                <td>
+                                                    <SliderNumericInput
+                                                        :model="currentStyleSpecs[panel]?.opacity || 1"
+                                                        :min="0.1"
+                                                        :max="1"
+                                                        :step="0.1"
+                                                        @update="(v: number) => debouncedStyleSpecUpdated(panel, v)"
+                                                    />
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </v-card-text>
+                            </v-card>
+                        </v-row>
+                        <v-divider v-if="index === 0" class="my-2"></v-divider>
+                    </template>
+                </template>
             </v-card-text>
         </v-card>
     </v-menu>
