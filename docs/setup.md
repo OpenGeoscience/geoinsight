@@ -39,9 +39,6 @@ docker compose run --rm django python manage.py migrate
 
 # Create an admin user (you will be prompted for email and password)
 docker compose run --rm -it django python manage.py createsuperuser
-
-# Create OAuth client for authentication
-docker compose run --rm django python manage.py makeclient
 ```
 
 > **Note:** The `createsuperuser` command prompts you to create login credentials (email and password). Use these credentials to sign into both the Admin Panel and User Interface. If you forget your password, run `createsuperuser` again to create a new admin account.
