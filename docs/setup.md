@@ -23,7 +23,6 @@ cp web/.env.example web/.env
 ### 2. Build and Start Docker Containers
 
 ```bash
-docker compose build
 docker compose up
 ```
 
@@ -35,17 +34,17 @@ While the containers are running, open a **separate terminal** and run:
 
 ```bash
 # Apply database migrations
-docker compose run --rm django python manage.py migrate
+docker compose run --rm django ./manage.py migrate
 
 # Create an admin user (you will be prompted for email and password)
-docker compose run --rm -it django python manage.py createsuperuser
+docker compose run --rm -it django ./manage.py createsuperuser
 ```
 
 > **Note:** The `createsuperuser` command prompts you to create login credentials (email and password). Use these credentials to sign into both the Admin Panel and User Interface. If you forget your password, run `createsuperuser` again to create a new admin account.
 
 > **Windows Users:** If the `createsuperuser` command hangs or doesn't show prompts, prefix the command with `winpty`:
 > ```bash
-> winpty docker compose run --rm -it django python manage.py createsuperuser
+> winpty docker compose run --rm -it django ./manage.py createsuperuser
 > ```
 
 ### 4. Load Sample Data (Optional)
@@ -53,7 +52,7 @@ docker compose run --rm -it django python manage.py createsuperuser
 The ingest command loads datasets, charts, and project configuration from an ingestion file:
 
 ```bash
-docker compose run --rm django python manage.py ingest {JSON_FILE}
+docker compose run --rm django ./manage.py ingest {JSON_FILE}
 ```
 
 Available ingest options (paths relative to `sample_data/`):
@@ -112,7 +111,7 @@ docker compose pull
 docker compose build --pull --no-cache
 
 # Apply any new migrations
-docker compose run --rm django python manage.py migrate
+docker compose run --rm django ./manage.py migrate
 ```
 
 ---
@@ -167,7 +166,7 @@ GPU acceleration is optional and only needed for accelerated inferencing.
 On Windows (especially Git Bash/MINGW), interactive Docker commands like `createsuperuser` may hang or fail to display prompts. Prefix the command with `winpty`:
 
 ```bash
-winpty docker compose run --rm -it django python manage.py createsuperuser
+winpty docker compose run --rm -it django ./manage.py createsuperuser
 ```
 
 **"No such container" errors:**
@@ -175,7 +174,7 @@ winpty docker compose run --rm -it django python manage.py createsuperuser
 If you see errors like `No such container: django` when trying to attach to a running container, use `docker compose run` instead:
 
 ```bash
-docker compose run --rm -it django python manage.py <command>
+docker compose run --rm -it django ./manage.py <command>
 ```
 
 This creates a new container instance rather than attaching to an existing one.

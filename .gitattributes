@@ -1,2 +1,5 @@
+# Code needs to be run with Unix-style line endings, even when checked out on Windows
+* text eol=lf
+
 package-lock.json linguist-generated=true
 uv.lock linguist-generated=true
