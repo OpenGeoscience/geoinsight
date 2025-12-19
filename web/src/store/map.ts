@@ -232,7 +232,7 @@ export const useMapStore = defineStore('map', () => {
   function getBaseLayerSourceIds() {
     return getMapSources()
       .filter((sourceId) => (
-        !sourceId || !(sourceId.includes('.vector.') || sourceId.includes('.raster.'))
+        !sourceId || !(sourceId.includes('.vector.') || sourceId.includes('.raster.') || sourceId.includes('.bounds.'))
       ));
   }
 
@@ -302,7 +302,15 @@ export const useMapStore = defineStore('map', () => {
     // Must collect all source Ids so they can be removed after all layers
     // have been removed, since multple layers may use the same source
     let sourceIdsToRemove = new Set<string>();
-    const layersToRemove = getUserMapLayers().filter((id) => layerIds.includes(id));
+    const updatedLayerIds: string[] = [];
+    layerIds.forEach((id) => {
+      // Rasters have implicit bounds layers that also need to be removed
+      if (id.includes('.raster.')) {
+        updatedLayerIds.push(id.replace('.raster.', '.bounds.'));
+      }
+      updatedLayerIds.push(id);
+    });
+    const layersToRemove = getUserMapLayers().filter((id) => updatedLayerIds.includes(id));
     layersToRemove.forEach((id) => {
       sourceIdsToRemove.add(map.getLayer(id)!.source);
       map.removeLayer(id);
