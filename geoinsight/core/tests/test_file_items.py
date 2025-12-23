@@ -30,7 +30,7 @@ def test_upload_and_create_file_item(
     serialized_fileitem = resp.json()
     for key, value in fileitem_expected.items():
         if key == 'file':
-            assert ':9000/test-django-storage' in serialized_fileitem[key]
+            assert 'multiframe_vector.geojson' in serialized_fileitem[key]
         else:
             assert serialized_fileitem[key] == value
     assert 'id' in serialized_fileitem

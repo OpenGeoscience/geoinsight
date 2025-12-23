@@ -1,7 +1,6 @@
 import datetime
 import os
 from pathlib import Path
-import subprocess
 import tempfile
 
 from celery import shared_task
@@ -11,10 +10,6 @@ from django.core.files.base import ContentFile
 from geoinsight.core.models import Chart, Colormap, Dataset, FileItem, LayerStyle, TaskResult
 
 from .analysis_type import AnalysisType
-
-MODULE_REPOSITORY = 'https://github.com/OpenGeoscience/uvdat-flood-sim.git'
-MODULE_PATH = Path('/analytics/modules/uvdat-flood-sim')
-VENV_PATH = Path('/venvs/flood_simulation')
 
 
 class FloodSimulation(AnalysisType):
@@ -36,7 +31,7 @@ class FloodSimulation(AnalysisType):
 
     @classmethod
     def is_enabled(cls):
-        return settings.ENABLE_TASK_FLOOD_SIMULATION
+        return settings.GEOINSIGHT_ENABLE_TASK_FLOOD_SIMULATION
 
     def get_input_options(self):
         return {
@@ -60,55 +55,10 @@ class FloodSimulation(AnalysisType):
         return result
 
 
-def run_command(cmd, cwd):
-    result = subprocess.run(
-        cmd,
-        cwd=cwd,
-        capture_output=True,
-    )
-    if result.stderr:
-        raise Exception(result.stderr)
-
-
-def pull_module():
-    MODULE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    if not MODULE_PATH.exists():
-        run_command(
-            ['git', 'clone', MODULE_REPOSITORY],
-            MODULE_PATH.parent,
-        )
-    run_command(['git', 'pull', '-q'], MODULE_PATH)
-
-
-def install_module_dependencies():
-    VENV_PATH.parent.mkdir(parents=True, exist_ok=True)
-    if not VENV_PATH.exists():
-        run_command(['python', '-m', 'venv', VENV_PATH], MODULE_PATH)
-    run_command(
-        [VENV_PATH / 'bin' / 'python', '-m', 'pip', 'install', '--upgrade', 'pip'],
-        MODULE_PATH,
-    )
-    run_command(
-        [VENV_PATH / 'bin' / 'python', '-m', 'pip', 'install', '-r', 'requirements.txt'],
-        MODULE_PATH,
-    )
-    run_command(
-        [
-            VENV_PATH / 'bin' / 'python',
-            '-m',
-            'pip',
-            'install',
-            'tifftools',
-            'large-image[gdal,zarr,converter]',
-            '--find-links',
-            'https://girder.github.io/large_image_wheels',
-        ],
-        MODULE_PATH,
-    )
-
-
 @shared_task
 def flood_simulation(result_id):
+    from uvdat_flood_sim import run_sim, write_multiframe_geotiff
+
     result = TaskResult.objects.get(id=result_id)
 
     try:
@@ -124,12 +74,6 @@ def flood_simulation(result_id):
                 result.write_error(f'{input_key} not provided')
                 result.complete()
                 return
-
-        result.write_status(
-            'Ensuring that flood simulation module code and dependencies are up to date'
-        )
-        pull_module()
-        install_module_dependencies()
 
         result.write_status('Interpreting input values')
         time_period = result.inputs.get('time_period')
@@ -148,35 +92,28 @@ def flood_simulation(result_id):
         )
         result.name = name
         result.write_status('Running flood simulation module with specified inputs')
-        output_path = Path(tempfile.gettempdir(), 'flood_simulation.tif')
 
-        run_command(
-            [
-                VENV_PATH / 'bin' / 'python',
-                'main.py',
-                '--time_period',
-                time_period,
-                '--hydrograph',
-                *[str(v) for v in hydrograph],
-                '--pet_percentile',
-                str(pet_percentile),
-                '--sm_percentile',
-                str(sm_percentile),
-                '--gw_percentile',
-                str(gw_percentile),
-                '--annual_probability',
-                str(annual_probability),
-                '--output_path',
-                output_path,
-                '--no_animation',
-                '--tiff-writer',
-                'large_image',
-            ],
-            MODULE_PATH,
+        flood_results = run_sim(
+            time_period=time_period,
+            annual_probability=annual_probability,
+            hydrograph=hydrograph,
+            pet_percentile=pet_percentile,
+            sm_percentile=sm_percentile,
+            gw_percentile=gw_percentile,
         )
 
         result.write_status('Saving result to database')
-        if output_path.exists():
+
+        with tempfile.TemporaryDirectory() as output_folder:
+            output_folder = Path(output_folder)
+
+            write_multiframe_geotiff(
+                flood_results=flood_results,
+                output_folder=output_folder,
+                writer='large_image',
+            )
+            output_path = output_folder / 'flood_simulation.tif'
+
             metadata = dict(
                 attribution='Simulation code by August Posch at Northeastern University',
                 simulation_steps=[
@@ -184,7 +121,7 @@ def flood_simulation(result_id):
                     'hydrological_prediction',
                     'hydrodynamic_prediction',
                 ],
-                module_repository=MODULE_REPOSITORY,
+                module_repository='https://github.com/OpenGeoscience/uvdat-flood-sim',
                 inputs=dict(
                     time_period=time_period,
                     hydrograph=hydrograph,

@@ -34,7 +34,7 @@ class GeoAISegmentation(AnalysisType):
 
     @classmethod
     def is_enabled(cls):
-        return settings.ENABLE_TASK_GEOAI_SEGMENTATION
+        return settings.GEOINSIGHT_ENABLE_TASK_GEOAI_SEGMENTATION
 
     def get_input_options(self):
         return {
