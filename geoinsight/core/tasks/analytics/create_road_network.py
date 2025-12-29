@@ -63,7 +63,7 @@ def create_road_network(result_id):
     import osmnx
     from xdg_base_dirs import xdg_cache_home
 
-    osmnx.settings.cache_folder = xdg_cache_home / 'osmnx'
+    osmnx.settings.cache_folder = xdg_cache_home() / 'osmnx'
 
     result = TaskResult.objects.get(id=result_id)
     try:
