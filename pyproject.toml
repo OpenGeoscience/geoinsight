@@ -74,6 +74,7 @@ tasks = [
   # Needed by "uvdat-flood-sim[large-image-writer]"
   "pyvips",
   "uvdat-flood-sim[large-image-writer]",
+  "xdg-base-dirs",
 ]
 
 [dependency-groups]
