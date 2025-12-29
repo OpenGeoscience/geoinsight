@@ -128,7 +128,6 @@ explicit = true
 gdal = { index = "large_image_wheels" }
 pylibtiff = { index = "large_image_wheels" }
 pyvips = { index = "large_image_wheels" }
-uvdat-flood-sim = { git = "https://github.com/OpenGeoscience/uvdat-flood-sim", lfs = true  }
 
 [tool.hatch.build]
 packages = [
