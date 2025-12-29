@@ -245,7 +245,7 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name='layerframe',
             constraint=models.CheckConstraint(
-                check=models.Q(
+                condition=models.Q(
                     models.Q(('raster__isnull', False), ('vector__isnull', True)),
                     models.Q(('raster__isnull', True), ('vector__isnull', False)),
                     _connector='OR',

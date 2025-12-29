@@ -32,7 +32,7 @@ class CreateRoadNetwork(AnalysisType):
 
     @classmethod
     def is_enabled(cls):
-        return settings.ENABLE_TASK_CREATE_ROAD_NETWORK
+        return settings.GEOINSIGHT_ENABLE_TASK_CREATE_ROAD_NETWORK
 
     def get_input_options(self):
         return {'location': []}
@@ -61,6 +61,9 @@ def metadata_for_row(row):
 @shared_task
 def create_road_network(result_id):
     import osmnx
+    from xdg_base_dirs import xdg_cache_home
+
+    osmnx.settings.cache_folder = xdg_cache_home() / 'osmnx'
 
     result = TaskResult.objects.get(id=result_id)
     try:

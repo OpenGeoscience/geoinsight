@@ -36,7 +36,7 @@ class LayerFrame(models.Model):
     class Meta:
         constraints = [
             models.CheckConstraint(
-                check=(models.Q(raster__isnull=False) & models.Q(vector__isnull=True))
+                condition=(models.Q(raster__isnull=False) & models.Q(vector__isnull=True))
                 | (models.Q(raster__isnull=True) & models.Q(vector__isnull=False)),
                 name='exactly_one_data',
             )

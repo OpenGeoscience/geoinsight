@@ -60,10 +60,13 @@ urlpatterns = [
     path('api/docs/swagger/', schema_view.with_ui('swagger'), name='docs-swagger'),
     path('api/v1/token/', obtain_auth_token),
     # Redirect all other server requests to Vue client
-    path('', RedirectView.as_view(url=settings.HOMEPAGE_REDIRECT_URL)),  # type: ignore
+    path('', RedirectView.as_view(url=settings.GEOINSIGHT_WEB_URL)),
 ]
 
 if settings.DEBUG:
-    import debug_toolbar
+    import debug_toolbar.toolbar
 
-    urlpatterns = [path('__debug__/', include(debug_toolbar.urls))] + urlpatterns
+    urlpatterns += [
+        *debug_toolbar.toolbar.debug_toolbar_urls(),
+        path('__reload__/', include('django_browser_reload.urls')),
+    ]
