@@ -1,11 +1,11 @@
 [
     {
         "name": "Basic Light",
-        "style": "https://demo.kitware.com/vector-maps/tiles/style/openstreetmap-openmaptiles-openfreemap-positron.json"
+        "style": "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
     },
     {
         "name": "Basic Dark",
-        "style": "https://demo.kitware.com/vector-maps/tiles/style/openstreetmap-openmaptiles-openmaptiles-dark-matter.json"
+        "style": "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
     },
     {
         "name": "NAIP Imagery",
