@@ -7,7 +7,7 @@ on:
 permissions:
   contents: write
 jobs:
-  tag-and-publish:
+  version-and-release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -16,8 +16,10 @@ jobs:
           fetch-depth: 0
       - name: Install uv
         uses: astral-sh/setup-uv@v7
-      - name: Python Semantic Release
-        id: release
-        uses: python-semantic-release/python-semantic-release@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install npm
+        uses: actions/setup-node@v6
+      - name: Run Semantic Release
+        run: |
+          uvx python-semantic-release version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
