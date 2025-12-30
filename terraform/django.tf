@@ -17,8 +17,9 @@ module "django" {
   django_settings_module = "geoinsight.settings.heroku_production"
 
   additional_django_vars = {
-    DJANGO_GEOINSIGHT_WEB_URL = "https://www.geoinsight.kitware.com/"
+    DJANGO_GEOINSIGHT_WEB_URL     = "https://www.geoinsight.kitware.com/"
     DJANGO_DATABASE_POOL_MAX_SIZE = "12"
+    DJANGO_SENTRY_DSN             = "https://5302701c88f1fa6ec056e0c269071191@o267860.ingest.us.sentry.io/4510620385804288"
   }
   django_cors_allowed_origins = [
     "https://www.geoinsight.kitware.com"
