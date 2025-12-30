@@ -11,6 +11,7 @@ const props = defineProps<{
 
 const searchText = ref<string | undefined>();
 const selectedTags = ref<string[]>();
+const showFilter = ref();
 const filteredDatasets = computed(() => {
   return props.datasets?.filter((dataset: any) => {
     const searchMatch = !searchText.value ||
@@ -60,8 +61,8 @@ watch(filteredDatasets, expandAllGroups)
       append-inner-icon="mdi-magnify"
       hide-details
     />
-    <v-expansion-panels flat v-if="props.datasets?.length">
-      <v-expansion-panel class="mb-2 bg-transparent">
+    <v-expansion-panels v-model="showFilter" flat v-if="props.datasets?.length">
+      <v-expansion-panel value="true" class="mb-2 bg-transparent">
         <v-expansion-panel-title class="tag-filter-title">
           Filter by Tag
         </v-expansion-panel-title>
@@ -78,7 +79,7 @@ watch(filteredDatasets, expandAllGroups)
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
-    <v-card class="panel-content-inner with-tag-filter">
+    <v-card :class="showFilter ? 'panel-content-inner with-tag-filter-open' : 'panel-content-inner with-tag-filter-closed'">
       <v-expansion-panels
         v-if="props.datasets?.length"
         v-model="expandedGroups"
@@ -160,7 +161,12 @@ watch(filteredDatasets, expandAllGroups)
   min-height: 0px!important;
   font-size: inherit!important;
 }
-.panel-content-inner.with-tag-filter {
-  height: calc(100% - 75px);
+
+.panel-content-inner.with-tag-filter-open {
+  height: calc(100% - 120px);
+}
+
+.panel-content-inner.with-tag-filter-closed {
+  height: calc(100% - 80px);
 }
 </style>
