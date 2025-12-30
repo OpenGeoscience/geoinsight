@@ -1,11 +1,49 @@
 [
     {
         "name": "Basic Light",
-        "style": "https://demo.kitware.com/vector-maps/tiles/style/openstreetmap-openmaptiles-openfreemap-positron.json"
+        "style": {
+            "version": 8,
+            "sources": {
+                "light": {
+                    "type": "raster",
+                    "tiles": [
+                        "https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"
+                    ],
+                    "tileSize": 256,
+                    "maxzoom": 19
+                }
+            },
+            "layers": [
+                {
+                    "id": "light",
+                    "type": "raster",
+                    "source": "light"
+                }
+            ]
+        }
     },
     {
         "name": "Basic Dark",
-        "style": "https://demo.kitware.com/vector-maps/tiles/style/openstreetmap-openmaptiles-openmaptiles-dark-matter.json"
+        "style": {
+            "version": 8,
+            "sources": {
+                "dark": {
+                    "type": "raster",
+                    "tiles": [
+                        "https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"
+                    ],
+                    "tileSize": 256,
+                    "maxzoom": 19
+                }
+            },
+            "layers": [
+                {
+                    "id": "dark",
+                    "type": "raster",
+                    "source": "dark"
+                }
+            ]
+        }
     },
     {
         "name": "NAIP Imagery",
