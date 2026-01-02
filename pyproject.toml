@@ -53,6 +53,7 @@ dependencies = [
   "django-storages[s3]",
   "sentry-sdk[celery,django,pure_eval]",
   "uvicorn",
+  "websockets",
 ]
 
 [project.optional-dependencies]
