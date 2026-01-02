@@ -30,7 +30,7 @@ dependencies = [
   "djangorestframework",
   "drf-yasg",
   # Needed for GeoDjango and "large-image[gdal]"
-  # gdal 3.10 is the newest supported by Django: https://docs.djangoproject.com/en/5.0/ref/contrib/gis/install/geolibs/
+  # gdal 3.10 is the newest supported by Django: https://docs.djangoproject.com/en/5.2/ref/contrib/gis/install/geolibs/
   'gdal==3.10.*',
   "geopandas",
   "large-image-converter",
@@ -45,7 +45,6 @@ dependencies = [
   "pyshp",
   "rasterio",
   "rich",
-  "urllib3",
   "webcolors",
   "whitenoise[brotli]",
   # Production-only
