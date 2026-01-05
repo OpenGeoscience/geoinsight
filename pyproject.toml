@@ -106,6 +106,7 @@ type = [
   "django-stubs[compatible-mypy]",
   "djangorestframework-stubs",
   "pandas-stubs",
+  "types-channels",
 ]
 test = [
   "django-s3-file-field-client",
