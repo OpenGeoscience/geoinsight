@@ -57,7 +57,7 @@ watch(darkMode, () => {
       ">
       <v-toolbar class="toolbar px-5" color="background">
         <v-toolbar-title>
-          <img width="15px" class="mr-1" src="/static/Kitware.png" />
+          <img width="15px" class="mr-1" src="/Kitware.png" />
           <span class="secondary-text">GeoInsight</span>
           <v-menu activator="parent" :open-on-hover="true" :close-on-content-click="false"
             @update:model-value="copied = undefined">
