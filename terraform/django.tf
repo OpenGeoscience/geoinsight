@@ -25,6 +25,8 @@ module "django" {
     "https://www.geoinsight.kitware.com"
   ]
   heroku_postgresql_plan = "essential-0"
+  # Disable workers; they require "tasks" dependencies, which are too large for Heroku to install
+  heroku_worker_dyno_quantity = 0
 }
 
 resource "heroku_addon" "redis" {
