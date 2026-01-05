@@ -20,12 +20,12 @@ export interface Dataset {
   name?: string;
   description?: string;
   category?: string;
-  tags: string[];
+  tags?: string[];
   processing?: boolean;
   layers?: Layer[];
   metadata?: Record<string, any>;
-  owner: User;
-  n_layers: number;
+  owner?: User;
+  n_layers?: number;
 }
 
 export interface Layer {
