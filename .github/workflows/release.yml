@@ -4,35 +4,22 @@ on:
   push:
     branches:
       - master
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: opengeoscience/geoinsight-server
-
+permissions:
+  contents: write
 jobs:
-  tag-and-publish:
+  version-and-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
-
-      - name: Python Semantic Release
-        id: release
-        uses: python-semantic-release/python-semantic-release@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Log into the Container registry
-        uses: docker/login-action@v2
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: token
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push the Docker image
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          file: dev/Dockerfile
-          push: ${{ github.actor != 'dependabot[bot]' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.release.outputs.tag }}
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+      - name: Install npm
+        uses: actions/setup-node@v6
+      - name: Run Semantic Release
+        run: |
+          uvx python-semantic-release version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

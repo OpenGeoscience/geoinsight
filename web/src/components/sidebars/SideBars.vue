@@ -22,7 +22,6 @@ const compareStore = useMapCompareStore();
 
 
 const version = import.meta.env.VITE_APP_VERSION;
-const hash = import.meta.env.VITE_APP_HASH;
 const copied: Ref<string | undefined> = ref();
 
 const themeManager = useTheme();
@@ -77,11 +76,6 @@ watch(darkMode, () => {
                 <v-icon :icon="copied === version ? 'mdi-check' : 'mdi-content-copy'"
                   :color="copied === version ? 'success' : 'primary'" @click="copyToClipboard(version)" />
                 Version: {{ version }}
-              </v-card-subtitle>
-              <v-card-subtitle>
-                <v-icon :icon="copied === hash ? 'mdi-check' : 'mdi-content-copy'"
-                  :color="copied === hash ? 'success' : 'primary'" @click="copyToClipboard(hash)" />
-                Hash: {{ hash }}
               </v-card-subtitle>
             </v-card>
           </v-menu>

@@ -5,14 +5,13 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 // Utilities
-import gitDescribe from 'git-describe';
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
 
+import packageJson from './package.json'
 
-const describe = gitDescribe.gitDescribeSync();
-process.env.VITE_APP_VERSION = describe.dirty ? describe.raw : (describe.tag || undefined);
-process.env.VITE_APP_HASH = describe.hash;
+
+process.env.VITE_APP_VERSION = packageJson.version;
 
 // https://vitejs.dev/config/
 export default defineConfig({
