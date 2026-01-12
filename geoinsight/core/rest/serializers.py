@@ -266,6 +266,14 @@ class AnalysisTypeSerializer(serializers.Serializer):
 
 
 class TaskResultSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField('get_name')
+
+    def get_name(self, obj):
+        if obj.name and obj.created:
+            timestamp = obj.created.strftime('%I:%M %p %d %b %Y')
+            return f'{timestamp} - {obj.name}'
+        return obj.name
+
     class Meta:
         model = TaskResult
         fields = '__all__'
