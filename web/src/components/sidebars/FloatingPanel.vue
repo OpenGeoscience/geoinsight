@@ -120,7 +120,7 @@ function panelUpdated() {
                     @click="compareStore.isComparing = !compareStore.isComparing"
                   />
                   <v-icon
-                    :icon="compareStore.orientation === 'vertical' ? 'mdi-compare-vertical' : 'mdi-compare-horizontal'"
+                    :icon="compareStore.orientation === 'vertical' ? 'mdi-arrow-split-vertical' : 'mdi-arrow-split-horizontal'"
                     size="small"
                     style="position: absolute; bottom: -10px; right: -10px; background-color: rgb(var(--v-theme-background)); border-radius: 50%; padding: 1px;"
                   />
@@ -128,13 +128,13 @@ function panelUpdated() {
               </template>
               <v-list>
                 <v-list-item
-                  :prepend-icon="'mdi-compare-vertical'"
+                  :prepend-icon="'mdi-arrow-split-horizontal'"
                   title="Horizontal"
                   :active="compareStore.orientation === 'horizontal'"
                   @click="compareStore.setOrientation('horizontal')"
                 />
                 <v-list-item
-                  :prepend-icon="'mdi-compare-horizontal'"
+                  :prepend-icon="'mdi-arrow-split-vertical'"
                   title="Vertical"
                   :active="compareStore.orientation === 'vertical'"
                   @click="compareStore.setOrientation('vertical')"
