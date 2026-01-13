@@ -13,6 +13,9 @@ import LayersPanel from "@/components/sidebars/LayersPanel.vue";
 import NetworksPanel from "@/components/sidebars/NetworksPanel.vue";
 
 import { useAppStore, usePanelStore, useProjectStore } from "@/store";
+
+import KitwareLogo from "@/assets/Kitware.png";
+
 const appStore = useAppStore();
 const panelStore = usePanelStore();
 const projectStore = useProjectStore();
@@ -57,7 +60,7 @@ watch(darkMode, () => {
       ">
       <v-toolbar class="toolbar px-5" color="background">
         <v-toolbar-title>
-          <img width="15px" class="mr-1" src="/Kitware.png" />
+          <img width="15px" class="mr-1" :src="KitwareLogo" />
           <span class="secondary-text">GeoInsight</span>
           <v-menu activator="parent" :open-on-hover="true" :close-on-content-click="false"
             @update:model-value="copied = undefined">
