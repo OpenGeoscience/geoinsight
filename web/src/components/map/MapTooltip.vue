@@ -89,7 +89,6 @@ function zoomToFeature() {
   if (clickedFeature.value === undefined) {
     return;
   }
-
   // Set map zoom to match bounding box of region
   const map = mapStore.getMap(props.compareMap);
   const buffered = turf.buffer(
@@ -97,40 +96,12 @@ function zoomToFeature() {
     0.5, {units: 'kilometers'}
   )
   if (!buffered)  return;
-
   const bbox = turf.bbox(buffered);
   if (bbox.length !== 4) {
     throw new Error("Returned bbox should have 4 elements!");
   }
-  
-  // Handle padding based on orientation
-  if (compareStore.isComparing && compareStore.orientation === 'horizontal') {
-    // Horizontal orientation: top/bottom split
-    const padding = { top: 0, bottom: 0 };
-    let offset = window.innerHeight * compareStore.sliderEnd.percentage * 0.01;
-    // Offsets for the sidebars
-    if (!props.compareMap) {
-      padding.bottom = window.innerHeight - offset; // account for split
-      padding.top += appStore.openSidebars.includes("left") ? 0 : 0;
-    } else {
-      padding.top = offset; // account for split
-      padding.bottom += appStore.openSidebars.includes("right") ? 0 : 0;
-    }
-    map.fitBounds(bbox, {maxZoom: map.getZoom(), padding});
-  } else {
-    // Vertical orientation: left/right split (existing logic)
-    const padding = { left: 0, right: 0};
-    let offset = window.innerWidth * compareStore.sliderEnd.percentage * 0.01;
-    // Offsets for the sidebars
-    if (!props.compareMap) {
-      padding.right = window.innerWidth -offset; // account for sidebar
-      padding.left += appStore.openSidebars.includes("left") ? 300 : 0;
-    } else {
-      padding.left = offset; // account for sidebar
-      padding.right += appStore.openSidebars.includes("right") ? 300 : 0;
-    }
-    map.fitBounds(bbox, {maxZoom: map.getZoom(), padding});
-  }
+  map.fitBounds(bbox, {maxZoom: map.getZoom()});
+
 }
 
 // Check if the layer associated with the clicked feature is still selected and visible
@@ -162,7 +133,10 @@ watch(
     tooltip.setLngLat(center);
     // This makes the tooltip visible
     tooltip.addTo(mapStore.getMap(props.compareMap));
-    zoomToFeature()
+    // Don't zoom to feature if comparing maps
+    if (!compareStore.isComparing) {
+      zoomToFeature();
+    }
   }
 );
 
