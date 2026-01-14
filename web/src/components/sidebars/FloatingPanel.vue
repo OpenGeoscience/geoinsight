@@ -2,8 +2,10 @@
 import { computed, ref } from "vue";
 
 import { usePanelStore, useProjectStore } from "@/store";
+import { useMapCompareStore } from "@/store/compare";
 const panelStore = usePanelStore();
 const projectStore = useProjectStore();
+const compareStore = useMapCompareStore();
 
 const props = defineProps<{
   id: string;
@@ -103,6 +105,50 @@ function panelUpdated() {
               color="primary"
               @mousedown="projectStore.projectConfigMode = 'existing'"
             />
+            <v-menu
+              v-if="panel.id === 'layers' && projectStore.currentProject && compareStore.isComparing"
+              :open-on-hover="true"
+              location="bottom"
+              :close-on-content-click="true"
+            >
+              <template v-slot:activator="{ props: menuProps }">
+                <div v-bind="menuProps" style="position: relative; display: inline-block;">
+                  <v-icon
+                    v-tooltip="'Compare Layers'"
+                    icon="mdi-compare"
+                    color="primary"
+                    @click="compareStore.isComparing = !compareStore.isComparing"
+                  />
+                  <v-icon
+                    :icon="compareStore.orientation === 'vertical' ? 'mdi-arrow-split-vertical' : 'mdi-arrow-split-horizontal'"
+                    size="small"
+                    style="position: absolute; bottom: -10px; right: -10px; background-color: rgb(var(--v-theme-background)); border-radius: 50%; padding: 1px;"
+                  />
+                </div>
+              </template>
+              <v-list>
+                <v-list-item
+                  :prepend-icon="'mdi-arrow-split-horizontal'"
+                  title="Horizontal"
+                  :active="compareStore.orientation === 'horizontal'"
+                  @click="compareStore.setOrientation('horizontal')"
+                />
+                <v-list-item
+                  :prepend-icon="'mdi-arrow-split-vertical'"
+                  title="Vertical"
+                  :active="compareStore.orientation === 'vertical'"
+                  @click="compareStore.setOrientation('vertical')"
+                />
+              </v-list>
+            </v-menu>
+            <v-icon
+              v-else-if="panel.id === 'layers' && projectStore.currentProject"
+              v-tooltip="'Compare Layers'"
+              icon="mdi-compare"
+              :color="compareStore.isComparing ? 'primary' : ''"
+              @click="compareStore.isComparing = !compareStore.isComparing"
+            />
+
             <v-icon
               :icon="panel.collapsed ? 'mdi-chevron-down' : 'mdi-chevron-up'"
               v-tooltip="panel.collapsed ? 'Expand' : 'Collapse'"

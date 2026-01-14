@@ -13,6 +13,7 @@ declare module 'vue' {
     ChartsPanel: typeof import('./src/components/sidebars/ChartsPanel.vue')['default']
     ColormapEditor: typeof import('./src/components/sidebars/ColormapEditor.vue')['default']
     ColormapPreview: typeof import('./src/components/sidebars/ColormapPreview.vue')['default']
+    CompareLayerStyle: typeof import('./src/components/sidebars/CompareLayerStyle.vue')['default']
     ControlsBar: typeof import('./src/components/ControlsBar.vue')['default']
     DatasetList: typeof import('./src/components/DatasetList.vue')['default']
     DatasetSelect: typeof import('./src/components/projects/DatasetSelect.vue')['default']
@@ -24,11 +25,13 @@ declare module 'vue' {
     LayerStyle: typeof import('./src/components/sidebars/LayerStyle.vue')['default']
     Map: typeof import('./src/components/map/Map.vue')['default']
     MapTooltip: typeof import('./src/components/map/MapTooltip.vue')['default']
+    MapWrapper: typeof import('./src/components/map/MapWrapper.vue')['default']
     NetworksPanel: typeof import('./src/components/sidebars/NetworksPanel.vue')['default']
     NodeAnimation: typeof import('./src/components/sidebars/NodeAnimation.vue')['default']
     ProjectConfig: typeof import('./src/components/projects/ProjectConfig.vue')['default']
     RecursiveTable: typeof import('./src/components/RecursiveTable.vue')['default']
     SideBars: typeof import('./src/components/sidebars/SideBars.vue')['default']
     SliderNumericInput: typeof import('./src/components/SliderNumericInput.vue')['default']
+    ToggleCompareMap: typeof import('./src/components/map/ToggleCompareMap.vue')['default']
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "geoinsight",
-  "version": "1.20.5",
+  "version": "1.22.0",
   "private": true,
   "scripts": {
     "serve": "vite",
@@ -28,6 +28,7 @@
     "sortablejs": "^1.15.0",
     "vue": "^3.2.13",
     "vue-chartjs": "^5.2.0",
+    "vue-maplibre-compare": "^1.0.19",
     "vuedraggable": "^4.1.0",
     "vuetify": "^3.8.0"
   },

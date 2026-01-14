@@ -4,12 +4,27 @@ import { Layer } from "@/types";
 import { computed, ref } from "vue";
 import draggable from "vuedraggable";
 import LayerStyle from "./LayerStyle.vue";
+import CompareLayerStyle from "./CompareLayerStyle.vue";
 import DetailView from "../DetailView.vue";
 import SliderNumericInput from '../SliderNumericInput'
 
 import { useLayerStore, useMapStore } from "@/store";
+import { useMapCompareStore } from "@/store/compare";
 const layerStore = useLayerStore();
 const mapStore = useMapStore()
+const compareStore = useMapCompareStore();
+const isComparing = computed(() => compareStore.isComparing);
+const orientation = computed(() => compareStore.orientation);
+const visibilityCompareMap = computed(() => {
+    const visibilityMap: { A: Record<string, boolean>, B: Record<string, boolean> } = {A: {}, B: {}};
+    compareStore.displayLayers.mapLayerA.forEach((layer) => {
+        visibilityMap.A[layer.displayName] = layer.state;
+    });
+    compareStore.displayLayers.mapLayerB.forEach((layer) => {
+        visibilityMap.B[layer.displayName] = layer.state;
+    });
+    return visibilityMap;
+});
 
 const searchText = ref<string | undefined>();
 const filteredLayers = computed({
@@ -59,9 +74,14 @@ function getLayerCurrentFrames(layer: Layer) {
     return layerStore.layerFrames(layer).filter((frame) => frame.index === layer.current_frame_index)
 }
 
+
 function setLayerActive(layer: Layer, active: boolean) {
-    if (active) activeLayer.value = layer
-    else activeLayer.value = undefined
+    if (active) {
+        activeLayer.value = layer;
+    }
+    else {
+        activeLayer.value = undefined;
+    }
 }
 </script>
 
@@ -86,10 +106,25 @@ function setLayerActive(layer: Layer, active: boolean) {
                     class="secondary-button"
                 />
                 <v-checkbox-btn
+                    v-if="!isComparing"
                     :model-value="layerStore.selectedLayers.every((l: Layer) => l.visible)"
                     @click="setVisibility(layerStore.selectedLayers, !allLayersVisible)"
                     style="display: inline"
                 />
+                <span v-if="isComparing">
+                    <v-checkbox-btn
+                        v-tooltip="`${ orientation === 'vertical' ? 'Left' : 'Top' } Map All Visibility`"
+                        :model-value="Object.values(visibilityCompareMap.A).every((v) => v === true)"
+                        @update:model-value="compareStore.setAllVisibility('A', $event)"
+                        style="display: inline"
+                    />
+                    <v-checkbox-btn
+                        v-tooltip="`${ orientation === 'vertical' ? 'Right' : 'Bottom' } Map All Visibility`"
+                        :model-value="Object.values(visibilityCompareMap.B).every((v) => v === true)"
+                        @update:model-value="compareStore.setAllVisibility('B', $event)"
+                        style="display: inline"
+                    />
+                </span>
             </div>
             <v-list
                 v-if="filteredLayers?.length"
@@ -111,10 +146,25 @@ function setLayerActive(layer: Layer, active: boolean) {
                                         class="secondary-button"
                                     />
                                     <v-checkbox-btn
+                                        v-if="!isComparing"
                                         :model-value="element.visible"
                                         @click="() => setVisibility([element], !element.visible)"
                                         style="display: inline"
                                     />
+                                    <span v-if="isComparing">
+                                        <v-checkbox-btn
+                                            v-tooltip="`${ orientation === 'vertical' ? 'Left' : 'Top' } Map Visibility`"
+                                            :model-value="visibilityCompareMap.A[element.name]"
+                                            @update:model-value="compareStore.setVisibility('A', element.name, $event)"
+                                            style="display: inline"
+                                        />
+                                        <v-checkbox-btn
+                                            v-tooltip="`${ orientation === 'vertical' ? 'Right' : 'Bottom' } Map Visibility`"
+                                            :model-value="visibilityCompareMap.B[element.name]"
+                                            @update:model-value="compareStore.setVisibility('B', element.name, $event)"
+                                            style="display: inline"
+                                        />
+                                    </span>
                                 </template>
                                 {{ element.name }}
                                 <template v-slot:append>
@@ -125,7 +175,8 @@ function setLayerActive(layer: Layer, active: boolean) {
                                         <v-icon icon="mdi-dots-horizontal"/>
                                         <v-icon :icon="element.hideFrameMenu ? 'mdi-menu-down' :'mdi-menu-up'" />
                                     </span>
-                                    <LayerStyle :layer="element" :activeLayer="activeLayer" @setLayerActive="(v: boolean) => setLayerActive(element, v)"/>
+                                    <LayerStyle v-if="!isComparing" :layer="element" :activeLayer="activeLayer" @setLayerActive="(v: boolean) => setLayerActive(element, v)"/>
+                                    <CompareLayerStyle v-if="isComparing" :layer="element" :activeLayer="activeLayer" @setLayerActive="(v: boolean) => setLayerActive(element, v)"/>
                                     <span class="v-icon material-symbols-outlined" style="cursor: grab;">
                                         format_line_spacing
                                     </span>

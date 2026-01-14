@@ -10,15 +10,17 @@ import ChartsPanel from "@/components/sidebars/ChartsPanel.vue";
 import AnalyticsPanel from "@/components/sidebars/AnalyticsPanel.vue";
 import DatasetsPanel from "@/components/sidebars/DatasetsPanel.vue";
 import LayersPanel from "@/components/sidebars/LayersPanel.vue";
+import CompareLayersPanel from "./CompareLayersPanel.vue";
 import NetworksPanel from "@/components/sidebars/NetworksPanel.vue";
 
 import { useAppStore, usePanelStore, useProjectStore } from "@/store";
-
+import { useMapCompareStore } from "@/store/compare";
 import KitwareLogo from "@/assets/Kitware.png";
 
 const appStore = useAppStore();
 const panelStore = usePanelStore();
 const projectStore = useProjectStore();
+const compareStore = useMapCompareStore();
 
 
 const version = import.meta.env.VITE_APP_VERSION;
