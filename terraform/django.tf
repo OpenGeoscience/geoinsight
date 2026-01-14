@@ -16,6 +16,9 @@ module "django" {
   subdomain_name         = "api"
   django_settings_module = "geoinsight.settings.heroku_production"
 
+  ec2_worker_instance_quantity = 1
+  ec2_worker_ssh_public_key = file("${path.module}/ssh-key.pub")
+
   additional_django_vars = {
     DJANGO_GEOINSIGHT_WEB_URL     = "https://www.geoinsight.kitware.com/"
     DJANGO_DATABASE_POOL_MAX_SIZE = "12"
@@ -24,7 +27,7 @@ module "django" {
   django_cors_allowed_origins = [
     "https://www.geoinsight.kitware.com"
   ]
-  heroku_postgresql_plan = "essential-0"
+
   # Disable workers; they require "tasks" dependencies, which are too large for Heroku to install
   heroku_worker_dyno_quantity = 0
 }
@@ -36,4 +39,8 @@ resource "heroku_addon" "redis" {
 
 output "dns_nameservers" {
   value = aws_route53_zone.this.name_servers
+}
+
+output "ec2_worker_hostnames" {
+  value = module.django.ec2_worker_hostnames
 }
