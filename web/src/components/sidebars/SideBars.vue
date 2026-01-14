@@ -15,6 +15,8 @@ import NetworksPanel from "@/components/sidebars/NetworksPanel.vue";
 
 import { useAppStore, usePanelStore, useProjectStore } from "@/store";
 import { useMapCompareStore } from "@/store/compare";
+import KitwareLogo from "@/assets/Kitware.png";
+
 const appStore = useAppStore();
 const panelStore = usePanelStore();
 const projectStore = useProjectStore();
@@ -60,8 +62,7 @@ watch(darkMode, () => {
       ">
       <v-toolbar class="toolbar px-5" color="background">
         <v-toolbar-title>
-          <img width="15px" class="mr-1"
-            src="https://www.kitware.com/main/wp-content/uploads/2021/12/Kitware-Mark-231x300.png" />
+          <img width="15px" class="mr-1" :src="KitwareLogo" />
           <span class="secondary-text">GeoInsight</span>
           <v-menu activator="parent" :open-on-hover="true" :close-on-content-click="false"
             @update:model-value="copied = undefined">
