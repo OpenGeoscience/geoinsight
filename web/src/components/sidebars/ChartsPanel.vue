@@ -45,6 +45,7 @@ const defaultChartData = {
 };
 const defaultOptions = {
   responsive: true,
+  maintainAspectRatio: false,
 };
 const currentXStart = ref(0);
 const currentXRange = ref(500);
@@ -167,7 +168,7 @@ const downloadReady = computed(() => {
       hide-details
     />
     <v-card class="panel-content-inner">
-      <div v-if="analysisStore.currentChart" class="pa-2">
+      <div v-if="analysisStore.currentChart" class="pa-2" style="height: 100%">
         <div style="position: absolute; right: 10px;">
           <a ref="downloadButton">
             <v-icon

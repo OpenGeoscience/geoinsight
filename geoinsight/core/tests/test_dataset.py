@@ -95,7 +95,6 @@ def test_rest_convert_dataset(
     project.datasets.set([dataset])
 
     result_expected = dict(
-        name=f'Conversion of Dataset {dataset.name}',
         task_type='conversion',
         inputs=dict(
             dataset_id=dataset.id,

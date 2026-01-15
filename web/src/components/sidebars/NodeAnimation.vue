@@ -9,7 +9,7 @@ const layerStore = useLayerStore();
 
 const props = defineProps<{
   nodeFailures?: Record<number, number[]>,
-  nodeRecoveries?:  Record<number, number[]>,
+  nodeRecoveries?: Record<number, number[]>,
   network: Network,
   additionalAnimationLayers: Layer[] | undefined,
 }>();
@@ -20,7 +20,7 @@ const ticker = ref();
 const seconds = computed(() => {
   const nNodes = props.network.nodes.length
   const ordersOfMagnitude = nNodes.toString().length
-  return Math.max(ordersOfMagnitude - 2, 1)
+  return Math.max(ordersOfMagnitude, 4)
 });
 
 const nodeChanges = computed(() => {
@@ -85,27 +85,14 @@ watch(currentTick, async () => {
 <template>
   <div v-if="nodeChanges">
     <div class="animation-row">
-      <v-icon
-        :icon="currentMode === 'play' ? 'mdi-play' : currentMode === 'rewind' ? 'mdi-rewind' : 'mdi-pause'"
-      />
-      <v-slider
-        v-model="currentTick"
-        show-ticks="always"
-        color="primary"
-        class="ml-5"
-        tick-size="6"
-        thumb-size="15"
-        track-size="8"
-        min="0"
-        step="1"
-        :max="numTicks"
-        hide-details
-      />
+      <v-icon :icon="currentMode === 'play' ? 'mdi-play' : currentMode === 'rewind' ? 'mdi-rewind' : 'mdi-pause'" />
+      <v-slider v-model="currentTick" show-ticks="always" color="primary" class="ml-5" tick-size="6" thumb-size="15"
+        track-size="8" min="0" step="1" :max="numTicks" hide-details />
       {{ currentTick + 1 }}
     </div>
     <div class="animation-row">
-      <v-btn @click="play" icon="mdi-play" variant="text"  density="compact"/>
-      <v-btn @click="pause" icon="mdi-pause" variant="text" density="compact"/>
+      <v-btn @click="play" icon="mdi-play" variant="text" density="compact" />
+      <v-btn @click="pause" icon="mdi-pause" variant="text" density="compact" />
       <v-btn @click="rewind" icon="mdi-rewind" variant="text" density="compact" />
     </div>
   </div>
