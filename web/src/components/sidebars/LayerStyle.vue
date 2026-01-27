@@ -975,7 +975,7 @@ onMounted(resetCurrentStyle)
                                                         variant="outlined"
                                                         divided
                                                         mandatory
-                                                        :disabled="!group.visible || !getColormap(group.colormap)?.markers || !vectorProperties?.find((p) => p.name === group.colormap?.color_by)?.range"
+                                                        :disabled="!group.visible || !getColormap(group.colormap)?.markers"
                                                         @update:model-value="(value: string) => {if (group.colormap) group.colormap.discrete = value === 'discrete'}"
                                                     >
                                                         <v-btn :value="'discrete'">Discrete</v-btn>
