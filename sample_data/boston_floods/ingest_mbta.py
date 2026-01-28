@@ -1,4 +1,5 @@
 import json
+
 from geoinsight.core.models import VectorFeature
 
 LINE_COLORS = {
@@ -8,6 +9,7 @@ LINE_COLORS = {
     'ORANGE': '#D88901',
     'SILVER': '#7B8B86',
 }
+
 
 def convert_dataset(dataset, options):
     # Run standard conversion task first
