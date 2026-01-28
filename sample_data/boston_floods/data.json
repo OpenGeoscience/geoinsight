@@ -38,6 +38,7 @@
                 }
             }
         ],
+        "conversion_script": "./ingest_mbta.py",
         "network_options": {
             "connection_column": "ROUTE",
             "connection_column_delimiter": "/",
