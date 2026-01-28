@@ -173,6 +173,14 @@ export const useNetworkStore = defineStore('network', () => {
         return network;
     }
 
+    async function isNodeActive(nodeId: number, dataset: Dataset) {
+        const network = await getNetwork(nodeId, dataset);
+        if (network) {
+            let deactivated = Array.from(networkStates.value[network.id]?.deactivated?.nodes || []);
+            return !deactivated.includes(nodeId)
+        }
+    }
+
     async function toggleNodeActive(nodeId: number, dataset: Dataset) {
         const network = await getNetwork(nodeId, dataset);
         if (network) {
@@ -281,6 +289,7 @@ export const useNetworkStore = defineStore('network', () => {
         currentNetworkEdges,
         initNetworks,
         getNetwork,
+        isNodeActive,
         toggleNodeActive,
         setNetworkDeactivatedNodes,
         styleVisibleNetworks,

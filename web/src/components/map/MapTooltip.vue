@@ -1,19 +1,16 @@
 <script setup lang="ts">
-import { computed, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import * as turf from "@turf/turf";
 import proj4 from "proj4";
-import { Popup } from "maplibre-gl";
 
 import RecursiveTable from "../RecursiveTable.vue";
-
-import { useMapStore, useLayerStore, useNetworkStore, useAppStore } from "@/store";
+import { useMapStore, useLayerStore, useNetworkStore } from "@/store";
 import { useMapCompareStore } from "@/store/compare";
-import { pad } from "lodash";
+
 const layerStore = useLayerStore();
 const networkStore = useNetworkStore();
 const mapStore = useMapStore();
 const compareStore = useMapCompareStore();
-const appStore = useAppStore();
 
 const props = defineProps({
   compareMap: {
@@ -37,6 +34,9 @@ const clickedFeature = computed({
     }
   }
 });
+
+const clickedFeatureIsDeactivatedNode = ref(false);
+
 const clickedFeatureProperties = computed(() => {
   if (clickedFeature.value === undefined) {
     return {};
@@ -48,6 +48,9 @@ const clickedFeatureProperties = computed(() => {
     "id",
     "node_id",
     "edge_id",
+    "to_node_id",
+    "from_node_id",
+    "style",
   ]);
   return Object.fromEntries(
     Object.entries(clickedFeature.value.feature.properties).filter(
@@ -71,8 +74,8 @@ const rasterValue = computed(() => {
     if (raster?.id) {
       const data = mapStore.rasterTooltipDataCache[raster.id]?.data;
       if (data) {
-        const {lng, lat} = clickedFeature.value.pos;
-        let {xmin, xmax, ymin, ymax, srs} = raster.metadata.bounds;
+        const { lng, lat } = clickedFeature.value.pos;
+        let { xmin, xmax, ymin, ymax, srs } = raster.metadata.bounds;
         [xmin, ymin] = proj4(srs, "EPSG:4326", [xmin, ymin]);
         [xmax, ymax] = proj4(srs, "EPSG:4326", [xmax, ymax]);
         // Convert lat/lng to array indices
@@ -93,14 +96,14 @@ function zoomToFeature() {
   const map = mapStore.getMap(props.compareMap);
   const buffered = turf.buffer(
     clickedFeature.value.feature,
-    0.5, {units: 'kilometers'}
+    0.5, { units: 'kilometers' }
   )
-  if (!buffered)  return;
+  if (!buffered) return;
   const bbox = turf.bbox(buffered);
   if (bbox.length !== 4) {
     throw new Error("Returned bbox should have 4 elements!");
   }
-  map.fitBounds(bbox, {maxZoom: map.getZoom()});
+  map.fitBounds(bbox, { maxZoom: map.getZoom() });
 
 }
 
@@ -126,7 +129,7 @@ watch(
     if (clickedFeature.value === undefined) {
       tooltip.remove();
       return;
-    }    
+    }
     // Set tooltip position. Give feature clicks priority
     const centroid = turf.centroid(clickedFeature.value.feature)
     const center = centroid.geometry.coordinates as [number, number]
@@ -140,15 +143,23 @@ watch(
   }
 );
 
-const clickedFeatureIsDeactivatedNode = computed(
-  () =>
-    clickedFeature.value &&
-    networkStore.availableNetworks.find((network) => {
-      return network.deactivated?.nodes.includes(
-        clickedFeature.value?.feature.properties.node_id
-      )
-    })
-);
+async function updateClickedFeatureIsDeactivatedNode() {
+  if (clickedFeature.value === undefined) {
+    throw new Error("Clicked node is undefined!");
+  }
+  const feature = clickedFeature.value.feature;
+  const sourceId = feature.source;
+  const nodeId = clickedFeature.value.feature.properties.node_id;
+  const { dataset } = layerStore.getDBObjectsForSourceID(sourceId);
+  if (dataset) {
+    const active = await networkStore.isNodeActive(nodeId, dataset)
+    clickedFeatureIsDeactivatedNode.value = !active
+  } else {
+    clickedFeatureIsDeactivatedNode.value = false;
+  }
+}
+
+watch(clickedFeature, updateClickedFeatureIsDeactivatedNode)
 
 function toggleNodeHandler() {
   if (clickedFeature.value === undefined) {
@@ -161,6 +172,7 @@ function toggleNodeHandler() {
   if (nodeId && dataset && layer) {
     networkStore.toggleNodeActive(nodeId, dataset)
   }
+  updateClickedFeatureIsDeactivatedNode()
 };
 </script>
 
@@ -171,13 +183,8 @@ function toggleNodeHandler() {
 
     <!-- Render for Network Nodes -->
     <!-- TODO: Eventually allow deactivating Network Edges -->
-    <v-btn
-      v-if="clickedFeature.feature.properties.node_id"
-      block
-      variant="outlined"
-      @click="toggleNodeHandler"
-      :text="clickedFeatureIsDeactivatedNode ? 'Reactivate Node' : 'Deactivate Node'"
-    />
+    <v-btn v-if="clickedFeature.feature.properties.node_id" block variant="outlined" @click="toggleNodeHandler"
+      :text="clickedFeatureIsDeactivatedNode ? 'Reactivate Node' : 'Deactivate Node'" />
   </div>
 
   <!-- Check for raster tooltip data after, to give clicked features priority -->
@@ -194,9 +201,11 @@ function toggleNodeHandler() {
   background-color: rgb(var(--v-theme-surface)) !important;
   border-top-color: rgb(var(--v-theme-surface)) !important;
 }
+
 .maplibregl-popup-tip {
   border-top-color: rgb(var(--v-theme-surface)) !important;
 }
+
 .maplibregl-popup-close-button {
   font-size: 24px;
   margin-right: 5px;
