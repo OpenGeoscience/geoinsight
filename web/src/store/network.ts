@@ -265,7 +265,13 @@ export const useNetworkStore = defineStore('network', () => {
                     const groupName = layerInfo.layerType === 'line' ? 'lines' : 'points'
                     const propsSpec = currentFrame.vector?.summary?.properties
                     if (propsSpec) {
-                        defaultPropValue = styleStore.getVectorColorPaintProperty(currentStyleSpec, groupName, propsSpec, styleStore.colormaps)
+                        defaultPropValue = styleStore.getVectorColorPaintProperty(
+                            currentStyleSpec,
+                            groupName,
+                            propsSpec,
+                            styleStore.colormaps,
+                            paintProperty.includes('stroke'),
+                        )
                     } else {
                         defaultPropValue = 'black'
                     }

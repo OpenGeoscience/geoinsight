@@ -50,7 +50,8 @@ const clickedFeatureProperties = computed(() => {
     "edge_id",
     "to_node_id",
     "from_node_id",
-    "style",
+    "fill",
+    "stroke",
   ]);
   return Object.fromEntries(
     Object.entries(clickedFeature.value.feature.properties).filter(

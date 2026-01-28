@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { FilterSpecification, LayerSpecification, RasterTileSource } from "maplibre-gl";
+import { RasterTileSource } from "maplibre-gl";
 import {
     AppliedColormap,
     Colormap,
@@ -135,12 +135,14 @@ function getVectorColorPaintProperty(
     groupName: string,
     propsSpec: Record<string, PropertySummary>,
     colormaps: Colormap[],
+    stroke: boolean = false,
 ) {
     const colorSpecs = styleSpec.colors || []
     const colorSpec = colorSpecs.find((c) => [groupName, 'all'].includes(c.name))
     let baseColor: any = '#000'
     if (colorSpec?.single_color) {
-        baseColor = colorSpec.single_color;
+        const propName = stroke ? "stroke" : "fill"
+        baseColor = ["coalesce", ["get", propName], colorSpec.single_color];
     } else if (colorSpec?.colormap?.color_by && propsSpec) {
         const colorByProp = propsSpec[colorSpec.colormap.color_by]
         if (!colorByProp) return undefined
@@ -441,7 +443,11 @@ export const useStyleStore = defineStore('style', () => {
             const color = getVectorColorPaintProperty(styleSpec, 'points', propsSpec, colormaps.value);
             if (color) {
                 paint['circle-color'] = color;
-                paint['circle-stroke-color'] = color;
+            }
+            const strokeColor = getVectorColorPaintProperty(styleSpec, 'points', propsSpec, colormaps.value, true);
+            if (strokeColor) {
+                paint['circle-stroke-color'] = strokeColor;
+                paint['circle-stroke-width'] = 3;
             }
             const size = getVectorSizePaintProperty(styleSpec, 'points', propsSpec);
             if (size) paint['circle-radius'] = size;
@@ -472,32 +478,32 @@ export const useStyleStore = defineStore('style', () => {
     }
 
     function setMapLayerStyle(
-    mapLayerId: string,
-    styleSpec: StyleSpec,
-    frame: LayerFrame | undefined,
-    vector: VectorData | null,
-) {
-    const map = mapStore.getMap();
-    const result = createMapLayerStyle(mapLayerId, styleSpec, frame, vector);
-    if (!result) return;
+        mapLayerId: string,
+        styleSpec: StyleSpec,
+        frame: LayerFrame | undefined,
+        vector: VectorData | null,
+    ) {
+        const map = mapStore.getMap();
+        const result = createMapLayerStyle(mapLayerId, styleSpec, frame, vector);
+        if (!result) return;
 
-    for (const [key, value] of Object.entries(result.paint)) {
-        map.setPaintProperty(mapLayerId, key, value);
-    }
+        for (const [key, value] of Object.entries(result.paint)) {
+            map.setPaintProperty(mapLayerId, key, value);
+        }
 
-    if (result.tileURL) {
-        const mapLayer = map.getLayer(mapLayerId) as MapLibreLayerWithMetadata;
-        const source = map.getSource(mapLayer.source) as RasterTileSource;
-        source?.setTiles([result.tileURL]);
+        if (result.tileURL) {
+            const mapLayer = map.getLayer(mapLayerId) as MapLibreLayerWithMetadata;
+            const source = map.getSource(mapLayer.source) as RasterTileSource;
+            source?.setTiles([result.tileURL]);
+        }
     }
-}
 
     function returnMapLayerStyle(
-    mapLayerId: string,
-    styleSpec: StyleSpec,
-    frame: LayerFrame | undefined,
-    vector: VectorData | null,
-    visibility: 'visible' | 'none' = 'visible',
+        mapLayerId: string,
+        styleSpec: StyleSpec,
+        frame: LayerFrame | undefined,
+        vector: VectorData | null,
+        visibility: 'visible' | 'none' = 'visible',
     ) {
         const result = createMapLayerStyle(mapLayerId, styleSpec, frame, vector);
         if (!result) return;
