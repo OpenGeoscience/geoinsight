@@ -19,6 +19,7 @@ class FloodSimulation(AnalysisType):
         self.description = 'Select parameters to simulate a 24-hour flood of the Charles River'
         self.db_value = 'flood_simulation'
         self.input_types = {
+            'initial_conditions_id': 'string',
             'time_period': 'string',
             'hydrograph': 'Chart',
             'potential_evapotranspiration_percentile': 'number',
@@ -35,6 +36,7 @@ class FloodSimulation(AnalysisType):
 
     def get_input_options(self):
         return {
+            'initial_conditions_id': ['001', '002', '003'],
             'time_period': ['2031-2050', '2041-2060'],
             'hydrograph': Chart.objects.filter(name__icontains='hydrograph'),
             'potential_evapotranspiration_percentile': [dict(min=0, max=100, step=1)],
@@ -63,6 +65,7 @@ def flood_simulation(result_id):
 
     try:
         for input_key in [
+            'initial_conditions_id',
             'time_period',
             'hydrograph',
             'potential_evapotranspiration_percentile',
@@ -76,6 +79,7 @@ def flood_simulation(result_id):
                 return
 
         result.write_status('Interpreting input values')
+        initial_conditions_id = result.inputs.get('initial_conditions_id')
         time_period = result.inputs.get('time_period')
         hydrograph_id = result.inputs.get('hydrograph')
         hydrograph_chart = Chart.objects.get(id=hydrograph_id)
@@ -87,13 +91,14 @@ def flood_simulation(result_id):
 
         name = (
             f'{time_period} {annual_probability} Flood Simulation '
-            f'with {hydrograph_chart.name} and '
-            f'percentiles {pet_percentile}, {sm_percentile}, {gw_percentile}'
+            f'with {hydrograph_chart.name}, initial condition set {initial_conditions_id}, '
+            f'and percentiles {pet_percentile}, {sm_percentile}, {gw_percentile}'
         )
         result.name = name
         result.write_status('Running flood simulation module with specified inputs')
 
         flood_results = run_sim(
+            initial_conditions_id=initial_conditions_id,
             time_period=time_period,
             annual_probability=annual_probability,
             hydrograph=hydrograph,
@@ -105,14 +110,13 @@ def flood_simulation(result_id):
         result.write_status('Saving result to database')
 
         with tempfile.TemporaryDirectory() as output_folder:
-            output_folder = Path(output_folder)
+            output_path = Path(output_folder) / 'flood_simulation.tif'
 
             write_multiframe_geotiff(
                 flood_results=flood_results,
-                output_folder=output_folder,
+                output_path=output_path,
                 writer='large_image',
             )
-            output_path = output_folder / 'flood_simulation.tif'
 
             metadata = dict(
                 attribution='Simulation code by August Posch at Northeastern University',
@@ -123,6 +127,7 @@ def flood_simulation(result_id):
                 ],
                 module_repository='https://github.com/OpenGeoscience/uvdat-flood-sim',
                 inputs=dict(
+                    initial_conditions_id=initial_conditions_id,
                     time_period=time_period,
                     hydrograph=hydrograph,
                     pet_percentile=pet_percentile,
