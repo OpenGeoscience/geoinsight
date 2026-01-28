@@ -1,5 +1,3 @@
-import json
-
 from geoinsight.core.models import VectorFeature
 
 LINE_COLORS = {
