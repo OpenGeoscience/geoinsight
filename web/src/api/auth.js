@@ -9,7 +9,7 @@ export const apiClient = axios.create({
   baseURL,
 });
 export const oauthClient = new OauthClient(
-  new URL(import.meta.env.VITE_APP_OAUTH_API_ROOT),
+  new URL(`${import.meta.env.VITE_APP_API_ROOT}oauth/`),
   import.meta.env.VITE_APP_OAUTH_CLIENT_ID,
   { redirectUrl: window.location.origin }
 );
