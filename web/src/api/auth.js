@@ -3,6 +3,8 @@ import OauthClient from "@resonant/oauth-client";
 import S3FileFieldClient from 'django-s3-file-field';
 import { useAppStore, useMapStore, useProjectStore } from "@/store";
 
+const OAUTH2_CLIENT_ID = 'cBmD6D6F2YAmMWHNQZFPUr4OpaXVpW5w4Thod6Kj';
+
 export const baseURL = `${import.meta.env.VITE_APP_API_ROOT}api/v1/`;
 
 export const apiClient = axios.create({
@@ -10,7 +12,7 @@ export const apiClient = axios.create({
 });
 export const oauthClient = new OauthClient(
   new URL(`${import.meta.env.VITE_APP_API_ROOT}oauth/`),
-  import.meta.env.VITE_APP_OAUTH_CLIENT_ID,
+  OAUTH2_CLIENT_ID,
   { redirectUrl: window.location.origin }
 );
 

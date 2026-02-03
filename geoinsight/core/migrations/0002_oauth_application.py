@@ -2,8 +2,7 @@ from django.db import migrations
 from django.db.backends.base.schema import BaseDatabaseSchemaEditor
 from django.db.migrations.state import StateApps
 
-APPLICATION_NAME = 'client-app'
-# This should be changed in production, to avoid accidental attempts to authenticate
+APPLICATION_NAME = 'geoinsight-web'
 CLIENT_ID = 'cBmD6D6F2YAmMWHNQZFPUr4OpaXVpW5w4Thod6Kj'
 
 
