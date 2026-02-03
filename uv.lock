@@ -1419,27 +1419,59 @@ argon2 = [
 
 [[package]]
 name = "django-allauth"
-version = "65.13.1"
+version = "65.14.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref" },
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e0/b7/42a048ba1dedbb6b553f5376a6126b1c753c10c70d1edab8f94c560c8066/django_allauth-65.13.1.tar.gz", hash = "sha256:2af0d07812f8c1a8e3732feaabe6a9db5ecf3fad6b45b6a0f7fd825f656c5a15", size = 1983857, upload-time = "2025-11-20T16:34:40.811Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/23/9b/061a6ac65c602eb721b13fbf9c665b20fb900f113a03ec8521b5fcf16b83/django_allauth-65.14.0.tar.gz", hash = "sha256:5529227aba2b1377d900e9274a3f24496c645e65400fbae3cad5789944bc4d0b", size = 1991909, upload-time = "2026-01-17T18:43:12.928Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d8/98/9d44ae1468abfdb521d651fb67f914165c7812dfdd97be16190c9b1cc246/django_allauth-65.13.1-py3-none-any.whl", hash = "sha256:2887294beedfd108b4b52ebd182e0ed373deaeb927fc5a22f77bbde3174704a6", size = 1787349, upload-time = "2025-11-20T16:34:37.354Z" },
+    { url = "https://files.pythonhosted.org/packages/ce/c8/2f959ff8466913d95ba72eb4a29bd7998d28a559786033a97b5bbdda2b81/django_allauth-65.14.0-py3-none-any.whl", hash = "sha256:448f5f7877f95fcbe1657256510fe7822d7871f202521a29e23ef937f3325a97", size = 1793052, upload-time = "2026-01-17T18:43:08.954Z" },
 ]
 
 [[package]]
 name = "django-auth-style"
-version = "0.12.1"
+version = "0.13.0"
 source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django" },
+resolution-markers = [
+    "python_full_version == '3.11.*' and platform_machine == 'aarch64' and sys_platform == 'linux'",
+    "python_full_version == '3.11.*' and platform_machine != 'aarch64' and sys_platform == 'linux'",
+    "python_full_version == '3.11.*' and sys_platform == 'darwin'",
+    "python_full_version == '3.11.*' and sys_platform != 'darwin' and sys_platform != 'linux'",
+    "python_full_version < '3.11' and platform_machine == 'aarch64' and sys_platform == 'linux'",
+    "python_full_version < '3.11' and platform_machine != 'aarch64' and sys_platform == 'linux'",
+    "python_full_version < '3.11' and sys_platform == 'darwin'",
+    "python_full_version < '3.11' and sys_platform != 'darwin' and sys_platform != 'linux'",
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/44/45/220dd032c02642cc8d70e741e990b5c963d9b6ddf8dc8265b28d007f220d/django_auth_style-0.12.1.tar.gz", hash = "sha256:63cc70b20b2ca33ddb7ec109f5694033a222fcb6efdc11319ee7fea60512d895", size = 1454185, upload-time = "2025-10-16T22:41:24.919Z" }
+dependencies = [
+    { name = "django", marker = "python_full_version < '3.12'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/4c/8e/60cc1cfb521c6efc1be562e5472ad48f08de55f2a058b23f0e1b76343a87/django_auth_style-0.13.0.tar.gz", hash = "sha256:80d723d6b4ecc6ca57df558951395ff66a2ff172a8a7303c613f469fce8b4d04", size = 40865, upload-time = "2026-01-06T14:08:55.556Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/01/d3/0ae69999892f83069583d4f2643595ffbf801381e6a2485944b8aa1d569b/django_auth_style-0.12.1-py3-none-any.whl", hash = "sha256:e0659b6c7cf23caac00f982cc7f32c0e60c42b631f40a294c8485e9ae606bdf8", size = 1459454, upload-time = "2025-10-16T22:41:23.217Z" },
+    { url = "https://files.pythonhosted.org/packages/ba/ab/a8b25f48c13ab4cf449bba2a162585e3c8d4e4126fa02d96890e02762028/django_auth_style-0.13.0-py3-none-any.whl", hash = "sha256:9751345f02c7acfd7e3fdb4546131d7692805294ce50f6f41eff32f58a0f6ad8", size = 45958, upload-time = "2026-01-06T14:08:54.258Z" },
+]
+
+[[package]]
+name = "django-auth-style"
+version = "0.14.0"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version >= '3.14' and platform_machine == 'aarch64' and sys_platform == 'linux'",
+    "python_full_version >= '3.14' and platform_machine != 'aarch64' and sys_platform == 'linux'",
+    "python_full_version >= '3.14' and sys_platform == 'darwin'",
+    "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'linux'",
+    "python_full_version >= '3.12' and python_full_version < '3.14' and platform_machine == 'aarch64' and sys_platform == 'linux'",
+    "python_full_version >= '3.12' and python_full_version < '3.14' and platform_machine != 'aarch64' and sys_platform == 'linux'",
+    "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform == 'darwin'",
+    "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform != 'darwin' and sys_platform != 'linux'",
+]
+dependencies = [
+    { name = "django", marker = "python_full_version >= '3.12'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a7/47/23aa3a54607ac4e2db45323dd4576f0e3d15675c93d80cacf49d715d44e6/django_auth_style-0.14.0.tar.gz", hash = "sha256:9cfa474da6242fb501f9b5f9f0c094a667039e71bd086c28983ae4958d128408", size = 40843, upload-time = "2026-01-06T14:25:26.164Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f5/b9/bb40b531581b0d219c0bd14469f0df786b72b97420a4d8cf0506e7fc7bfd/django_auth_style-0.14.0-py3-none-any.whl", hash = "sha256:e191f23730ac89e7b660a387ba6a1c1b26a87a519dfdb05313bc9355efbc0a8e", size = 45948, upload-time = "2026-01-06T14:25:27.121Z" },
 ]
 
 [[package]]
@@ -1558,7 +1590,7 @@ wheels = [
 
 [[package]]
 name = "django-oauth-toolkit"
-version = "3.1.0"
+version = "3.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
@@ -1566,9 +1598,9 @@ dependencies = [
     { name = "oauthlib" },
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b7/9f/2f183535b1ae1e3b6b07b59e74e75c47c057a690a83cc7ed1edc2621f3a4/django_oauth_toolkit-3.1.0.tar.gz", hash = "sha256:d5a59d07588cfefa8818e99d65040a252eb2ede22512483e2240c91d0b885c8e", size = 102563, upload-time = "2025-10-03T16:12:25.236Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a7/95/efd83b35c34b86eb2249d2b54c5eaf383c48f3f19034aa6f3807e37471b6/django_oauth_toolkit-3.2.0.tar.gz", hash = "sha256:c36761ae6810083d95a652e9c820046cde0d45a2e2a5574bbe7202656ec20bb6", size = 114211, upload-time = "2026-01-08T22:03:13.311Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1f/40/c36397edbd020319403a76ce3229f757c262db8652a424f354d848799271/django_oauth_toolkit-3.1.0-py3-none-any.whl", hash = "sha256:10ddc90804297d913dfb958edd58d5fac541eb1ca912f47893ca1e482bb2a11f", size = 78658, upload-time = "2025-10-03T16:12:24.038Z" },
+    { url = "https://files.pythonhosted.org/packages/ae/cc/f27a784c0ecd13335abd9ef85ebb80dbc04945f919da5f496f56e3562751/django_oauth_toolkit-3.2.0-py3-none-any.whl", hash = "sha256:bd2cd2719b010231a2f370f927dbcc740454fb1d0dd7e7f4138f36227363dc26", size = 87077, upload-time = "2026-01-08T22:03:12.123Z" },
 ]
 
 [[package]]
@@ -1595,8 +1627,18 @@ celery = [
 name = "django-resonant-utils"
 version = "0.16.2"
 source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version == '3.11.*' and platform_machine == 'aarch64' and sys_platform == 'linux'",
+    "python_full_version == '3.11.*' and platform_machine != 'aarch64' and sys_platform == 'linux'",
+    "python_full_version == '3.11.*' and sys_platform == 'darwin'",
+    "python_full_version == '3.11.*' and sys_platform != 'darwin' and sys_platform != 'linux'",
+    "python_full_version < '3.11' and platform_machine == 'aarch64' and sys_platform == 'linux'",
+    "python_full_version < '3.11' and platform_machine != 'aarch64' and sys_platform == 'linux'",
+    "python_full_version < '3.11' and sys_platform == 'darwin'",
+    "python_full_version < '3.11' and sys_platform != 'darwin' and sys_platform != 'linux'",
+]
 dependencies = [
-    { name = "django" },
+    { name = "django", marker = "python_full_version < '3.12'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/9b/a0/8375977719b03256f000bef2edad09e4e3a4fffce009d01012875de3694c/django_resonant_utils-0.16.2.tar.gz", hash = "sha256:5586aa46d78c09891ed436e42b654ef023bcefd269dcb84fb46818f9485c0324", size = 12635, upload-time = "2025-12-03T20:03:24.47Z" }
 wheels = [
@@ -1605,13 +1647,46 @@ wheels = [
 
 [package.optional-dependencies]
 allauth = [
-    { name = "django-allauth" },
+    { name = "django-allauth", marker = "python_full_version < '3.12'" },
 ]
 minio-storage = [
-    { name = "django-minio-storage" },
+    { name = "django-minio-storage", marker = "python_full_version < '3.12'" },
 ]
 s3-storage = [
-    { name = "django-storages", extra = ["s3"] },
+    { name = "django-storages", extra = ["s3"], marker = "python_full_version < '3.12'" },
+]
+
+[[package]]
+name = "django-resonant-utils"
+version = "0.17.0"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version >= '3.14' and platform_machine == 'aarch64' and sys_platform == 'linux'",
+    "python_full_version >= '3.14' and platform_machine != 'aarch64' and sys_platform == 'linux'",
+    "python_full_version >= '3.14' and sys_platform == 'darwin'",
+    "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'linux'",
+    "python_full_version >= '3.12' and python_full_version < '3.14' and platform_machine == 'aarch64' and sys_platform == 'linux'",
+    "python_full_version >= '3.12' and python_full_version < '3.14' and platform_machine != 'aarch64' and sys_platform == 'linux'",
+    "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform == 'darwin'",
+    "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform != 'darwin' and sys_platform != 'linux'",
+]
+dependencies = [
+    { name = "django", marker = "python_full_version >= '3.12'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/2a/ea/fceac0c90a0ca0317ebac762725b10039c4c724602ac483128365974ec27/django_resonant_utils-0.17.0.tar.gz", hash = "sha256:dbb4a85001286b12405c45c7eee83ad76ebf218ae711f90c398e82bec6a87177", size = 13250, upload-time = "2026-01-27T06:39:10.707Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ef/cf/9bcef19b10e73690887baac8b5b047fbb50ece71ab08e8fba43f7ee09994/django_resonant_utils-0.17.0-py3-none-any.whl", hash = "sha256:d8116b062f960497cd26bf140d65b8cfa992baa5c513e3075fb558327d3365f5", size = 14983, upload-time = "2026-01-27T06:39:09.93Z" },
+]
+
+[package.optional-dependencies]
+allauth = [
+    { name = "django-allauth", marker = "python_full_version >= '3.12'" },
+]
+minio-storage = [
+    { name = "django-minio-storage", marker = "python_full_version >= '3.12'" },
+]
+s3-storage = [
+    { name = "django-storages", extra = ["s3"], marker = "python_full_version >= '3.12'" },
 ]
 
 [[package]]
@@ -2368,7 +2443,8 @@ dependencies = [
     { name = "channels-redis" },
     { name = "django", extra = ["argon2"] },
     { name = "django-allauth" },
-    { name = "django-auth-style" },
+    { name = "django-auth-style", version = "0.13.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "django-auth-style", version = "0.14.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "django-cors-headers" },
     { name = "django-environ" },
     { name = "django-extensions" },
@@ -2377,7 +2453,8 @@ dependencies = [
     { name = "django-large-image" },
     { name = "django-oauth-toolkit" },
     { name = "django-resonant-settings", extra = ["allauth", "celery"] },
-    { name = "django-resonant-utils", extra = ["allauth", "s3-storage"] },
+    { name = "django-resonant-utils", version = "0.16.2", source = { registry = "https://pypi.org/simple" }, extra = ["allauth", "s3-storage"], marker = "python_full_version < '3.12'" },
+    { name = "django-resonant-utils", version = "0.17.0", source = { registry = "https://pypi.org/simple" }, extra = ["allauth", "s3-storage"], marker = "python_full_version >= '3.12'" },
     { name = "django-s3-file-field", extra = ["s3"] },
     { name = "django-storages", extra = ["s3"] },
     { name = "django-stubs-ext" },
@@ -2409,7 +2486,8 @@ development = [
     { name = "django-browser-reload" },
     { name = "django-debug-toolbar" },
     { name = "django-minio-storage" },
-    { name = "django-resonant-utils", extra = ["minio-storage"] },
+    { name = "django-resonant-utils", version = "0.16.2", source = { registry = "https://pypi.org/simple" }, extra = ["minio-storage"], marker = "python_full_version < '3.12'" },
+    { name = "django-resonant-utils", version = "0.17.0", source = { registry = "https://pypi.org/simple" }, extra = ["minio-storage"], marker = "python_full_version >= '3.12'" },
     { name = "django-s3-file-field", extra = ["minio"] },
     { name = "ipython", version = "8.37.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "ipython", version = "9.8.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
