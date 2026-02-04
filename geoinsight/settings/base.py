@@ -119,10 +119,7 @@ LOGIN_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_SIGNUP_FORM_CLASS = 'resonant_utils.allauth.FullNameSignupForm'
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'guardian.backends.ObjectPermissionBackend',
-]
+AUTHENTICATION_BACKENDS.append('guardian.backends.ObjectPermissionBackend')
 # django-guardian; raise PermissionDenied exception instead of redirecting to login page
 GUARDIAN_RAISE_403 = True
 # django-guardian; disable anonymous user permissions
