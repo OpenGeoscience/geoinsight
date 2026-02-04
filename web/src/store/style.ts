@@ -141,8 +141,7 @@ function getVectorColorPaintProperty(
     const colorSpec = colorSpecs.find((c) => [groupName, 'all'].includes(c.name))
     let baseColor: any = '#000'
     if (colorSpec?.single_color) {
-        const propName = stroke ? "stroke" : "fill"
-        baseColor = ["coalesce", ["get", propName], colorSpec.single_color];
+        baseColor = colorSpec.single_color;
     } else if (colorSpec?.colormap?.color_by && propsSpec) {
         const colorByProp = propsSpec[colorSpec.colormap.color_by]
         if (!colorByProp) return undefined
@@ -208,6 +207,10 @@ function getVectorColorPaintProperty(
             nullColor,
             baseColor,
         ]
+    }
+    if (colorSpec?.use_feature_props) {
+        const propName = stroke ? "stroke" : "fill"
+        baseColor = ["coalesce", ["get", propName], baseColor];
     }
     return baseColor;
 }
@@ -343,6 +346,7 @@ export const useStyleStore = defineStore('style', () => {
                 {
                     name: 'all',
                     visible: true,
+                    use_feature_props: true,
                     single_color: raster ? undefined : getDefaultColor(),
                     colormap: raster ? {
                         range,

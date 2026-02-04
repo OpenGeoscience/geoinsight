@@ -203,7 +203,7 @@ function setCurrentColorGroups(different: boolean | null) {
     if (different) {
         if (showRasterOptions.value && rasterBands.value) {
             currentStyleSpec.value.colors = availableGroups.value.map((name) => {
-                return { ...all, visible: true, name }
+                return { ...all, visible: true, use_feature_props: true, name }
             })
             availableGroups.value.forEach((name) => setGroupColorMode(name, 'colormap'))
         } else if (showVectorOptions.value) {
@@ -219,6 +219,7 @@ function setCurrentColorGroups(different: boolean | null) {
                 ...currentGroupOptions,
                 name: 'all',
                 visible: true,
+                use_feature_props: true,
             }]
         } else {
             currentStyleSpec.value.colors = [...defaultStyle.colors]
@@ -826,6 +827,28 @@ onMounted(resetCurrentStyle)
                                         <tr v-if="currentGroups['color'] !== 'all'">
                                             <td colspan="2">
                                                 <v-label class="secondary-text py-2">Selected Feature Type Options [{{ currentGroups['color'] }}]</v-label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colSpan="2">
+                                                <v-checkbox
+                                                    v-model="group.use_feature_props"
+                                                    :disabled="!group.visible"
+                                                    density="compact"
+                                                    class="primary-control"
+                                                    hide-details
+                                                >
+                                                    <template v-slot:label>
+                                                        <span>
+                                                            Prioritize feature color properties
+                                                        </span>
+                                                        <v-icon
+                                                            icon="mdi-information-outline"
+                                                            class="ml-2"
+                                                            v-tooltip="'When enabled, features with fill and stroke properties will use those colors. Features without those properties will use the specified color configuration.'"
+                                                        />
+                                                    </template>
+                                                </v-checkbox>
                                             </td>
                                         </tr>
                                         <tr>
