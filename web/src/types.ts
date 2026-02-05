@@ -99,6 +99,7 @@ export interface StyleSpec {
   colors: {
     name: string;
     visible: boolean;
+    use_feature_props: boolean;
     single_color?: string;
     colormap?: AppliedColormap,
   }[],

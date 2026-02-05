@@ -76,7 +76,7 @@ class VectorData(models.Model):
         # Limit number of unique values to return for non-numeric fields
         value_set_max_length = 1000
         summary = dict(feature_types=[], properties={})
-        exclude_keys = ['node_id', 'edge_id', 'to_node_id', 'from_node_id']
+        exclude_keys = ['node_id', 'edge_id', 'to_node_id', 'from_node_id', 'fill', 'stroke']
         # Create sets of all values for all properties (except excluded)
         # and a list of the feature types that exist (point, line, polygon)
         for feature in self.features.all():

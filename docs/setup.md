@@ -43,6 +43,7 @@ docker compose run --rm -it django ./manage.py createsuperuser
 > **Note:** The `createsuperuser` command prompts you to create login credentials (email and password). Use these credentials to sign into both the Admin Panel and User Interface. If you forget your password, run `createsuperuser` again to create a new admin account.
 
 > **Windows Users:** If the `createsuperuser` command hangs or doesn't show prompts, prefix the command with `winpty`:
+>
 > ```bash
 > winpty docker compose run --rm -it django ./manage.py createsuperuser
 > ```
@@ -56,8 +57,9 @@ docker compose run --rm django ./manage.py ingest {JSON_FILE}
 ```
 
 Available ingest options (paths relative to `sample_data/`):
+
+- `boston_floods/data.json`
 - `multiframe_test.json`
-- `boston_floods.json`
 - `la_wildfires.json`
 - `new_york_energy/data.json`
 
@@ -68,11 +70,13 @@ Available ingest options (paths relative to `sample_data/`):
 ### Start the Services
 
 **Default (CPU-only):**
+
 ```bash
 docker compose up
 ```
 
 **With GPU acceleration (NVIDIA systems only):**
+
 ```bash
 docker compose --profile gpu up --scale celery=0
 ```
@@ -81,10 +85,10 @@ docker compose --profile gpu up --scale celery=0
 
 ### Access Points
 
-| Service | URL |
-|---------|-----|
-| User Interface | http://localhost:8080/ |
-| Admin Panel | http://localhost:8000/admin/ |
+| Service           | URL                                     |
+| ----------------- | --------------------------------------- |
+| User Interface    | http://localhost:8080/                  |
+| Admin Panel       | http://localhost:8000/admin/            |
 | API Documentation | http://localhost:8000/api/docs/swagger/ |
 
 Log in using the credentials you created with `createsuperuser`.
@@ -123,6 +127,7 @@ docker compose run --rm django ./manage.py migrate
 If you encounter build errors related to Python packages:
 
 1. **Clear Docker build cache:**
+
    ```bash
    docker compose build --no-cache
    ```
@@ -148,11 +153,13 @@ If ports 8000, 8080, 5432, or 9000 are in use, modify the port mappings in `dock
 ### GPU Not Available
 
 If you see an error like:
+
 ```
 Error response from daemon: could not select device driver "nvidia" with capabilities: [[gpu]]
 ```
 
 This means GPU mode was requested but NVIDIA drivers aren't available. Use the default CPU mode instead:
+
 ```bash
 docker compose up
 ```

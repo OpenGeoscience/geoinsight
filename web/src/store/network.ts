@@ -173,6 +173,14 @@ export const useNetworkStore = defineStore('network', () => {
         return network;
     }
 
+    async function isNodeActive(nodeId: number, dataset: Dataset) {
+        const network = await getNetwork(nodeId, dataset);
+        if (network) {
+            let deactivated = Array.from(networkStates.value[network.id]?.deactivated?.nodes || []);
+            return !deactivated.includes(nodeId)
+        }
+    }
+
     async function toggleNodeActive(nodeId: number, dataset: Dataset) {
         const network = await getNetwork(nodeId, dataset);
         if (network) {
@@ -257,7 +265,13 @@ export const useNetworkStore = defineStore('network', () => {
                     const groupName = layerInfo.layerType === 'line' ? 'lines' : 'points'
                     const propsSpec = currentFrame.vector?.summary?.properties
                     if (propsSpec) {
-                        defaultPropValue = styleStore.getVectorColorPaintProperty(currentStyleSpec, groupName, propsSpec, styleStore.colormaps)
+                        defaultPropValue = styleStore.getVectorColorPaintProperty(
+                            currentStyleSpec,
+                            groupName,
+                            propsSpec,
+                            styleStore.colormaps,
+                            paintProperty.includes('stroke'),
+                        )
                     } else {
                         defaultPropValue = 'black'
                     }
@@ -281,6 +295,7 @@ export const useNetworkStore = defineStore('network', () => {
         currentNetworkEdges,
         initNetworks,
         getNetwork,
+        isNodeActive,
         toggleNodeActive,
         setNetworkDeactivatedNodes,
         styleVisibleNetworks,

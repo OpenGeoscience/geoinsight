@@ -55,6 +55,7 @@ class LayerStyle(models.Model):
             color_config_names.append(color_config_name)
             color_config, _ = ColorConfig.objects.get_or_create(style=self, name=color_config_name)
             color_config.visible = color_spec.get('visible', True)
+            color_config.use_feature_props = color_spec.get('use_feature_props', True)
             single_color = color_spec.get('single_color')
             if single_color is not None:
                 color_config.single_color = single_color
@@ -160,7 +161,9 @@ class LayerStyle(models.Model):
 
         colors = []
         for color_config in ColorConfig.objects.filter(style=self):
-            color = serialize_fields(color_config, ['name', 'visible', 'single_color'])
+            color = serialize_fields(
+                color_config, ['name', 'visible', 'use_feature_props', 'single_color']
+            )
             try:
                 colormap = serialize_fields(
                     color_config.colormap,
@@ -225,6 +228,7 @@ class ColorConfig(models.Model):
     style = models.ForeignKey(LayerStyle, related_name='color_configs', on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     visible = models.BooleanField(default=True)
+    use_feature_props = models.BooleanField(default=True)
     single_color = models.CharField(
         max_length=12, null=True, blank=True
     )  # optionally contains a color hex or 'transparent'

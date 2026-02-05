@@ -9,6 +9,7 @@ SIMPLE_SPEC = dict(
         dict(
             name='all',
             visible=True,
+            use_feature_props=True,
             single_color='#ffffff',
         )
     ],
@@ -29,6 +30,7 @@ COMPLEX_SPEC = dict(
         dict(
             name='all',
             visible=True,
+            use_feature_props=False,
             # Discretely apply 5 colors of terrain colormap by 'depth' with range [-1.5, 1.5]
             colormap=dict(
                 id=1,
