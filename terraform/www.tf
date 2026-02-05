@@ -19,6 +19,7 @@ resource "cloudflare_pages_project" "www" {
       production_branch = "master"
       owner             = "OpenGeoscience"
       repo_name         = "geoinsight"
+      path_includes     = ["web/*"]
     }
   }
 

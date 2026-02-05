@@ -17,7 +17,7 @@ module "django" {
   django_settings_module = "geoinsight.settings.heroku_production"
 
   ec2_worker_instance_quantity = 1
-  ec2_worker_ssh_public_key = file("${path.module}/ssh-key.pub")
+  ec2_worker_ssh_public_key    = file("${path.module}/ssh-key.pub")
 
   additional_django_vars = {
     DJANGO_GEOINSIGHT_WEB_URL     = "https://www.geoinsight.kitware.com/"
