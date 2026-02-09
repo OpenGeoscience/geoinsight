@@ -15,7 +15,8 @@
             "Boston Neighborhoods",
             "Boston Census 2020 Block Groups",
             "Boston Zip Codes",
-            "Boston Rivers Boundary"
+            "Boston Rivers Boundary",
+            "Massachusetts Amenities"
         ]
     },
     {
@@ -201,6 +202,23 @@
                 "url": "https://data.kitware.com/api/v1/item/690a354103d1a144cbcf4244/download",
                 "hash": "708e4988c943db421a67b84926aee834e8dac5eb0a3b4331451ba2b401ac764a",
                 "path": "boston/water_boundary.geojson"
+            }
+        ]
+    },
+    {
+        "type": "Dataset",
+        "name": "Massachusetts Amenities",
+        "description": "Various amenity locations, sourced from https://maps.massgis.digital.mass.gov/MassMapper/MassMapper.html",
+        "category": "amenities",
+        "tags": [
+            "massachusetts",
+            "infrastructure"
+        ],
+        "files": [
+            {
+                "url": "https://data.kitware.com/api/v1/item/698a39825389b41db2e728a9/download",
+                "hash": "2a251bbd270341e9648f2bcbf488fa769b04995e3a9e93bf3ccaa0f36af327f9",
+                "path": "mass/amenities.zip"
             }
         ]
     },
