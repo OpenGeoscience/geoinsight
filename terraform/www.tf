@@ -1,6 +1,6 @@
 locals {
   www_env_vars = {
-    VITE_APP_API_ROOT        = "https://${module.django.fqdn}/"
+    VITE_APP_API_ROOT = "https://${module.django.fqdn}/"
   }
 }
 
