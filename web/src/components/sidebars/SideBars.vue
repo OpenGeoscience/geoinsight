@@ -10,18 +10,15 @@ import ChartsPanel from "@/components/sidebars/ChartsPanel.vue";
 import AnalyticsPanel from "@/components/sidebars/AnalyticsPanel.vue";
 import DatasetsPanel from "@/components/sidebars/DatasetsPanel.vue";
 import LayersPanel from "@/components/sidebars/LayersPanel.vue";
-import CompareLayersPanel from "./CompareLayersPanel.vue";
 import NetworksPanel from "@/components/sidebars/NetworksPanel.vue";
+import LegendPanel from "./LegendPanel.vue";
 
 import { useAppStore, usePanelStore, useProjectStore } from "@/store";
-import { useMapCompareStore } from "@/store/compare";
 import KitwareLogo from "@/assets/Kitware.png";
 
 const appStore = useAppStore();
 const panelStore = usePanelStore();
 const projectStore = useProjectStore();
-const compareStore = useMapCompareStore();
-
 
 const version = import.meta.env.VITE_APP_VERSION;
 const copied: Ref<string | undefined> = ref();
@@ -89,6 +86,7 @@ watch(darkMode, () => {
           :id="panel.id" :bottom="index == panelStore.panelArrangement.filter((p) => p.dock == 'left').length - 1">
           <DatasetsPanel v-if="panel.id === 'datasets'" :datasets="projectStore.availableDatasets" />
           <LayersPanel v-else-if="panel.id === 'layers'" />
+          <LegendPanel v-else-if="panel.id === 'legend'" />
           <ChartsPanel v-else-if="panel.id === 'charts'" />
           <NetworksPanel v-else-if="panel.id === 'networks'" />
           <AnalyticsPanel v-else-if="panel.id === 'analytics'" />
@@ -158,6 +156,7 @@ watch(darkMode, () => {
           :id="panel.id" :bottom="index == panelStore.panelArrangement.filter((p) => p.dock == 'right').length - 1">
           <DatasetsPanel v-if="panel.id === 'datasets'" :datasets="projectStore.availableDatasets" />
           <LayersPanel v-else-if="panel.id === 'layers'" />
+          <LegendPanel v-else-if="panel.id === 'legend'" />
           <ChartsPanel v-else-if="panel.id === 'charts'" />
           <NetworksPanel v-else-if="panel.id === 'networks'" />
           <AnalyticsPanel v-else-if="panel.id === 'analytics'" />

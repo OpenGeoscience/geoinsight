@@ -15,7 +15,6 @@ import {
     VectorData,
 } from "@/types";
 import { getProjectColormaps } from '@/api/rest';
-import { THEMES } from "@/themes";
 import chroma from 'chroma-js';
 
 import { useMapStore, useLayerStore, useProjectStore, useNetworkStore } from '.';
