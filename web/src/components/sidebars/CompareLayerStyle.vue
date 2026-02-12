@@ -92,7 +92,7 @@ function resetCurrentStyleForPanel(panel: 'A' | 'B') {
         if (props.layer.default_style) {
             currentStyleSpecs.value[panel] = cloneDeep(props.layer.default_style.style_spec);
         } else {
-            currentStyleSpecs.value[panel] = styleStore.getDefaultStyleSpec(currentFrame.value?.raster);
+            currentStyleSpecs.value[panel] = styleStore.getDefaultStyleSpec(currentFrame.value?.raster, props.layer.id);
         }
     }
 }
