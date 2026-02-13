@@ -173,7 +173,7 @@ export const useLayerStore = defineStore('layer', () => {
             styleStore.selectedLayerStyles[styleId] = {
               name: 'None',
               is_default: true,
-              style_spec: styleStore.getDefaultStyleSpec(firstCurrentRaster)
+              style_spec: styleStore.getDefaultStyleSpec(firstCurrentRaster, layer.id)
             }
           }
         }

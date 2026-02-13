@@ -23,6 +23,7 @@ declare module 'vue' {
     FloatingPanel: typeof import('./src/components/sidebars/FloatingPanel.vue')['default']
     LayersPanel: typeof import('./src/components/sidebars/LayersPanel.vue')['default']
     LayerStyle: typeof import('./src/components/sidebars/LayerStyle.vue')['default']
+    LegendPanel: typeof import('./src/components/sidebars/LegendPanel.vue')['default']
     Map: typeof import('./src/components/map/Map.vue')['default']
     MapTooltip: typeof import('./src/components/map/MapTooltip.vue')['default']
     MapWrapper: typeof import('./src/components/map/MapWrapper.vue')['default']

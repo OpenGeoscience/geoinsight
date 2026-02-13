@@ -4,7 +4,7 @@ import { ref } from 'vue';
 
 export const useAppStore = defineStore('app', () => {
     const theme = ref<"dark" | "light">("light");
-    const openSidebars = ref<("left" | "right")[]>(["left"]);
+    const openSidebars = ref<("left" | "right")[]>(["left", "right"]);
     const currentUser = ref<User>();
     const currentError = ref<string>();
 
