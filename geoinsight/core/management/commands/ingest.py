@@ -259,16 +259,11 @@ class Command(BaseCommand):
                 project_name = project_for_setting.name
                 missing = ', '.join(missing_datasets)
                 self.stdout.write(
-                    self.style.WARNING(
-                        f'Missing datasets for project {project_name}: {missing}'
-                    )
+                    self.style.WARNING(f'Missing datasets for project {project_name}: {missing}')
                 )
 
             # Update datasets in project
-            project_for_setting.datasets.set(
-                Dataset.objects.filter(name__in=project['datasets'])
-            )
-
+            project_for_setting.datasets.set(Dataset.objects.filter(name__in=project['datasets']))
 
     def ingest_charts(self, data: list[ChartItem], replace=False, no_cache=False) -> None:
         for chart in data:
