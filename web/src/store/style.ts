@@ -15,29 +15,32 @@ import {
     VectorData,
 } from "@/types";
 import { getProjectColormaps } from '@/api/rest';
-import { THEMES } from "@/themes";
 import chroma from 'chroma-js';
 
 import { useMapStore, useLayerStore, useProjectStore, useNetworkStore } from '.';
 
 export interface MapLayerStyleRaw {
-        paint: {
-            'fill-opacity'?: any;
-            'fill-color'?: any;
-            'line-opacity'?: any;
-            'line-color'?: any;
-            'line-width'?: any;
-            'circle-opacity'?: any;
-            'circle-stroke-opacity'?: any;
-            'circle-color'?: any;
-            'circle-stroke-color'?: any;
-            'circle-radius'?: any;
-            'raster-opacity'?: any;
-        }
-        tileURL?: string;
-        visibility: 'visible' | 'none';
+    paint: {
+        'fill-opacity'?: any;
+        'fill-color'?: any;
+        'line-opacity'?: any;
+        'line-color'?: any;
+        'line-width'?: any;
+        'circle-opacity'?: any;
+        'circle-stroke-opacity'?: any;
+        'circle-color'?: any;
+        'circle-stroke-color'?: any;
+        'circle-radius'?: any;
+        'raster-opacity'?: any;
     }
+    tileURL?: string;
+    visibility: 'visible' | 'none';
+}
 
+// hues range 0-360, pick 8 distinct hues
+const HUES = [0, 30, 60, 120, 180, 220, 270, 300]
+// first iterate through all hues with 50% lightness, then pastels, then shades
+const LIGHTNESSES = [0.5, 0.8, 0.3]
 
 function getMidMarker(
     markerA: {color: string, value: number},
@@ -50,7 +53,7 @@ function getMidMarker(
     }
 }
 
-function colormapMarkersSubsample(
+export function colormapMarkersSubsample(
     colormap: Colormap,
     appliedColormap: AppliedColormap,
     n: number | undefined = undefined
@@ -314,8 +317,13 @@ export const useStyleStore = defineStore('style', () => {
     const layerStore = useLayerStore();
     const networkStore = useNetworkStore();
 
-    function getDefaultColor() {
-        return THEMES.light.colors.primary;
+    function getDefaultColor(layerId: number) {
+        const color = chroma.hsl(
+            HUES[layerId % HUES.length],
+            1,
+            LIGHTNESSES[Math.floor(layerId / HUES.length) % LIGHTNESSES.length],
+        )
+        return color.hex();
     }
 
     function fetchColormaps() {
@@ -327,7 +335,7 @@ export const useStyleStore = defineStore('style', () => {
         }
     }
 
-    function getDefaultStyleSpec(raster: RasterData | null | undefined): StyleSpec {
+    function getDefaultStyleSpec(raster: RasterData | null | undefined, layerId: number): StyleSpec {
         let range: [number, number] | undefined;
         let absMin: number | undefined, absMax: number | undefined;
         if (raster) {
@@ -347,7 +355,7 @@ export const useStyleStore = defineStore('style', () => {
                     name: 'all',
                     visible: true,
                     use_feature_props: true,
-                    single_color: raster ? undefined : getDefaultColor(),
+                    single_color: raster ? undefined : getDefaultColor(layerId),
                     colormap: raster ? {
                         range,
                         color_by: 'value',

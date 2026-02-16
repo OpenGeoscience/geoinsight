@@ -142,7 +142,7 @@ function resetCurrentStyle() {
         } else {
             // layer has no default style; apply None style
             setCurrentLayerStyle({name: 'None', is_default: true})
-            currentStyleSpec.value = styleStore.getDefaultStyleSpec(currentFrame.value?.raster);
+            currentStyleSpec.value = styleStore.getDefaultStyleSpec(currentFrame.value?.raster, props.layer.id);
         }
     }
 }
@@ -197,7 +197,7 @@ function setAvailableGroups() {
 
 function setCurrentColorGroups(different: boolean | null) {
     if (!currentStyleSpec.value) return
-    const defaultStyle = styleStore.getDefaultStyleSpec(currentFrame.value?.raster)
+    const defaultStyle = styleStore.getDefaultStyleSpec(currentFrame.value?.raster, props.layer.id)
     let all = currentStyleSpec.value.colors.find((group) => group.name === 'all')
     if (!all) all = defaultStyle.colors.find((group) => group.name === 'all')
     if (different) {
@@ -247,7 +247,7 @@ function setGroupColorMode(groupName: string, colorMode: string) {
                         single_color: undefined,
                     }
                 } else if (!c.single_color) {
-                    return {...c, colormap: undefined, single_color: styleStore.getDefaultColor()}
+                    return {...c, colormap: undefined, single_color: styleStore.getDefaultColor(props.layer.id)}
                 }
             }
             return c
@@ -331,7 +331,8 @@ function setSizeGroups(different: boolean | null) {
             }]
         } else {
             currentStyleSpec.value.sizes = [...styleStore.getDefaultStyleSpec(
-                currentFrame.value?.raster
+                currentFrame.value?.raster,
+                props.layer.id,
             ).sizes]
         }
         currentGroups.value['size'] = 'all'
@@ -466,7 +467,8 @@ function deleteStyle() {
             } else {
                 setCurrentLayerStyle({name: 'None', is_default: true});
                 currentStyleSpec.value = {...styleStore.getDefaultStyleSpec(
-                    currentFrame.value?.raster
+                    currentFrame.value?.raster,
+                    props.layer.id,
                 )}
             }
             refreshLayer()
