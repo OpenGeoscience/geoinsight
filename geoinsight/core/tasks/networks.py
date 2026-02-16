@@ -148,7 +148,7 @@ def create_network(vector_data, network_options):
                 edge_line_geometry = LineString(*[Point(p.x, p.y) for p in edge_points['geometry']])
 
                 try:
-                   edge = NetworkEdge.objects.get(
+                    edge = NetworkEdge.objects.get(
                         network=network,
                         name=f'{current_node_name} - {next_node_name}',
                     )

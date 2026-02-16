@@ -131,7 +131,7 @@ def convert_dataset(
     region_options=None,
     result_id=None,
 ):
-    from geoinsight.core.models import Dataset, FileItem, RasterData, TaskResult, VectorData, NetworkNode, NetworkEdge
+    from geoinsight.core.models import Dataset, FileItem, RasterData, TaskResult, VectorData
 
     from .conversion import convert_file_item
     from .data import create_vector_features
