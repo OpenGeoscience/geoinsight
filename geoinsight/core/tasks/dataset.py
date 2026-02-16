@@ -131,7 +131,7 @@ def convert_dataset(
     region_options=None,
     result_id=None,
 ):
-    from geoinsight.core.models import Dataset, FileItem, RasterData, TaskResult, VectorData
+    from geoinsight.core.models import Dataset, FileItem, RasterData, TaskResult, VectorData, NetworkNode, NetworkEdge
 
     from .conversion import convert_file_item
     from .data import create_vector_features
@@ -166,10 +166,9 @@ def convert_dataset(
             create_network(vector_data, network_options)
         elif region_options:
             create_source_regions(vector_data, region_options)
+        else:
+            create_vector_features(vector_data)
 
-        # Create vector features after geojson_data may have
-        # been altered by create_network or create_source_regions
-        create_vector_features(vector_data)
         vector_data.get_summary()
 
     create_layers_and_frames(dataset, layer_options)

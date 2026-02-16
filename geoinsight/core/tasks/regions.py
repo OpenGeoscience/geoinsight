@@ -3,7 +3,7 @@ import secrets
 from django.contrib.gis.geos import GEOSGeometry
 import geopandas
 
-from geoinsight.core.models import Region
+from geoinsight.core.models import Region, VectorFeature
 
 
 def create_source_regions(vector_data, region_options):
@@ -31,11 +31,16 @@ def create_source_regions(vector_data, region_options):
             geometry['coordinates'] = [geometry['coordinates']]
 
         # Create region with properties and MultiPolygon
-        region = Region(
+        region = Region.objects.create(
             name=name,
             boundary=GEOSGeometry(str(geometry)),
             metadata=properties,
             dataset=dataset,
+        )
+        region.vector_feature = VectorFeature.objects.create(
+            vector_data=vector_data,
+            geometry=region.boundary,
+            properties=region.metadata,
         )
         region.save()
         region_count += 1
@@ -58,3 +63,6 @@ def create_source_regions(vector_data, region_options):
     vector_data.write_geojson_data(new_geodata.to_json())
     vector_data.save()
     print('\t\t', f'{region_count} regions created.')
+
+    all_features = VectorFeature.objects.filter(vector_data=vector_data)
+    print('\t\t', f'{all_features.count()} vector features created.')
