@@ -8369,7 +8369,7 @@ wheels = [
 
 [[package]]
 name = "uvdat-flood-sim"
-version = "1.0.2"
+version = "1.0.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -8384,9 +8384,9 @@ dependencies = [
     { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "scipy", version = "1.16.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/09/ce/5c9b8223b60cd342046259d3ddcbd9524db5df8a4f7853da15605679e611/uvdat_flood_sim-1.0.2.tar.gz", hash = "sha256:5e1dca00c8f176fb0656f53b0c144b622adcfabc3630ef45947b8ad68b77e22f", size = 30995198, upload-time = "2026-01-23T18:25:16.257Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/2d/93/aeaaf88192e0df2fa5e76611848971717cc14f8963048fe6bc56eb6a5867/uvdat_flood_sim-1.0.3.tar.gz", hash = "sha256:2e26a01f5cdbc94eefad58dac2fe80067ae19cffa5f4056e3398339bdfc64666", size = 29522668, upload-time = "2026-02-16T20:37:38.228Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9d/1a/5fce1a6e0dded1c07bfff4af81464357fd87dc3109fbe392ca5eaafc5c1a/uvdat_flood_sim-1.0.2-py3-none-any.whl", hash = "sha256:d98d769fb574685c17714c0a1479ff762c4c172455d686891eec905332215705", size = 31325471, upload-time = "2026-01-23T18:25:11.647Z" },
+    { url = "https://files.pythonhosted.org/packages/40/54/b1009d420486538083728d540431c48355c94e06a4ff5a140b5913b2c4f8/uvdat_flood_sim-1.0.3-py3-none-any.whl", hash = "sha256:24fbc0fc9ea98162f69fd79c133239d2726189cd3fcc65b8648186ce806cb50b", size = 29788467, upload-time = "2026-02-16T20:37:34.712Z" },
 ]
 
 [package.optional-dependencies]
