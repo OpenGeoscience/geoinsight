@@ -53,7 +53,7 @@ function getMidMarker(
     }
 }
 
-function colormapMarkersSubsample(
+export function colormapMarkersSubsample(
     colormap: Colormap,
     appliedColormap: AppliedColormap,
     n: number | undefined = undefined

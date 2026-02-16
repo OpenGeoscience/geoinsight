@@ -54,7 +54,7 @@ watch([() => props.colormap, () => props.discrete, () => props.nColors, () => pr
 </script>
 
 <template>
-    <div class="d-flex" style="column-gap: 5px;">
+    <div class="d-flex" style="column-gap: 5px; width:100%">
         <span v-if="props.range">{{ props.range[0] }}</span>
         <canvas ref="canvas" class="colormap-canvas"></canvas>
         <span v-if="props.range">{{ props.range[1] }}</span>

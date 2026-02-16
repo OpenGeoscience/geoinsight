@@ -4,6 +4,7 @@ import { Layer } from "@/types";
 import ColormapPreview from './ColormapPreview.vue';
 
 import { useLayerStore, useStyleStore } from "@/store";
+import { colormapMarkersSubsample } from "@/store/style";
 const layerStore = useLayerStore();
 const styleStore = useStyleStore();
 
@@ -23,12 +24,15 @@ function getColormapPreviews(layer: Layer) {
     const currentFrame = layerStore.layerFrames(layer).find(
         (f) => f.index === layer.current_frame_index
     )
+    const vector = currentFrame?.vector
     return currentStyleSpec.colors.map((colorConfig) => {
+        let name = colorConfig.name
         let discrete = false;
         let nColors = 1;
         let colorBy = undefined;
         let range: [number | undefined, number | undefined] = [undefined, undefined];
-        let useFeatureProps = currentFrame?.vector && colorConfig.use_feature_props;
+        let useFeatureProps = vector && colorConfig.use_feature_props;
+        let valueColors = undefined
         let colormap = styleStore.colormaps.find((cmap) => cmap.id === colorConfig.colormap?.id)
         if (colormap) {
             discrete = colorConfig.colormap?.discrete || discrete;
@@ -42,14 +46,32 @@ function getColormapPreviews(layer: Layer) {
                 ]
             }
         }
+        if (discrete && colorBy && colormap && colorConfig.colormap) {
+            const propsSpec = vector?.summary?.properties;
+            if (propsSpec) {
+                const colorByProp = propsSpec[colorBy]
+                const valueSet = Array.from(new Set(colorByProp.value_set.filter((v) => v)))
+                const sortedValues = valueSet.sort((a: any, b: any) => a - b)
+                const markers = colormapMarkersSubsample(colormap, colorConfig.colormap, nColors)
+                valueColors = sortedValues.map((v, i) => {
+                    if (markers) {
+                        return {
+                            value: v,
+                            color: markers[Math.ceil((i + 1) / sortedValues.length * markers.length) - 1]?.color
+                        }
+                    }
+                })
+            }
+        }
         return {
-            name: colorConfig.name,
+            name,
             colormap,
             discrete,
             nColors,
             colorBy,
             range,
             useFeatureProps,
+            valueColors,
         }
     })
 }
@@ -77,9 +99,28 @@ function setVisibility(layer: Layer, visible = true) {
                         <span v-if="colormap_preview.useFeatureProps">Use feature color props; default to </span>
                         <span v-if="colormap_preview.colorBy">color by {{ colormap_preview.colorBy }}</span>
                         <span v-if="!colormap_preview.colormap">Use default style</span>
-                        <colormap-preview v-if="colormap_preview.colormap" :colormap="colormap_preview.colormap"
-                            :discrete="colormap_preview.discrete" :nColors="colormap_preview.nColors"
-                            :range="colormap_preview.range" />
+                        <div v-else>
+                            <colormap-preview v-if="!colormap_preview.valueColors" :colormap="colormap_preview.colormap"
+                                :discrete="colormap_preview.discrete" :nColors="colormap_preview.nColors"
+                                :range="colormap_preview.range" />
+                            <v-expansion-panels v-else>
+                                <v-expansion-panel static bg-color="transparent">
+                                    <v-expansion-panel-title class="pa-0" min-height="0">
+                                        <colormap-preview :colormap="colormap_preview.colormap"
+                                            :discrete="colormap_preview.discrete" :nColors="colormap_preview.nColors"
+                                            :range="colormap_preview.range" />
+                                    </v-expansion-panel-title>
+                                    <v-expansion-panel-text>
+                                        <div v-for="row in colormap_preview.valueColors">
+                                            <div v-if="row" class="d-flex" style="align-items: center;">
+                                                <div class="color-square" :style="{ backgroundColor: row.color }"></div>
+                                                {{ row.value }}
+                                            </div>
+                                        </div>
+                                    </v-expansion-panel-text>
+                                </v-expansion-panel>
+                            </v-expansion-panels>
+                        </div>
                     </div>
                 </v-list-item>
             </v-list>
