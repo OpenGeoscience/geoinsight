@@ -1,4 +1,9 @@
-from geoinsight.core.models import VectorFeature
+import io
+
+import pandas
+import requests
+
+from geoinsight.core.models import NetworkNode, VectorData, VectorFeature
 
 LINE_COLORS = {
     'RED': '#D31414',
@@ -7,6 +12,8 @@ LINE_COLORS = {
     'ORANGE': '#D88901',
     'SILVER': '#7B8B86',
 }
+
+RIDERSHIP_DATA_URL = 'https://data.kitware.com/api/v1/item/69938a5d92fec64197f41dc3/download'
 
 
 def convert_dataset(dataset, options):
@@ -19,6 +26,7 @@ def convert_dataset(dataset, options):
     )
 
     # Post-processing
+
     # For each associated vector feature, add style properties
     # To color features by the LINE property
     for feature in VectorFeature.objects.filter(vector_data__dataset=dataset):
@@ -33,3 +41,27 @@ def convert_dataset(dataset, options):
             }
             feature.properties = feature.properties | default_style
             feature.save()
+
+    # Add ridership data to stations
+    response = requests.get(RIDERSHIP_DATA_URL)
+    ridership_data = pandas.read_csv(io.StringIO(response.text.replace('\r', '')))
+    for _, station in ridership_data.iterrows():
+        station_name = station.loc['stop_name']
+        total_offs = station.loc['total_offs']
+        node_matches = NetworkNode.objects.filter(
+            network__vector_data__dataset=dataset, metadata__STATION=station_name
+        )
+        if node_matches.count():
+            new = dict(total_ridership=total_offs)
+            node = node_matches.first()
+            node.metadata = node.metadata | new
+            node.save()
+            feature = node.vector_feature
+            feature.properties = feature.properties | new
+            feature.save()
+        else:
+            print(f'Could not find node for {station_name}')
+
+    # Update vector data summary
+    for vector in VectorData.objects.filter(dataset=dataset):
+        vector.get_summary(cache=False)
