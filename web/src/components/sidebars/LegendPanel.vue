@@ -21,10 +21,14 @@ function getColormapPreviews(layer: Layer) {
     const styleKey = `${layer.id}.${layer.copy_id}`;
     const currentStyleSpec = styleStore.selectedLayerStyles[styleKey].style_spec;
     if (!currentStyleSpec) return [];
+    const currentFrame = layerStore.layerFrames(layer).find(
+        (f) => f.index === layer.current_frame_index
+    )
     return currentStyleSpec.colors.map((colorConfig) => {
         let discrete = false;
         let nColors = 1;
         let colorBy = undefined;
+        let useFeatureProps = currentFrame?.vector && colorConfig.use_feature_props;
         let colormap = styleStore.colormaps.find((cmap) => cmap.id === colorConfig.colormap?.id)
         if (colormap) {
             discrete = colorConfig.colormap?.discrete || discrete;
@@ -42,7 +46,8 @@ function getColormapPreviews(layer: Layer) {
             colormap,
             discrete,
             nColors,
-            colorBy
+            colorBy,
+            useFeatureProps,
         }
     })
 }
@@ -57,8 +62,9 @@ function getColormapPreviews(layer: Layer) {
                 <v-list-item v-for="layer in filteredLegend" :key="layer.id">
                     {{ layer.name }}
                     <div v-for="colormap_preview in getColormapPreviews(layer)" class="ml-4">
-                        <span v-if="getColormapPreviews(layer).length > 1">{{ colormap_preview.name }}</span>
-                        <span v-if="colormap_preview.colorBy"> by {{ colormap_preview.colorBy }}</span>
+                        <div v-if="getColormapPreviews(layer).length > 1">{{ colormap_preview.name }}</div>
+                        <span v-if="colormap_preview.useFeatureProps">Use feature color properties; default to </span>
+                        <span v-if="colormap_preview.colorBy">color by {{ colormap_preview.colorBy }}</span>
                         <colormap-preview v-if="colormap_preview.colormap" :colormap="colormap_preview.colormap"
                             :discrete="colormap_preview.discrete" :nColors="colormap_preview.nColors" />
                     </div>
