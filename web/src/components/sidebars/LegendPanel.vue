@@ -65,6 +65,7 @@ function getColormapPreviews(layer: Layer) {
                         <div v-if="getColormapPreviews(layer).length > 1">{{ colormap_preview.name }}</div>
                         <span v-if="colormap_preview.useFeatureProps">Use feature color properties; default to </span>
                         <span v-if="colormap_preview.colorBy">color by {{ colormap_preview.colorBy }}</span>
+                        <span v-if="!colormap_preview.colormap">Use default style</span>
                         <colormap-preview v-if="colormap_preview.colormap" :colormap="colormap_preview.colormap"
                             :discrete="colormap_preview.discrete" :nColors="colormap_preview.nColors" />
                     </div>
