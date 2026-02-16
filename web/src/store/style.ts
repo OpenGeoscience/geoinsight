@@ -20,23 +20,27 @@ import chroma from 'chroma-js';
 import { useMapStore, useLayerStore, useProjectStore, useNetworkStore } from '.';
 
 export interface MapLayerStyleRaw {
-        paint: {
-            'fill-opacity'?: any;
-            'fill-color'?: any;
-            'line-opacity'?: any;
-            'line-color'?: any;
-            'line-width'?: any;
-            'circle-opacity'?: any;
-            'circle-stroke-opacity'?: any;
-            'circle-color'?: any;
-            'circle-stroke-color'?: any;
-            'circle-radius'?: any;
-            'raster-opacity'?: any;
-        }
-        tileURL?: string;
-        visibility: 'visible' | 'none';
+    paint: {
+        'fill-opacity'?: any;
+        'fill-color'?: any;
+        'line-opacity'?: any;
+        'line-color'?: any;
+        'line-width'?: any;
+        'circle-opacity'?: any;
+        'circle-stroke-opacity'?: any;
+        'circle-color'?: any;
+        'circle-stroke-color'?: any;
+        'circle-radius'?: any;
+        'raster-opacity'?: any;
     }
+    tileURL?: string;
+    visibility: 'visible' | 'none';
+}
 
+// hues range 0-360, pick 8 distinct hues
+const HUES = [0, 30, 60, 120, 180, 220, 270, 300]
+// first iterate through all hues with 50% lightness, then pastels, then shades
+const LIGHTNESSES = [0.5, 0.8, 0.3]
 
 function getMidMarker(
     markerA: {color: string, value: number},
@@ -314,14 +318,10 @@ export const useStyleStore = defineStore('style', () => {
     const networkStore = useNetworkStore();
 
     function getDefaultColor(layerId: number) {
-        // hues range 0-360, pick 8 distinct hues
-        const hues = [0, 30, 60, 120, 180, 220, 270, 300]
-        // first iterate through all hues with 50% lightness, then pastels, then shades
-        const lightnesses = [0.5, 0.8, 0.3]
         const color = chroma.hsl(
-            hues[layerId % hues.length],
+            HUES[layerId % HUES.length],
             1,
-            lightnesses[Math.floor(layerId / hues.length) % lightnesses.length],
+            LIGHTNESSES[Math.floor(layerId / HUES.length) % LIGHTNESSES.length],
         )
         return color.hex();
     }
