@@ -7,9 +7,10 @@ const styleStore = useStyleStore();
 
 const canvas = ref();
 const props = defineProps<{
-  colormap: Colormap,
-  discrete: boolean,
-  nColors: number,
+    colormap: Colormap,
+    discrete: boolean,
+    nColors: number,
+    range?: [number | undefined, number | undefined],
 }>();
 
 
@@ -49,11 +50,15 @@ function draw() {
     }
 }
 onMounted(draw)
-watch([() => props.colormap, () => props.discrete, () => props.nColors, () => props.colormap.markers], draw, {deep: true})
+watch([() => props.colormap, () => props.discrete, () => props.nColors, () => props.colormap.markers], draw, { deep: true })
 </script>
 
 <template>
-    <canvas ref="canvas" class="colormap-canvas"></canvas>
+    <div class="d-flex" style="column-gap: 5px;">
+        <span v-if="props.range">{{ props.range[0] }}</span>
+        <canvas ref="canvas" class="colormap-canvas"></canvas>
+        <span v-if="props.range">{{ props.range[1] }}</span>
+    </div>
 </template>
 
 <style scoped>

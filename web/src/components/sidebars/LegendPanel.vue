@@ -28,12 +28,14 @@ function getColormapPreviews(layer: Layer) {
         let discrete = false;
         let nColors = 1;
         let colorBy = undefined;
+        let range: [number | undefined, number | undefined] = [undefined, undefined];
         let useFeatureProps = currentFrame?.vector && colorConfig.use_feature_props;
         let colormap = styleStore.colormaps.find((cmap) => cmap.id === colorConfig.colormap?.id)
         if (colormap) {
             discrete = colorConfig.colormap?.discrete || discrete;
             nColors = colorConfig.colormap?.n_colors || nColors;
             colorBy = colorConfig.colormap?.color_by;
+            range = colorConfig.colormap?.range || range;
         } else if (colorConfig.single_color) {
             colormap = {
                 markers: [
@@ -47,6 +49,7 @@ function getColormapPreviews(layer: Layer) {
             discrete,
             nColors,
             colorBy,
+            range,
             useFeatureProps,
         }
     })
@@ -67,7 +70,8 @@ function getColormapPreviews(layer: Layer) {
                         <span v-if="colormap_preview.colorBy">color by {{ colormap_preview.colorBy }}</span>
                         <span v-if="!colormap_preview.colormap">Use default style</span>
                         <colormap-preview v-if="colormap_preview.colormap" :colormap="colormap_preview.colormap"
-                            :discrete="colormap_preview.discrete" :nColors="colormap_preview.nColors" />
+                            :discrete="colormap_preview.discrete" :nColors="colormap_preview.nColors"
+                            :range="colormap_preview.range" />
                     </div>
                 </v-list-item>
             </v-list>
