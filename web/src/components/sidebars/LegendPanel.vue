@@ -11,7 +11,6 @@ const searchText = ref<string | undefined>();
 const filteredLegend = computed(() => {
     return layerStore.selectedLayers?.filter((layer) => {
         return (
-            layer.visible &&
             (!searchText.value || layer.name.toLowerCase().includes(searchText.value.toLowerCase()))
         )
     })
@@ -54,6 +53,13 @@ function getColormapPreviews(layer: Layer) {
         }
     })
 }
+
+function setVisibility(layer: Layer, visible = true) {
+    layerStore.selectedLayers = layerStore.selectedLayers.map((l: Layer) => {
+        if (l.id == layer.id) l.visible = visible;
+        return l
+    })
+}
 </script>
 
 <template>
@@ -63,10 +69,12 @@ function getColormapPreviews(layer: Layer) {
         <v-card class="panel-content-inner">
             <v-list v-if="filteredLegend?.length" density="compact">
                 <v-list-item v-for="layer in filteredLegend" :key="layer.id">
+                    <v-icon :icon="layer.visible ? 'mdi-eye-outline' : 'mdi-eye-off-outline'"
+                        @click="setVisibility(layer, !layer.visible)" class="" />
                     {{ layer.name }}
-                    <div v-for="colormap_preview in getColormapPreviews(layer)" class="ml-4">
+                    <div v-for="colormap_preview in getColormapPreviews(layer)" class="ml-6">
                         <div v-if="getColormapPreviews(layer).length > 1">{{ colormap_preview.name }}</div>
-                        <span v-if="colormap_preview.useFeatureProps">Use feature color properties; default to </span>
+                        <span v-if="colormap_preview.useFeatureProps">Use feature color props; default to </span>
                         <span v-if="colormap_preview.colorBy">color by {{ colormap_preview.colorBy }}</span>
                         <span v-if="!colormap_preview.colormap">Use default style</span>
                         <colormap-preview v-if="colormap_preview.colormap" :colormap="colormap_preview.colormap"
