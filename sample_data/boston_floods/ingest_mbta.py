@@ -47,7 +47,7 @@ def convert_dataset(dataset, options):
     ridership_data = pandas.read_csv(io.StringIO(response.text.replace('\r', '')))
     for _, station in ridership_data.iterrows():
         station_name = station.loc['stop_name']
-        total_offs = station.loc['total_offs']
+        total_offs = int(station.loc['total_offs'])
         node_matches = NetworkNode.objects.filter(
             network__vector_data__dataset=dataset, metadata__STATION=station_name
         )
