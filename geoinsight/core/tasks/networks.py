@@ -93,6 +93,12 @@ def create_network(vector_data, network_options):
                         and str(v).lower() != 'nan'
                     },
                 )
+            from_node_obj.vector_feature = VectorFeature.objects.create(
+                vector_data=vector_data,
+                geometry=from_node_obj.location,
+                properties=from_node_obj.metadata,
+            )
+            from_node_obj.save()
 
             if i < len(route_nodes) - 1:
                 next_node = route_nodes.iloc[i + 1]
@@ -122,6 +128,12 @@ def create_network(vector_data, network_options):
                             and str(v).lower() != 'nan'
                         },
                     )
+                to_node_obj.vector_feature = VectorFeature.objects.create(
+                    vector_data=vector_data,
+                    geometry=to_node_obj.location,
+                    properties=to_node_obj.metadata,
+                )
+                to_node_obj.save()
 
                 route_points_start_index = route_points_reprojected.index[
                     route_points_reprojected['geometry'] == cutoff_points[current_node_name]
@@ -136,7 +148,7 @@ def create_network(vector_data, network_options):
                 edge_line_geometry = LineString(*[Point(p.x, p.y) for p in edge_points['geometry']])
 
                 try:
-                    NetworkEdge.objects.get(
+                    edge = NetworkEdge.objects.get(
                         network=network,
                         name=f'{current_node_name} - {next_node_name}',
                     )
@@ -150,7 +162,7 @@ def create_network(vector_data, network_options):
                             .to_dict()
                         )
                     )
-                    NetworkEdge.objects.create(
+                    edge = NetworkEdge.objects.create(
                         network=network,
                         name=f'{current_node_name} - {next_node_name}',
                         from_node=from_node_obj,
@@ -158,10 +170,20 @@ def create_network(vector_data, network_options):
                         line_geometry=edge_line_geometry,
                         metadata=metadata,
                     )
+                edge.vector_feature = VectorFeature.objects.create(
+                    vector_data=vector_data,
+                    geometry=edge.line_geometry,
+                    properties=edge.metadata,
+                )
+                edge.save()
 
     all_nodes = NetworkNode.objects.filter(network=network)
     all_edges = NetworkEdge.objects.filter(network=network)
     print('\t\t', f'{all_nodes.count()} nodes and {all_edges.count()} edges created.')
+
+    all_features = VectorFeature.objects.filter(vector_data=vector_data)
+    print('\t\t', f'{all_features.count()} vector features created.')
+
     # rewrite vector_data geojson_data with updated features
     vector_data.write_geojson_data(geojson_from_network(vector_data.dataset))
     vector_data.metadata['network'] = True
