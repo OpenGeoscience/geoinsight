@@ -38,7 +38,7 @@ class Project(models.Model):
             'list[User]', list(get_users_with_perms(self, only_with_perms_in=['owner']))
         )
         if len(users) != 1:
-            raise Exception('Project must have exactly one owner')
+            raise RuntimeError('Project must have exactly one owner')
 
         return users[0]
 

@@ -196,7 +196,7 @@ class Command(BaseCommand):
                 progressbar=True,
             )
         elif not file_location.exists():
-            raise Exception('File path does not exist and no download URL was specified.')
+            raise FileNotFoundError('File path does not exist and no download URL was specified.')
 
         create_new = True
         existing = FileItem.objects.filter(dataset=dataset, name=file_name)
@@ -244,7 +244,7 @@ class Command(BaseCommand):
 
                 superuser = User.objects.filter(is_superuser=True).first()
                 if superuser is None:
-                    raise Exception('Please create at least one superuser')
+                    raise RuntimeError('Please create at least one superuser')
                 project_for_setting.set_permissions(owner=superuser)
             else:
                 self.stdout.write(
@@ -341,7 +341,7 @@ class Command(BaseCommand):
     ) -> None:
         superuser = User.objects.filter(is_superuser=True).first()
         if superuser is None:
-            raise Exception('Please create at least one superuser')
+            raise RuntimeError('Please create at least one superuser')
         for _dataset_index, dataset in enumerate(data):
             self.stdout.write(f'\t- {dataset["name"]}')
             create_new = True

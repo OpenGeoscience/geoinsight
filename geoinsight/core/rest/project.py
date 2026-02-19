@@ -33,7 +33,7 @@ class ProjectViewSet(ModelViewSet):
     @action(detail=True, methods=['PUT'])
     def permissions(self, request: Request, *args: Any, **kwargs: Any):
         if request.user.is_anonymous:
-            raise Exception('Anonymous user received after guardian filter')
+            raise RuntimeError('Anonymous user received after guardian filter')
         user = typing.cast('User', request.user)
 
         # Only the owner can modify project permissions

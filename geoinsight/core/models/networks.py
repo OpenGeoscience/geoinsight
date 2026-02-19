@@ -89,7 +89,7 @@ class Network(models.Model):
                 )
                 nodes: list[int] = [x[0] for x in cursor.fetchall()]
                 if not nodes:
-                    raise Exception('Expected to find nodes but found none')
+                    raise RuntimeError('Expected to find nodes but found none')
 
                 cur_excluded_nodes.extend(nodes)
                 if len(nodes) > len(gcc):
