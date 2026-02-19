@@ -138,18 +138,17 @@ def convert_file_item(file_item):
     path = utilities.field_file_to_local_path(file_item.file)
     if file_item.file_type == 'zip':
         # write contents to temporary directory for conversion
-        with tempfile.TemporaryDirectory() as temp_dir:
-            with zipfile.ZipFile(path) as zip_archive:
-                files = []
-                for file in zip_archive.infolist():
-                    if not file.is_dir():
-                        filepath = Path(temp_dir, Path(file.filename).name)
-                        with open(filepath, 'wb') as f:
-                            f.write(zip_archive.open(file).read())
-                        files.append(filepath)
-                combine = False
-                if file_item.metadata:
-                    combine = file_item.metadata.get('combine_contents', combine)
-                convert_files(*files, file_item=file_item, combine=combine)
+        with tempfile.TemporaryDirectory() as temp_dir, zipfile.ZipFile(path) as zip_archive:
+            files = []
+            for file in zip_archive.infolist():
+                if not file.is_dir():
+                    filepath = Path(temp_dir, Path(file.filename).name)
+                    with open(filepath, 'wb') as f:
+                        f.write(zip_archive.open(file).read())
+                    files.append(filepath)
+            combine = False
+            if file_item.metadata:
+                combine = file_item.metadata.get('combine_contents', combine)
+            convert_files(*files, file_item=file_item, combine=combine)
     else:
         convert_files(path, file_item=file_item)
