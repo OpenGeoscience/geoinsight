@@ -11,7 +11,7 @@
 # ///
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 from pathlib import Path
 
@@ -27,7 +27,7 @@ STAC_API_URL = 'https://earth-search.aws.element84.com/v1'
 
 
 def default_end_date():
-    return datetime.utcnow().date().isoformat()
+    return datetime.now(tz=timezone.utc).date().isoformat()
 
 
 def read_cog_window(cog_url, lon, lat, size_km=10):
