@@ -6,7 +6,7 @@ from celery import shared_task
 from django.conf import settings
 from django.utils import timezone
 import networkx as nx
-import numpy
+import numpy as np
 
 from geoinsight.core.models import Chart, Network, TaskResult
 
@@ -113,8 +113,8 @@ def sort_graph_centrality(g, measure):
     elif measure == 'second order':
         cent = nx.second_order_centrality(g)
     cent_list = list(cent.items())  # convert to np array
-    cent_arr = numpy.array(cent_list)
-    cent_idx = numpy.argsort(cent_arr, 0)  # sort array of tuples by betweenness
+    cent_arr = np.array(cent_list)
+    cent_idx = np.argsort(cent_arr, 0)  # sort array of tuples by betweenness
 
     node_list = list(g.nodes())
     nodes_sorted = [node_list[i] for i in cent_idx[:, 1]]

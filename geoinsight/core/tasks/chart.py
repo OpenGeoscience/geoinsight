@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 
 from celery import shared_task
-import pandas
+import pandas as pd
 from webcolors import name_to_hex
 
 from geoinsight.core.models import Chart, NetworkNode, Project
@@ -24,7 +24,7 @@ def convert_chart(chart_id, conversion_options):
 
     chart_file = chart.fileitem_set.first()
     if chart_file.file_type == 'csv':
-        raw_data = pandas.read_csv(chart_file.file.open())
+        raw_data = pd.read_csv(chart_file.file.open())
     else:
         raise NotImplementedError(
             f'Convert chart data for file type {chart_file.file_type}',

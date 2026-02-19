@@ -5,7 +5,7 @@ import math
 from celery import shared_task
 from django.conf import settings
 from django_large_image import tilesource, utilities
-import numpy
+import numpy as np
 
 from geoinsight.core.models import Layer, Network, TaskResult
 
@@ -158,9 +158,7 @@ def flood_network_failure(result_id):
                         frame=frame_index,
                         format='numpy',
                     )
-                    if node_id not in node_failures and numpy.any(
-                        numpy.where(region_data > tolerance)
-                    ):
+                    if node_id not in node_failures and np.any(np.where(region_data > tolerance)):
                         node_failures.append(node_id)
                 animation_results[frame_index] = node_failures.copy()
             result.outputs = {'failures': animation_results}

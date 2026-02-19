@@ -8,7 +8,7 @@ import zipfile
 from django.core.files.base import ContentFile
 from django_large_image import utilities
 import geopandas
-import numpy
+import numpy as np
 import rasterio
 import shapefile
 
@@ -48,7 +48,7 @@ def get_cog_path(file):
                 height=input_data.height,
                 width=input_data.width,
                 count=1,
-                dtype=numpy.float32,
+                dtype=np.float32,
                 crs=input_data.crs,
                 transform=input_data.transform,
             )
