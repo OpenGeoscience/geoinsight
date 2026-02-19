@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import random
 
 from celery import shared_task
@@ -87,7 +89,7 @@ def get_network_graph(network):
         if e.from_node.id not in edge_list:
             edge_list[e.from_node.id] = []
         edge_list[e.from_node.id].append(e.to_node.id)
-    for edge_id in edge_list.keys():
+    for edge_id in edge_list:
         edge_list[edge_id].sort()
     graph_representation = nx.from_dict_of_lists(edge_list)
     return graph_representation
@@ -159,7 +161,6 @@ def network_recovery(result_id):
 
         # Run task
         if result.error is None:
-
             # Update name
             result.name = f'{mode.title()} Recovery from Failure Result {failure.id}'
             result.save()

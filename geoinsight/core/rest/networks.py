@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers
 from rest_framework.decorators import action

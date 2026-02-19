@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing
 
 from django.contrib.auth.models import User
@@ -36,7 +38,7 @@ class Dataset(models.Model):
 
     def owner(self) -> User | None:
         users = typing.cast(
-            list[User], list(get_users_with_perms(self, only_with_perms_in=['owner']))
+            'list[User]', list(get_users_with_perms(self, only_with_perms_in=['owner']))
         )
         if len(users) != 1:
             return None

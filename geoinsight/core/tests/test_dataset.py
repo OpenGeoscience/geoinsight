@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.core.files.base import File
 import pytest
 

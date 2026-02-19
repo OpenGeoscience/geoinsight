@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 
 import geopandas
@@ -41,11 +43,10 @@ def merge_properties(p1, p2):
         v2 = p2.get(k1)
         if v2 is None or v2 == '':
             properties[k1] = v1
+        elif v1 is None or v1 == '':
+            properties[k1] = v2
         else:
-            if v1 is None or v1 == '':
-                properties[k1] = v2
-            else:
-                properties[k1] = ','.join([str(v1), str(v2)])
+            properties[k1] = ','.join([str(v1), str(v2)])
     # update p2 with merged properties to catch keys not in p1
     return p2.update(properties)
 

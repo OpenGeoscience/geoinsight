@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.http import HttpResponse
 from rest_framework.decorators import action
 from rest_framework.response import Response

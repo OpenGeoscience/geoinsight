@@ -9,6 +9,7 @@
 #     "pyproj",
 # ]
 # ///
+from __future__ import annotations
 
 from datetime import datetime
 import json
@@ -35,30 +36,29 @@ def read_cog_window(cog_url, lon, lat, size_km=10):
 
     Returns numpy array data and updated affine transform.
     """
-    with rasterio.Env():
-        with rasterio.open(cog_url) as src:
-            # Convert lat/lon to image CRS coordinates
-            transformer = Transformer.from_crs('EPSG:4326', src.crs, always_xy=True)
-            x, y = transformer.transform(lon, lat)
+    with rasterio.Env(), rasterio.open(cog_url) as src:
+        # Convert lat/lon to image CRS coordinates
+        transformer = Transformer.from_crs('EPSG:4326', src.crs, always_xy=True)
+        x, y = transformer.transform(lon, lat)
 
-            half_size_m = (size_km * 1000) / 2
-            bounds = (x - half_size_m, y - half_size_m, x + half_size_m, y + half_size_m)
-            window = from_bounds(*bounds, transform=src.transform)
+        half_size_m = (size_km * 1000) / 2
+        bounds = (x - half_size_m, y - half_size_m, x + half_size_m, y + half_size_m)
+        window = from_bounds(*bounds, transform=src.transform)
 
-            data = src.read(1, window=window)
-            transform = src.window_transform(window)
+        data = src.read(1, window=window)
+        transform = src.window_transform(window)
 
-            # Copy metadata for output
-            meta = src.meta.copy()
-            meta.update(
-                {
-                    'height': data.shape[0],
-                    'width': data.shape[1],
-                    'transform': transform,
-                }
-            )
+        # Copy metadata for output
+        meta = src.meta.copy()
+        meta.update(
+            {
+                'height': data.shape[0],
+                'width': data.shape[1],
+                'transform': transform,
+            }
+        )
 
-            return data, meta
+        return data, meta
 
 
 def read_cog_window_rgb(cog_url, lon, lat, size_km=10):
@@ -69,37 +69,36 @@ def read_cog_window_rgb(cog_url, lon, lat, size_km=10):
     """
     import numpy as np
 
-    with rasterio.Env():
-        with rasterio.open(cog_url) as src:
-            transformer = Transformer.from_crs('EPSG:4326', src.crs, always_xy=True)
-            x, y = transformer.transform(lon, lat)
+    with rasterio.Env(), rasterio.open(cog_url) as src:
+        transformer = Transformer.from_crs('EPSG:4326', src.crs, always_xy=True)
+        x, y = transformer.transform(lon, lat)
 
-            half_size_m = (size_km * 1000) / 2
-            bounds = (x - half_size_m, y - half_size_m, x + half_size_m, y + half_size_m)
-            click.echo(f'  - Window bounds: {bounds}')
-            window = from_bounds(*bounds, transform=src.transform)
+        half_size_m = (size_km * 1000) / 2
+        bounds = (x - half_size_m, y - half_size_m, x + half_size_m, y + half_size_m)
+        click.echo(f'  - Window bounds: {bounds}')
+        window = from_bounds(*bounds, transform=src.transform)
 
-            # Read bands 1,2,3 (RGB)
-            bands = []
-            for b in [1, 2, 3]:
-                band_data = src.read(b, window=window)
-                bands.append(band_data)
+        # Read bands 1,2,3 (RGB)
+        bands = []
+        for b in [1, 2, 3]:
+            band_data = src.read(b, window=window)
+            bands.append(band_data)
 
-            data = np.stack(bands)  # shape: (3, height, width)
+        data = np.stack(bands)  # shape: (3, height, width)
 
-            transform = src.window_transform(window)
-            meta = src.meta.copy()
-            meta.update(
-                {
-                    'count': 3,
-                    'height': data.shape[1],
-                    'width': data.shape[2],
-                    'transform': transform,
-                    'dtype': data.dtype,
-                }
-            )
+        transform = src.window_transform(window)
+        meta = src.meta.copy()
+        meta.update(
+            {
+                'count': 3,
+                'height': data.shape[1],
+                'width': data.shape[2],
+                'transform': transform,
+                'dtype': data.dtype,
+            }
+        )
 
-            return data, meta
+        return data, meta
 
 
 @click.command()

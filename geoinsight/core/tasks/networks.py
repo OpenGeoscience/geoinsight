@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 
 from django.contrib.gis.geos import LineString, Point
@@ -143,7 +145,8 @@ def create_network(vector_data, network_options):
                 ][0]
 
                 edge_points = route_points[  # use original projection
-                    route_points_start_index : route_points_end_index + 1  # +1 to include end
+                    route_points_start_index : route_points_end_index
+                    + 1  # +1 to include end
                 ]
                 edge_line_geometry = LineString(*[Point(p.x, p.y) for p in edge_points['geometry']])
 

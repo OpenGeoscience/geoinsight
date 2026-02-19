@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 from geoinsight.core.tasks.dataset import create_layers_and_frames

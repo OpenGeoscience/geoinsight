@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from guardian.shortcuts import get_objects_for_user
 from rest_framework.filters import BaseFilterBackend
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated

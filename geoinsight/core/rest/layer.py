@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.db import transaction
 import jsonschema
 from rest_framework.decorators import action

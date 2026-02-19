@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.core import signing
 from rest_framework.decorators import action
 from rest_framework.response import Response

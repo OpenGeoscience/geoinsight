@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from rest_framework.viewsets import ModelViewSet
 
 from geoinsight.core.models import Colormap

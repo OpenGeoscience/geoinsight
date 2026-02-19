@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import math
 
 from celery import shared_task
@@ -104,7 +106,6 @@ def flood_network_failure(result_id):
 
         # Run task
         if result.error is None:
-
             # Update name
             result.name = (
                 f'Failures for Network {network.id} with Flood Result {flood_sim.id}, '

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .basemap import Basemap
 from .chart import Chart
 from .colormap import Colormap
@@ -20,26 +22,26 @@ from .task_result import TaskResult
 
 __all__ = [
     'Basemap',
-    'TaskResult',
     'Chart',
+    'ColorConfig',
     'Colormap',
-    'Project',
+    'ColormapConfig',
     'Dataset',
     'DatasetTag',
     'FileItem',
-    'RasterData',
-    'VectorData',
-    'VectorFeature',
+    'FilterConfig',
     'Layer',
     'LayerFrame',
     'LayerStyle',
-    'ColorConfig',
-    'ColormapConfig',
-    'SizeConfig',
-    'SizeRangeConfig',
-    'FilterConfig',
-    'Region',
     'Network',
     'NetworkEdge',
     'NetworkNode',
+    'Project',
+    'RasterData',
+    'Region',
+    'SizeConfig',
+    'SizeRangeConfig',
+    'TaskResult',
+    'VectorData',
+    'VectorFeature',
 ]

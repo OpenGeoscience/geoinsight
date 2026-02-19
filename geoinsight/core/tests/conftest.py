@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 from django.contrib.auth.models import User
@@ -8,7 +10,7 @@ from rest_framework.test import APIClient
 
 from geoinsight.core.models import Project
 
-from .factory_fixtures import *  # noqa: F403, F401
+from .factory_fixtures import *  # noqa: F403
 
 
 @pytest.fixture

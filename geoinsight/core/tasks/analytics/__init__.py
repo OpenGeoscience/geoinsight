@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .analysis_type import AnalysisType
 from .create_road_network import CreateRoadNetwork
 from .flood_network_failure import FloodNetworkFailure

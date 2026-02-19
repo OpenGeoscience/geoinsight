@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing
 
 from django.contrib.auth.models import User
@@ -24,7 +26,7 @@ class Project(models.Model):
 
     def owner(self) -> User:
         users = typing.cast(
-            list[User], list(get_users_with_perms(self, only_with_perms_in=['owner']))
+            'list[User]', list(get_users_with_perms(self, only_with_perms_in=['owner']))
         )
         if len(users) != 1:
             raise Exception('Project must have exactly one owner')
@@ -33,12 +35,12 @@ class Project(models.Model):
 
     def collaborators(self) -> list[User]:
         return typing.cast(
-            list[User], list(get_users_with_perms(self, only_with_perms_in=['collaborator']))
+            'list[User]', list(get_users_with_perms(self, only_with_perms_in=['collaborator']))
         )
 
     def followers(self):
         return typing.cast(
-            list[User], list(get_users_with_perms(self, only_with_perms_in=['follower']))
+            'list[User]', list(get_users_with_perms(self, only_with_perms_in=['follower']))
         )
 
     @transaction.atomic()

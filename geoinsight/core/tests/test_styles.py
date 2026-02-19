@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pytest
 
 from geoinsight.core.models import ColorConfig, SizeConfig
@@ -89,8 +91,7 @@ def test_style_config_empty(layer_style):
     with pytest.raises(
         ValueError,
         match=(
-            'style_spec must contain at least one '
-            'color configuration and one size configuration.'
+            'style_spec must contain at least one color configuration and one size configuration.'
         ),
     ):
         layer_style.save_style_configs({})

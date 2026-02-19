@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 from pathlib import Path
 import tempfile
@@ -105,9 +107,9 @@ class VectorData(models.Model):
                 if value_range[0] < value_range[1]:
                     del summary['properties'][k]['value_set']
                     summary['properties'][k]['range'] = value_range
-                    summary['properties'][k][
-                        'sample_label'
-                    ] = f'[{value_range[0]}, {value_range[1]}]'
+                    summary['properties'][k]['sample_label'] = (
+                        f'[{value_range[0]}, {value_range[1]}]'
+                    )
             # Otherwise, limit the value set to the maximum length
             if summary['properties'][k].get('range') is None:
                 summary['properties'][k]['value_set'] = list(summary['properties'][k]['value_set'])[

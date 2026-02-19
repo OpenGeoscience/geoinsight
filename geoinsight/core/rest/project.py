@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing
 from typing import Any
 
@@ -30,7 +32,7 @@ class ProjectViewSet(ModelViewSet):
     def permissions(self, request: Request, *args: Any, **kwargs: Any):
         if request.user.is_anonymous:
             raise Exception('Anonymous user received after guardian filter')
-        user = typing.cast(User, request.user)
+        user = typing.cast('User', request.user)
 
         # Only the owner can modify project permissions
         project: Project = self.get_object()

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 from django.contrib.auth.models import User

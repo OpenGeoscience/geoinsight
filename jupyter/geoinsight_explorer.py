@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 from urllib.parse import urlencode
 
-from IPython import display
 from ipyleaflet import FullScreenControl, Map, TileLayer, VectorTileLayer, basemaps, projections
+from IPython import display
 from ipytree import Node, Tree
 import ipywidgets as widgets
 import requests

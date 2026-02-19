@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime
 import importlib
 import importlib.util
@@ -5,7 +7,7 @@ import json
 import os
 from pathlib import Path
 import sys
-from typing import Any, Dict, Literal, Optional, TypedDict
+from typing import Any, Literal, TypedDict
 
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
@@ -26,7 +28,7 @@ class ProjectItem(TypedDict):
     default_map_center: list[float]
     default_map_zoom: float
     datasets: list[str]
-    action: Optional[Literal['replace']]
+    action: Literal['replace'] | None
 
 
 class FrameInfo(TypedDict, total=False):
@@ -49,26 +51,26 @@ class DatasetItem(TypedDict):
     type: Literal['Dataset']
     name: str
     description: str
-    category: Optional[str]
+    category: str | None
     project: str
     file: str
-    layers: Optional[list[LayerInfo]]
-    conversion_script: Optional[  # noqa: N815
-        str
-    ]  # Relative path to python file used for conversion with function convert_dataset
-    network_options: Optional[dict[str, Any]]
-    region_options: Optional[dict[str, Any]]
-    action: Optional[Literal['redownload', 'replace']]
+    layers: list[LayerInfo] | None
+    conversion_script: (
+        str | None
+    )  # Relative path to python file used for conversion with function convert_dataset
+    network_options: dict[str, Any] | None
+    region_options: dict[str, Any] | None
+    action: Literal['redownload', 'replace'] | None
 
 
 class FileItemType(TypedDict):
     name: str
-    url: Optional[str]
+    url: str | None
     path: str
-    hash: Optional[str]
+    hash: str | None
     file_type: str
     file_size: int
-    metadata: Optional[dict[str, Any]]
+    metadata: dict[str, Any] | None
     index: int
 
 
@@ -91,8 +93,8 @@ class ChartItem(TypedDict, total=False):
     project: str
     files: list[ChartFileInfo]
     editable: bool
-    metadata: Dict[str, Any]
-    chart_options: Dict[str, Any]
+    metadata: dict[str, Any]
+    chart_options: dict[str, Any]
     conversion_options: ConversionOptions
 
 
@@ -117,7 +119,7 @@ class Command(BaseCommand):
             help='Do not used cached downloaded files',
         )
 
-    def handle(self, *args: Any, **options: Dict[str, Any]) -> None:
+    def handle(self, *args: Any, **options: dict[str, Any]) -> None:
         file_path = Path(DATA_FOLDER, options['file_path'])
         if not file_path.exists():
             self.stdout.write(f'File {file_path} does not exist.')
@@ -149,7 +151,7 @@ class Command(BaseCommand):
         charts = []
         for item in json_data:
             if item.get('type') not in VALID_TYPES:
-                self.stdout.write(self.style.ERROR(f"Invalid item type: {item.get('type')}"))
+                self.stdout.write(self.style.ERROR(f'Invalid item type: {item.get("type")}'))
                 continue
 
             if item['type'] == 'Project':
@@ -226,7 +228,7 @@ class Command(BaseCommand):
         for project in data:
             self.stdout.write(f'\t- {project["name"]}')
             existing = Project.objects.filter(name=project['name'])
-            if existing.count() and replace or project.get('action') == 'replace':
+            if (existing.count() and replace) or project.get('action') == 'replace':
                 existing.delete()
             project_for_setting, created = Project.objects.get_or_create(
                 name=project['name'],
