@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import datetime
-import os
 from pathlib import Path
 import tempfile
 
@@ -153,7 +152,7 @@ def flood_simulation(result_id):
                 name=output_path.name,
                 dataset=dataset,
                 file_type='tif',
-                file_size=os.path.getsize(output_path),
+                file_size=output_path.stat().st_size,
                 metadata=metadata,
             )
             with output_path.open('rb') as f:

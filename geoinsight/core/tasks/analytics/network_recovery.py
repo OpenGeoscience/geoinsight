@@ -89,7 +89,7 @@ def get_network_graph(network):
         if e.from_node.id not in edge_list:
             edge_list[e.from_node.id] = []
         edge_list[e.from_node.id].append(e.to_node.id)
-    for _edge_id, edges in edge_list.items():
+    for edges in edge_list.values():
         edges.sort()
     return nx.from_dict_of_lists(edge_list)
 

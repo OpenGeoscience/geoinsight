@@ -13,7 +13,6 @@ from __future__ import annotations
 
 from datetime import datetime
 import json
-import os
 from pathlib import Path
 
 import click
@@ -151,7 +150,7 @@ def download_stac_sentinel(
     lat, lon, start_date, end_date, max_results, output_dir, cloud_cover, size_km
 ):
     """Download clipped Sentinel-2 L1C visual images from AWS via STAC API."""
-    os.makedirs(output_dir, exist_ok=True)
+    Path(output_dir).mkdir(parents=True, exist_ok=True)
 
     catalog = Client.open(STAC_API_URL)
 
@@ -200,7 +199,7 @@ def download_stac_sentinel(
         if visual_asset:
             url = visual_asset.href
             filename = f'{item_id}_visual_clip_{int(size_km)}km.tif'
-            filepath = os.path.join(output_dir, filename)
+            filepath = Path(output_dir) / filename
 
             click.echo(f'  - Reading {size_km}km x {size_km}km window around point')
             try:

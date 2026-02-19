@@ -184,8 +184,8 @@ class Command(BaseCommand):
         file_type = file_path.split('.')[-1]
         file_location.parent.mkdir(parents=True, exist_ok=True)
 
-        if os.path.exists(file_location) and no_cache:
-            os.remove(file_location)
+        if file_location.exists() and no_cache:
+            file_location.unlink()
 
         if file_url is not None:
             pooch.retrieve(
@@ -213,7 +213,7 @@ class Command(BaseCommand):
                 dataset=dataset,
                 chart=chart,
                 file_type=file_type,
-                file_size=os.path.getsize(file_location),
+                file_size=file_location.stat().st_size,
                 metadata=dict(
                     **file_metadata,
                     uploaded=str(datetime.now()),

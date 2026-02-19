@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import datetime
-import os
 
 from celery import shared_task
 from django.conf import settings
@@ -155,7 +154,7 @@ def geoai_segmentation(result_id):
                 name=mask_path.name,
                 dataset=dataset,
                 file_type='tif',
-                file_size=os.path.getsize(mask_path),
+                file_size=mask_path.stat().st_size,
             )
             with mask_path.open('rb') as f:
                 raster_file_item.file.save(mask_path, ContentFile(f.read()))
