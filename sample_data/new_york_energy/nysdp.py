@@ -64,7 +64,7 @@ def create_vector_features(dataset, service_name=None, **kwargs):
     vector_data = VectorData.objects.create(dataset=dataset, name=dataset.name)
     feature_sets = fetch_vector_features(service_name=service_name)
     vector_features = []
-    for _, feature_set in feature_sets.items():
+    for feature_set in feature_sets.values():
         for feature in feature_set:
             vector_features.append(
                 VectorFeature(
@@ -106,7 +106,7 @@ def download_all_deduped_vector_features(**kwargs):
 
     features = []
     for feature_set in feature_sets:
-        for _, fset in feature_set.items():
+        for fset in feature_set.values():
             for feature in fset:
                 properties = feature['properties']
                 geometry = GEOSGeometry(json.dumps(feature['geometry']))
