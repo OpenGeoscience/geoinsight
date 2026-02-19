@@ -15,11 +15,11 @@ if typing.TYPE_CHECKING:
 class DatasetTag(models.Model):
     tag = models.CharField(max_length=255, unique=True)
 
-    def __str__(self):
-        return self.tag
-
     class Meta:
         ordering = ['tag']
+
+    def __str__(self):
+        return self.tag
 
 
 class Dataset(models.Model):
