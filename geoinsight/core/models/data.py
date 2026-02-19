@@ -35,7 +35,7 @@ class RasterData(models.Model):
             with open(raster_path, 'wb') as raster_file:
                 raster_file.write(self.cloud_optimized_geotiff.read())
             source = large_image.open(raster_path)
-            data, data_format = source.getRegion(format='numpy')
+            data, _data_format = source.getRegion(format='numpy')
             data = data[:, :, 0]
             if resolution != 1.0:
                 step = int(1 / resolution)

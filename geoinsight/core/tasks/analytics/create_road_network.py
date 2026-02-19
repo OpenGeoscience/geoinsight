@@ -119,21 +119,21 @@ def create_road_network(result_id):
                 (road_nodes['x'] == end[0]) & (road_nodes['y'] == end[1])
             ].iloc[0]
 
-            start_node, created = NetworkNode.objects.get_or_create(
+            start_node, _created = NetworkNode.objects.get_or_create(
                 network=network,
                 name='{:0.5f}/{:0.5f}'.format(*start),
                 location=Point(*start),
             )
             start_node.metadata = metadata_for_row(start_node_data)
             start_node.save()
-            end_node, created = NetworkNode.objects.get_or_create(
+            end_node, _created = NetworkNode.objects.get_or_create(
                 network=network,
                 name='{:0.5f}/{:0.5f}'.format(*end),
                 location=Point(*end),
             )
             end_node.metadata = metadata_for_row(end_node_data)
             end_node.save()
-            edge, created = NetworkEdge.objects.get_or_create(
+            edge, _created = NetworkEdge.objects.get_or_create(
                 network=network,
                 name=edge_name,
                 directed=edge_data['oneway'],
