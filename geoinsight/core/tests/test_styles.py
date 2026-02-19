@@ -127,11 +127,11 @@ def test_style_config_update(layer_style):
     color_config = layer_style.color_configs.first()
     assert color_config.id == color_config_id
     with pytest.raises(ColorConfig.colormap.RelatedObjectDoesNotExist):
-        color_config.colormap
+        color_config.colormap  # noqa: B018
     size_config = layer_style.size_configs.first()
     assert size_config.id == size_config_id
     with pytest.raises(SizeConfig.size_range.RelatedObjectDoesNotExist):
-        size_config.size_range
+        size_config.size_range  # noqa: B018
     assert layer_style.filter_configs.count() == 0
 
 
