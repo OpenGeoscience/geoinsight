@@ -194,7 +194,7 @@ def download_stac_sentinel(
             break
         date_str = item.datetime.strftime('%Y-%m-%d')
         item_id = item.id
-        click.echo(f'[{i+1}/{len(items)}] {item_id} from {date_str}')
+        click.echo(f'[{i + 1}/{len(items)}] {item_id} from {date_str}')
 
         visual_asset = item.assets.get('visual')
         if visual_asset:

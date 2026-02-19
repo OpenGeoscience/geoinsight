@@ -68,7 +68,8 @@ class VectorData(models.Model):
 
     def read_geojson_data(self) -> dict:
         """Read and load the data from geojson_data into a dict."""
-        return json.load(self.geojson_data.open())
+        with self.geojson_data.open() as f:
+            return json.load(f)
 
     def get_summary(self, cache=True):
         if cache and self.summary:
