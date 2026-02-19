@@ -176,7 +176,7 @@ def network_recovery(result_id):
                 random.shuffle(node_recoveries)
             else:
                 nodes_sorted, _edge_list = sort_graph_centrality(graph, mode)
-                node_recoveries.sort(key=lambda n: nodes_sorted.index(n))
+                node_recoveries.sort(key=nodes_sorted.index)
 
             recovery_timesteps = {
                 i: [n for n in last_frame_failures if n not in node_recoveries[:i]]
