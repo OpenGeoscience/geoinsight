@@ -83,8 +83,7 @@ def cut_crossed_lines(gdf):
             ]
         )
 
-    gdf = geopandas.GeoDataFrame.from_features(separated_features)
-    return gdf
+    return geopandas.GeoDataFrame.from_features(separated_features)
 
 
 def merge_lines(gdf):

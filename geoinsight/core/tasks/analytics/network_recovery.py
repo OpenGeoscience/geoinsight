@@ -91,8 +91,7 @@ def get_network_graph(network):
         edge_list[e.from_node.id].append(e.to_node.id)
     for edge_id in edge_list:
         edge_list[edge_id].sort()
-    graph_representation = nx.from_dict_of_lists(edge_list)
-    return graph_representation
+    return nx.from_dict_of_lists(edge_list)
 
 
 # Authored by Jack Watson
