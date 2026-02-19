@@ -90,10 +90,7 @@ def download_all_deduped_vector_features(**kwargs):
         ],
     )
     downloads_folder = kwargs.get('downloads_folder')
-    if downloads_folder is None:
-        downloads_folder = Path(__file__).parent
-    else:
-        downloads_folder = Path(downloads_folder)
+    downloads_folder = Path(__file__).parent if downloads_folder is None else Path(downloads_folder)
     filename = downloads_folder / 'nyc' / 'network_basic_features.json'
     if filename.exists():
         print('\t\tReading saved file of basic features.')
