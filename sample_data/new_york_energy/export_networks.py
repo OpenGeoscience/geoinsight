@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 from pathlib import Path
 
@@ -12,7 +12,7 @@ OUTPUT_FOLDER = Path('sample_data/use_cases/new_york_energy/networks')
 
 
 def perform_export():
-    start = datetime.now()
+    start = datetime.now(tz=timezone.utc)
     networks = Network.objects.filter(vector_data__dataset__name='National Grid Network')
     zones = Region.objects.filter(dataset__name='County Boundaries')
 
@@ -53,4 +53,4 @@ def perform_export():
                 json.dump(geodata, f)
             print(f'Wrote {len(features)} features to {filename}.')
 
-    print(f'\tCompleted in {(datetime.now() - start).total_seconds()} seconds.')
+    print(f'\tCompleted in {(datetime.now(tz=timezone.utc) - start).total_seconds()} seconds.')

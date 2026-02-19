@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from celery import shared_task
 import pandas as pd
@@ -109,7 +109,7 @@ def add_gcc_chart_datum(dataset, project_id, excluded_node_names, gcc_size):
     chart.chart_data['datasets'] = datasets
 
     new_entry = {
-        'run_time': datetime.now().strftime('%d/%m/%Y %H:%M'),
+        'run_time': datetime.now(tz=timezone.utc).strftime('%d/%m/%Y %H:%M'),
         'n_excluded_nodes': len(excluded_node_names),
         'excluded_node_names': excluded_node_names,
         'gcc_size': gcc_size,

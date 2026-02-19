@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 import importlib
 import importlib.util
 import json
@@ -216,7 +216,7 @@ class Command(BaseCommand):
                 file_size=file_location.stat().st_size,
                 metadata=dict(
                     **file_metadata,
-                    uploaded=str(datetime.now()),
+                    uploaded=str(datetime.now(tz=timezone.utc)),
                 ),
                 index=index,
             )

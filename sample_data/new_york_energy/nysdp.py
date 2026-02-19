@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 from pathlib import Path
 
@@ -77,7 +77,7 @@ def create_vector_features(dataset, service_name=None, **kwargs):
 
 
 def download_all_deduped_vector_features(**kwargs):
-    start = datetime.now()
+    start = datetime.now(tz=timezone.utc)
     include_services = kwargs.get(
         'include_services',
         [
@@ -128,12 +128,12 @@ def download_all_deduped_vector_features(**kwargs):
     gdf.reset_index(inplace=True)
 
     gdf.to_file(filename)
-    print(f'\t\tCompleted download in {(datetime.now() - start).total_seconds()} seconds.')
+    print(f'\t\tCompleted download in {(datetime.now(tz=timezone.utc) - start).total_seconds()} seconds.')
     return gdf
 
 
 def create_consolidated_network(dataset, **kwargs):
-    start = datetime.now()
+    start = datetime.now(tz=timezone.utc)
     Network.objects.filter(vector_data__dataset=dataset).delete()
     VectorData.objects.filter(dataset=dataset).delete()
     gdf = download_all_deduped_vector_features(**kwargs)
@@ -201,4 +201,4 @@ def create_consolidated_network(dataset, **kwargs):
         create_vector_features_from_network(network)
 
     print(f'\t\t{dataset.networks.count()} separate networks created.')
-    print(f'\tCompleted in {(datetime.now() - start).total_seconds()} seconds.')
+    print(f'\tCompleted in {(datetime.now(tz=timezone.utc) - start).total_seconds()} seconds.')

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 from pathlib import Path
 import tempfile
@@ -85,7 +85,7 @@ def create_network(dataset, network_name, geodata):
 
 def perform_import(dataset, **kwargs):
     print('\tEstimated time: 45 minutes.')
-    start = datetime.now()
+    start = datetime.now(tz=timezone.utc)
     Network.objects.filter(vector_data__dataset=dataset).delete()
     VectorData.objects.filter(dataset=dataset).delete()
     for file_item in dataset.source_files.all():
@@ -101,4 +101,4 @@ def perform_import(dataset, **kwargs):
                             content = zip_archive.open(filename).read()
                             geodata = json.loads(content)
                             create_network(dataset, network_name, geodata)
-    print(f'\tCompleted in {(datetime.now() - start).total_seconds()} seconds.')
+    print(f'\tCompleted in {(datetime.now(tz=timezone.utc) - start).total_seconds()} seconds.')
