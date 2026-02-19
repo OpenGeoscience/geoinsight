@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import contextlib
+
 from celery import shared_task
 
 
@@ -146,10 +148,8 @@ def convert_dataset(
 
     result = None
     if result_id:
-        try:
+        with contextlib.suppress(TaskResult.DoesNotExist):
             result = TaskResult.objects.get(id=result_id)
-        except TaskResult.DoesNotExist:
-            pass
 
     VectorData.objects.filter(dataset=dataset).delete()
     RasterData.objects.filter(dataset=dataset).delete()

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import contextlib
+
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
@@ -61,10 +63,8 @@ class LayerStyle(models.Model):
             single_color = color_spec.get('single_color')
             if single_color is not None:
                 color_config.single_color = single_color
-                try:
+                with contextlib.suppress(ColorConfig.colormap.RelatedObjectDoesNotExist):
                     color_config.colormap.delete()
-                except ColorConfig.colormap.RelatedObjectDoesNotExist:
-                    pass
             else:
                 color_config.single_color = None
                 colormap_spec = color_spec.get('colormap')
@@ -105,10 +105,8 @@ class LayerStyle(models.Model):
             single_size = size_spec.get('single_size')
             if single_size is not None:
                 size_config.single_size = single_size
-                try:
+                with contextlib.suppress(SizeConfig.size_range.RelatedObjectDoesNotExist):
                     size_config.size_range.delete()
-                except SizeConfig.size_range.RelatedObjectDoesNotExist:
-                    pass
             else:
                 size_config.single_size = None
                 size_range_spec = size_spec.get('size_range')
