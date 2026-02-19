@@ -167,7 +167,7 @@ def network_recovery(result_id):
 
             result.write_status('Reading network failure state...')
             node_failures = failure.outputs.get('failures')
-            frames = sorted(int(key) for key in node_failures.keys())
+            frames = sorted(int(key) for key in node_failures)
             last_frame_failures = node_failures[str(frames[-1])]
             node_recoveries = last_frame_failures.copy()
             graph = get_network_graph(network)
