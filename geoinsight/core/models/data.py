@@ -96,7 +96,7 @@ class VectorData(models.Model):
                         summary['properties'][k]['count'] += 1
         # Once sets are complete, reevaluate each set and create a `sample_label` for each property
         for k in summary['properties']:
-            types = set(type(v).__name__ for v in summary['properties'][k]['value_set'])
+            types = {type(v).__name__ for v in summary['properties'][k]['value_set']}
             summary['properties'][k]['types'] = list(types)
             # If a property has only numeric values, return the range instead of a set of values
             if len(types.intersection({'int', 'float'})) == len(types):
