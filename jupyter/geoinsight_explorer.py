@@ -54,7 +54,7 @@ class LayerRepresentation:
         )
         self.map.add(FullScreenControl())
         self.map_layers = []
-        self.update_frame(dict(name='value'))
+        self.update_frame({'name': 'value'})
 
     def get_frame_path_and_metadata(self, frame):
         raster = frame.get('raster')
@@ -100,10 +100,10 @@ class LayerRepresentation:
                         tile_size = metadata.get('tileWidth', 256)
                     url_suffix = 'tiles/{z}/{x}/{y}'
                     layer_class = None
-                    layer_kwargs = dict(min_zoom=0, max_zoom=20, tile_size=tile_size)
-                    query = dict(token=self.token)
+                    layer_kwargs = {'min_zoom': 0, 'max_zoom': 20, 'tile_size': tile_size}
+                    query = {'token': self.token}
                     source_filters = frame.get('source_filters')
-                    if source_filters is not None and source_filters != dict(band=1):
+                    if source_filters is not None and source_filters != {'band': 1}:
                         query.update(self.get_flat_filters(source_filters))
 
                     if 'raster' in url_path:
@@ -185,10 +185,10 @@ class GeoInsightExplorer:
 
             response = requests.post(
                 self.api_url + 'token/',
-                dict(
-                    username=email,
-                    password=password,
-                ),
+                {
+                    'username': email,
+                    'password': password,
+                },
             )
             if response.status_code == 200:
                 self.token = response.json().get('token')

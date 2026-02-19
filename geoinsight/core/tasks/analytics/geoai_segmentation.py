@@ -44,8 +44,8 @@ class GeoAISegmentation(AnalysisType):
             'segmentation_prompt': [],
             'tile_size': [128, 256, 512, 1024, 2048],
             'tile_overlap': [4, 8, 16, 32, 64],
-            'threshold': [dict(min=0, max=1, step=0.01)],
-            'smoothing_sigma': [dict(min=0, max=1, step=0.01)],
+            'threshold': [{'min': 0, 'max': 1, 'step': 0.01}],
+            'smoothing_sigma': [{'min': 0, 'max': 1, 'step': 0.01}],
         }
 
     def run_task(self, *, project, **inputs):
@@ -112,12 +112,12 @@ def geoai_segmentation(result_id):
             region_size = 1000
             for iy in range(int(seg.sizeY / region_size)):
                 for ix in range(int(seg.sizeX / region_size)):
-                    region = dict(
-                        top=iy * region_size,
-                        left=ix * region_size,
-                        bottom=(iy + 1) * region_size,
-                        right=(ix + 1) * region_size,
-                    )
+                    region = {
+                        'top': iy * region_size,
+                        'left': ix * region_size,
+                        'bottom': (iy + 1) * region_size,
+                        'right': (ix + 1) * region_size,
+                    }
                     data, _ = seg.getRegion(region=region, format='numpy')
                     mask = (data[:, :, 0] > 0).astype(int) * 255
                     sink.addTile(mask, x=region['left'], y=region['top'])
@@ -161,7 +161,7 @@ def geoai_segmentation(result_id):
                 raster_file_item.file.save(mask_path, ContentFile(f.read()))
 
             dataset.spawn_conversion_task(asynchronous=False)
-            result.outputs = dict(result=dataset.id)
+            result.outputs = {'result': dataset.id}
     except Exception as e:
         result.error = str(e)
     result.complete()

@@ -78,7 +78,7 @@ class VectorData(models.Model):
             return self.summary
         # Limit number of unique values to return for non-numeric fields
         value_set_max_length = 1000
-        summary = dict(feature_types=[], properties={})
+        summary = {'feature_types': [], 'properties': {}}
         exclude_keys = ['node_id', 'edge_id', 'to_node_id', 'from_node_id', 'fill', 'stroke']
         # Create sets of all values for all properties (except excluded)
         # and a list of the feature types that exist (point, line, polygon)
@@ -89,7 +89,7 @@ class VectorData(models.Model):
             for k, v in feature.properties.items():
                 if k not in exclude_keys and v is not None and v != '':
                     if k not in summary['properties']:
-                        summary['properties'][k] = dict(value_set=set(), count=0)
+                        summary['properties'][k] = {'value_set': set(), 'count': 0}
                     new_val = v if isinstance(v, list) else [v]
                     for item in new_val:
                         summary['properties'][k]['value_set'].add(item)

@@ -24,7 +24,7 @@ def perform_export():
             for node in network.nodes.all():
                 geom = shapely.geometry.mapping(shapely.wkt.loads(node.location.wkt))
                 features.append(
-                    dict(geometry=geom, properties=dict(**node.metadata, county=zone.name))
+                    {'geometry': geom, 'properties': dict(**node.metadata, county=zone.name)}
                 )
             for edge in network.edges.all():
                 geom = shapely.geometry.mapping(shapely.wkt.loads(edge.line_geometry.wkt))
@@ -33,21 +33,21 @@ def perform_export():
                 )
                 to_point = shapely.geometry.mapping(shapely.wkt.loads(edge.to_node.location.wkt))
                 features.append(
-                    dict(
-                        geometry=geom,
-                        properties=dict(
+                    {
+                        'geometry': geom,
+                        'properties': dict(
                             **edge.metadata,
                             from_point=from_point,
                             to_point=to_point,
                             county=zone.name,
                         ),
-                    )
+                    }
                 )
-            geodata = dict(
-                type='FeatureCollection',
-                crs=dict(type='name', properties=dict(name='EPSG:4326')),
-                features=features,
-            )
+            geodata = {
+                'type': 'FeatureCollection',
+                'crs': {'type': 'name', 'properties': {'name': 'EPSG:4326'}},
+                'features': features,
+            }
             filename = OUTPUT_FOLDER / f'{zone.name}.json'
             with open(filename, 'w') as f:
                 json.dump(geodata, f)

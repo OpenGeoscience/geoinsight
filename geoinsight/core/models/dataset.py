@@ -46,11 +46,11 @@ class Dataset(models.Model):
 
     @transaction.atomic()
     def set_owner(self, user: User):
-        filters = dict(
-            content_type__app_label=self._meta.app_label,
-            content_type__model=self._meta.model_name,
-            object_pk=self.pk,
-        )
+        filters = {
+            'content_type__app_label': self._meta.app_label,
+            'content_type__model': self._meta.model_name,
+            'object_pk': self.pk,
+        }
 
         # Remove existing owner
         UserObjectPermission.objects.filter(
@@ -84,12 +84,12 @@ class Dataset(models.Model):
             result = TaskResult.objects.create(
                 name=f'Conversion of Dataset {self.name}',
                 task_type='conversion',
-                inputs=dict(
-                    dataset_id=self.id,
-                    layer_options=layer_options,
-                    network_options=network_options,
-                    region_options=region_options,
-                ),
+                inputs={
+                    'dataset_id': self.id,
+                    'layer_options': layer_options,
+                    'network_options': network_options,
+                    'region_options': region_options,
+                },
                 status='Initializing task...',
             )
             convert_dataset.delay(

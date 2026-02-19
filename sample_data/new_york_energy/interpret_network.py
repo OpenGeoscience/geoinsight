@@ -14,8 +14,8 @@ def get_properties(feature):
         feature.drop(['geometry', 'index'], errors='ignore').fillna('').to_json()
     )
     properties.update(
-        dict(
-            colors=','.join(
+        {
+            'colors': ','.join(
                 [
                     name_to_hex(
                         (
@@ -28,7 +28,7 @@ def get_properties(feature):
                     '#ffffff',
                 ]
             )
-        )
+        }
     )
     return properties
 
@@ -74,11 +74,11 @@ def cut_crossed_lines(gdf):
             separated = [feature.geometry]
         separated_features.extend(
             [
-                dict(
-                    type='Feature',
-                    geometry=json.loads(shapely.to_geojson(s)),
-                    properties=properties,
-                )
+                {
+                    'type': 'Feature',
+                    'geometry': json.loads(shapely.to_geojson(s)),
+                    'properties': properties,
+                }
                 for s in separated
             ]
         )
@@ -114,11 +114,11 @@ def merge_lines(gdf):
             if curr_segment is None:
                 # no valid merge segment, include feature as-is
                 merged_features.append(
-                    dict(
-                        type='Feature',
-                        geometry=json.loads(shapely.to_geojson(curr_geom)),
-                        properties=properties,
-                    )
+                    {
+                        'type': 'Feature',
+                        'geometry': json.loads(shapely.to_geojson(curr_geom)),
+                        'properties': properties,
+                    }
                 )
             else:
                 # valid merge segment, mark constituent features as visited
@@ -135,11 +135,11 @@ def merge_lines(gdf):
                         ),
                     )
                 merged_features.append(
-                    dict(
-                        type='Feature',
-                        geometry=json.loads(shapely.to_geojson(curr_segment)),
-                        properties=properties,
-                    )
+                    {
+                        'type': 'Feature',
+                        'geometry': json.loads(shapely.to_geojson(curr_segment)),
+                        'properties': properties,
+                    }
                 )
     gdf = geopandas.GeoDataFrame.from_features(merged_features)
     return cut_crossed_lines(gdf)
@@ -162,7 +162,7 @@ def find_nodes(gdf):
                 # omit duplicates within tolerance radius
                 not existing_node_locations.dwithin(endpoint, TOLERANCE).any()
             ):
-                nodes.append(dict(location=endpoint, metadata=properties))
+                nodes.append({'location': endpoint, 'metadata': properties})
     return nodes
 
 
@@ -196,12 +196,12 @@ def find_edges(gdf, nodes):
                 .any()
             ):
                 edges.append(
-                    dict(
-                        line_geometry=segment,
-                        from_point=from_points.iloc[0],
-                        to_point=to_points.iloc[0],
-                        metadata=properties,
-                    )
+                    {
+                        'line_geometry': segment,
+                        'from_point': from_points.iloc[0],
+                        'to_point': to_points.iloc[0],
+                        'metadata': properties,
+                    }
                 )
     return edges
 

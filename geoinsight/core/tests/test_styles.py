@@ -4,80 +4,80 @@ import pytest
 
 from geoinsight.core.models import ColorConfig, SizeConfig
 
-SIMPLE_SPEC = dict(
-    default_frame=1,
-    opacity=0.5,
-    colors=[
-        dict(
-            name='all',
-            visible=True,
-            use_feature_props=True,
-            single_color='#ffffff',
-        )
+SIMPLE_SPEC = {
+    'default_frame': 1,
+    'opacity': 0.5,
+    'colors': [
+        {
+            'name': 'all',
+            'visible': True,
+            'use_feature_props': True,
+            'single_color': '#ffffff',
+        }
     ],
-    sizes=[
-        dict(
-            name='all',
-            zoom_scaling=True,
-            single_size=4,
-        )
+    'sizes': [
+        {
+            'name': 'all',
+            'zoom_scaling': True,
+            'single_size': 4,
+        }
     ],
-    filters=[],
-)
+    'filters': [],
+}
 
-COMPLEX_SPEC = dict(
-    default_frame=1,
-    opacity=0.5,
-    colors=[
-        dict(
-            name='all',
-            visible=True,
-            use_feature_props=False,
+COMPLEX_SPEC = {
+    'default_frame': 1,
+    'opacity': 0.5,
+    'colors': [
+        {
+            'name': 'all',
+            'visible': True,
+            'use_feature_props': False,
             # Discretely apply 5 colors of terrain colormap by 'depth' with range [-1.5, 1.5]
-            colormap=dict(
-                id=1,
-                discrete=True,
-                clamp=False,
-                n_colors=5,
-                color_by='depth',
-                null_color='#000000',
-                range=[-1.5, 1.5],
-            ),
-        )
+            'colormap': {
+                'id': 1,
+                'discrete': True,
+                'clamp': False,
+                'n_colors': 5,
+                'color_by': 'depth',
+                'null_color': '#000000',
+                'range': [-1.5, 1.5],
+            },
+        }
     ],
-    sizes=[
-        dict(
-            name='all',
-            zoom_scaling=True,
+    'sizes': [
+        {
+            'name': 'all',
+            'zoom_scaling': True,
             # Size features between 2 and 8 by 'magnitude' (1 if null)
-            size_range=dict(
-                size_by='magnitude',
-                minimum=2,
-                maximum=8,
-                null_size=dict(
-                    transparency=False,
-                    size=1,
-                ),
-            ),
-        )
+            'size_range': {
+                'size_by': 'magnitude',
+                'minimum': 2,
+                'maximum': 8,
+                'null_size': {
+                    'transparency': False,
+                    'size': 1,
+                },
+            },
+        }
     ],
-    filters=[
-        dict(
+    'filters': [
+        {
             # Exclude features with 'timestep' 0-10
-            filter_by='timestep',
-            include=False,
-            transparency=True,
-            range=[0, 10],
-        ),
-        dict(
+            'filter_by': 'timestep',
+            'include': False,
+            'transparency': True,
+            'range': [0, 10],
+        },
+        {
             # Include features where 'day' is a weekend day
-            filter_by='day',
-            include=True,
-            transparency=True,
-            list=['sunday', 'saturday'],
-        ),
+            'filter_by': 'day',
+            'include': True,
+            'transparency': True,
+            'list': ['sunday', 'saturday'],
+        },
     ],
-)
+}
 
 
 @pytest.mark.django_db
@@ -140,11 +140,11 @@ def test_rest_style_create_and_update(authenticated_api_client, layer, project, 
     project.set_collaborators([user])
     project.datasets.set([layer.dataset])
 
-    style = dict(
-        name='Test Style',
-        layer=layer.id,
-        project=project.id,
-    )
+    style = {
+        'name': 'Test Style',
+        'layer': layer.id,
+        'project': project.id,
+    }
 
     # Create style with simple spec
     style['style_spec'] = SIMPLE_SPEC

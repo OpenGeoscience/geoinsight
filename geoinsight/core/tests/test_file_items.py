@@ -16,15 +16,15 @@ def test_upload_and_create_file_item(
     with open(multiframe_vector_file['path'], 'rb') as f:
         s3ff_value = s3ff_field_value_factory(File(file=f, name=multiframe_vector_file['name']))
 
-    fileitem_expected = dict(
-        name='multiframe_vector.geojson',
-        file=s3ff_value,
-        file_type='geojson',
-        dataset=dataset.id,
-        metadata=dict(
-            source='pytest',
-        ),
-    )
+    fileitem_expected = {
+        'name': 'multiframe_vector.geojson',
+        'file': s3ff_value,
+        'file_type': 'geojson',
+        'dataset': dataset.id,
+        'metadata': {
+            'source': 'pytest',
+        },
+    }
     resp = authenticated_api_client.post('/api/v1/files/', fileitem_expected)
     assert resp.status_code == 201
     serialized_fileitem = resp.json()

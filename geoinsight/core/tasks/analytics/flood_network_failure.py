@@ -126,13 +126,13 @@ def flood_network_failure(result_id):
                     * (180 / math.pi)
                     / math.cos(point.y * math.pi / 180)
                 )
-                return dict(
-                    top=point.y + lat_delta,
-                    bottom=point.y - lat_delta,
-                    left=point.x - lon_delta,
-                    right=point.x + lon_delta,
-                    units='EPSG:4326',
-                )
+                return {
+                    'top': point.y + lat_delta,
+                    'bottom': point.y - lat_delta,
+                    'left': point.x - lon_delta,
+                    'right': point.x + lon_delta,
+                    'units': 'EPSG:4326',
+                }
 
             # Precompute node regions
             node_regions = {
@@ -163,7 +163,7 @@ def flood_network_failure(result_id):
                     ):
                         node_failures.append(node_id)
                 animation_results[frame_index] = node_failures.copy()
-            result.outputs = dict(failures=animation_results)
+            result.outputs = {'failures': animation_results}
     except Exception as e:
         result.error = str(e)
     result.complete()

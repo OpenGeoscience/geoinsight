@@ -41,10 +41,10 @@ class FloodSimulation(AnalysisType):
             'initial_conditions_id': ['001', '002', '003'],
             'time_period': ['2031-2050', '2041-2060'],
             'hydrograph': Chart.objects.filter(name__icontains='hydrograph'),
-            'potential_evapotranspiration_percentile': [dict(min=0, max=100, step=1)],
-            'soil_moisture_percentile': [dict(min=0, max=100, step=1)],
-            'ground_water_percentile': [dict(min=0, max=100, step=1)],
-            'annual_probability': [dict(min=0, max=1, step=0.01)],
+            'potential_evapotranspiration_percentile': [{'min': 0, 'max': 100, 'step': 1}],
+            'soil_moisture_percentile': [{'min': 0, 'max': 100, 'step': 1}],
+            'ground_water_percentile': [{'min': 0, 'max': 100, 'step': 1}],
+            'annual_probability': [{'min': 0, 'max': 1, 'step': 0.01}],
         }
 
     def run_task(self, *, project, **inputs):
@@ -120,25 +120,25 @@ def flood_simulation(result_id):
                 writer='large_image',
             )
 
-            metadata = dict(
-                attribution='Simulation code by August Posch at Northeastern University',
-                simulation_steps=[
+            metadata = {
+                'attribution': 'Simulation code by August Posch at Northeastern University',
+                'simulation_steps': [
                     'downscaling_prediction',
                     'hydrological_prediction',
                     'hydrodynamic_prediction',
                 ],
-                module_repository='https://github.com/OpenGeoscience/uvdat-flood-sim',
-                inputs=dict(
-                    initial_conditions_id=initial_conditions_id,
-                    time_period=time_period,
-                    hydrograph=hydrograph,
-                    pet_percentile=pet_percentile,
-                    sm_percentile=sm_percentile,
-                    gw_percentile=gw_percentile,
-                    annual_probability=annual_probability,
-                ),
-                uploaded=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-            )
+                'module_repository': 'https://github.com/OpenGeoscience/uvdat-flood-sim',
+                'inputs': {
+                    'initial_conditions_id': initial_conditions_id,
+                    'time_period': time_period,
+                    'hydrograph': hydrograph,
+                    'pet_percentile': pet_percentile,
+                    'sm_percentile': sm_percentile,
+                    'gw_percentile': gw_percentile,
+                    'annual_probability': annual_probability,
+                },
+                'uploaded': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            }
             name_match = Dataset.objects.filter(name__icontains=name)
             if name_match.count() > 0:
                 name += f' ({name_match.count() + 1})'
@@ -160,11 +160,11 @@ def flood_simulation(result_id):
                 file_item.file.save(output_path.name, ContentFile(f.read()))
             dataset.spawn_conversion_task(
                 layer_options=[
-                    dict(
-                        name='Flood Simulation',
-                        source_files=[output_path.name],
-                        frame_property='frame',
-                    ),
+                    {
+                        'name': 'Flood Simulation',
+                        'source_files': [output_path.name],
+                        'frame_property': 'frame',
+                    },
                 ],
                 network_options=None,
                 region_options=None,
@@ -182,34 +182,34 @@ def flood_simulation(result_id):
             layer.save()
             viridis = Colormap.objects.filter(name='viridis').first()
             style.save_style_configs(
-                dict(
-                    default_frame=0,
-                    opacity=1,
-                    colors=[
-                        dict(
-                            name='all',
-                            visible=True,
-                            colormap=dict(
-                                id=viridis.id,
-                                discrete=False,
-                                clamp=True,
-                                color_by='value',
-                                null_color='transparent',
-                                range=[0, 2],
-                            ),
-                        )
+                {
+                    'default_frame': 0,
+                    'opacity': 1,
+                    'colors': [
+                        {
+                            'name': 'all',
+                            'visible': True,
+                            'colormap': {
+                                'id': viridis.id,
+                                'discrete': False,
+                                'clamp': True,
+                                'color_by': 'value',
+                                'null_color': 'transparent',
+                                'range': [0, 2],
+                            },
+                        }
                     ],
-                    sizes=[
-                        dict(
-                            name='all',
-                            zoom_scaling=True,
-                            single_size=5,
-                        )
+                    'sizes': [
+                        {
+                            'name': 'all',
+                            'zoom_scaling': True,
+                            'single_size': 5,
+                        }
                     ],
-                )
+                }
             )
 
-            result.outputs = dict(flood=dataset.id)
+            result.outputs = {'flood': dataset.id}
     except Exception as e:
         result.error = str(e)
     result.complete()

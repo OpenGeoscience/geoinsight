@@ -28,7 +28,7 @@ def create_network(dataset, network_name, geodata):
         name=network_name,
         category='energy',
         vector_data=vector_data,
-        metadata=dict(name=network_name),
+        metadata={'name': network_name},
     )
     features = geodata.get('features')
     nodes = []

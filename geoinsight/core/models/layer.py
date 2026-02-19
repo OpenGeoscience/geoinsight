@@ -7,7 +7,7 @@ from .dataset import Dataset
 
 
 def default_source_filters():
-    return dict(band=1)
+    return {'band': 1}
 
 
 class Layer(models.Model):

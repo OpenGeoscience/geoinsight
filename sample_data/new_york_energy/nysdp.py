@@ -118,7 +118,11 @@ def download_all_deduped_vector_features(**kwargs):
                     geoms = [geometry]
                 for geom in geoms:
                     features.append(
-                        dict(type='Feature', geometry=json.loads(geom.json), properties=properties)
+                        {
+                            'type': 'Feature',
+                            'geometry': json.loads(geom.json),
+                            'properties': properties,
+                        }
                     )
     # normalize and eliminate duplicates
     gdf = geopandas.GeoDataFrame.from_features(features, crs='EPSG:4326')

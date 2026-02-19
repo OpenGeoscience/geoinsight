@@ -13,7 +13,7 @@ def create_layers_and_frames(dataset, layer_options=None):
 
     if layer_options is None:
         layer_options = [
-            dict(name=data.name.split('.')[0].replace('_', ' '), frames=None, data=data.name)
+            {'name': data.name.split('.')[0].replace('_', ' '), 'frames': None, 'data': data.name}
             for data in [*vectors.all(), *rasters.all()]
         ]
 
@@ -26,7 +26,7 @@ def create_layers_and_frames(dataset, layer_options=None):
         frames = layer_info.get('frames')
         if frames is None:
             frames = []
-            kwargs = dict(dataset=dataset)
+            kwargs = {'dataset': dataset}
             data_name = layer_info.get('data')
             source_file_names = layer_info.get('source_files')
             if data_name is not None:
@@ -52,57 +52,57 @@ def create_layers_and_frames(dataset, layer_options=None):
                         if value_set is not None:
                             for value in value_set:
                                 frames.append(
-                                    dict(
-                                        name=value,
-                                        index=len(frames),
-                                        data=layer_data.name,
-                                        source_filters=dict(
+                                    {
+                                        'name': value,
+                                        'index': len(frames),
+                                        'data': layer_data.name,
+                                        'source_filters': dict(
                                             **{frame_property: value}, **additional_filters
                                         ),
-                                    )
+                                    }
                                 )
                         value_range = property_summary.get('range')
                         if value_range is not None:
                             for i in range(*value_range):
                                 frames.append(
-                                    dict(
-                                        name=f'Frame {i}',
-                                        index=len(frames),
-                                        data=layer_data.name,
-                                        source_filters=dict(
+                                    {
+                                        'name': f'Frame {i}',
+                                        'index': len(frames),
+                                        'data': layer_data.name,
+                                        'source_filters': dict(
                                             **{frame_property: i}, **additional_filters
                                         ),
-                                    )
+                                    }
                                 )
                 elif frame_property == 'frame' and raster_frames and len(raster_frames) > 1:
                     for raster_frame in raster_frames:
                         i = raster_frame.get('Index')
                         frames.append(
-                            dict(
-                                name=i,
-                                index=i,
-                                data=layer_data.name,
-                                source_filters=dict(frame=i),
-                            )
+                            {
+                                'name': i,
+                                'index': i,
+                                'data': layer_data.name,
+                                'source_filters': {'frame': i},
+                            }
                         )
                 elif frame_property == 'band' and bands and len(bands) > 1:
                     for band in bands:
                         frames.append(
-                            dict(
-                                name=band,
-                                index=len(frames),
-                                data=layer_data.name,
-                                source_filters=dict(band=band),
-                            )
+                            {
+                                'name': band,
+                                'index': len(frames),
+                                'data': layer_data.name,
+                                'source_filters': {'band': band},
+                            }
                         )
                 else:
                     frames.append(
-                        dict(
-                            name=layer_data.name,
-                            index=len(frames),
-                            data=layer_data.name,
-                            source_filters={},
-                        )
+                        {
+                            'name': layer_data.name,
+                            'index': len(frames),
+                            'data': layer_data.name,
+                            'source_filters': {},
+                        }
                     )
         for i, frame_info in enumerate(frames):
             index = frame_info.get('index', i)
@@ -121,7 +121,7 @@ def create_layers_and_frames(dataset, layer_options=None):
                     index=index,
                     vector=vector,
                     raster=raster,
-                    source_filters=frame_info.get('source_filters', dict(band=1)),
+                    source_filters=frame_info.get('source_filters', {'band': 1}),
                 )
 
 

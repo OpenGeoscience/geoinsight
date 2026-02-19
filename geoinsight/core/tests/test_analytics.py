@@ -119,9 +119,9 @@ def test_flood_analysis_chain(project):
     assert flood_dataset.category == 'flood'
 
     metadata = flood_dataset.metadata
-    assert metadata.get('inputs', {}) == dict(
-        time_period='2031-2050',
-        hydrograph=[
+    assert metadata.get('inputs', {}) == {
+        'time_period': '2031-2050',
+        'hydrograph': [
             0.006,
             0.026,
             0.066,
@@ -147,12 +147,12 @@ def test_flood_analysis_chain(project):
             0.001,
             0.001,
         ],
-        pet_percentile=50,
-        sm_percentile=50,
-        gw_percentile=50,
-        annual_probability=0.25,
-        initial_conditions_id='001',
-    )
+        'pet_percentile': 50,
+        'sm_percentile': 50,
+        'gw_percentile': 50,
+        'annual_probability': 0.25,
+        'initial_conditions_id': '001',
+    }
 
     layer = flood_dataset.layers.first()
     assert layer.frames.count() == 24

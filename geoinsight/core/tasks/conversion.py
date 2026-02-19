@@ -66,7 +66,7 @@ def convert_files(*files, file_item=None, combine=False):
     source_projection = 'epsg:4326'
     geodata_set = []
     cog_set = []
-    metadata = dict(source_filenames=[])
+    metadata = {'source_filenames': []}
     for file in files:
         if file_item.metadata:
             metadata.update(file_item.metadata)
@@ -78,16 +78,18 @@ def convert_files(*files, file_item=None, combine=False):
                 continue
         elif file.name.endswith('.shp'):
             reader = shapefile.Reader(file)
-            geodata_set.append(dict(name=file.name, features=reader.__geo_interface__['features']))
+            geodata_set.append(
+                {'name': file.name, 'features': reader.__geo_interface__['features']}
+            )
         elif any(file.name.endswith(suffix) for suffix in ['.json', '.geojson']):
             with open(file, 'rb') as f:
                 data = json.load(f)
-                geodata_set.append(dict(name=file.name, features=data.get('features')))
+                geodata_set.append({'name': file.name, 'features': data.get('features')})
                 source_projection = data.get('crs', {}).get('properties', {}).get('name')
         elif any(file.name.endswith(suffix) for suffix in RASTER_FILETYPES):
             cog_path = get_cog_path(file)
             if cog_path:
-                cog_set.append(dict(name=file.name, path=cog_path))
+                cog_set.append({'name': file.name, 'path': cog_path})
         elif not any(file.name.endswith(suffix) for suffix in IGNORE_FILETYPES):
             print('\t\tUnable to convert', file.name)
 
@@ -96,7 +98,7 @@ def convert_files(*files, file_item=None, combine=False):
         all_features = []
         for geodata in geodata_set:
             all_features += geodata.get('features')
-        geodata_set = [dict(name=file_item.name, features=all_features)]
+        geodata_set = [{'name': file_item.name, 'features': all_features}]
 
     for geodata in geodata_set:
         data, features = geodata.get('data'), geodata.get('features')

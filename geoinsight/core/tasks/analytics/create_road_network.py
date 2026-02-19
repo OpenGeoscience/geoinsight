@@ -148,7 +148,7 @@ def create_road_network(result_id):
         create_vector_features(vector_data)
         vector_data.get_summary()
 
-        result.outputs = dict(roads=dataset.id)
+        result.outputs = {'roads': dataset.id}
     except Exception as e:
         result.error = str(e)
     result.complete()

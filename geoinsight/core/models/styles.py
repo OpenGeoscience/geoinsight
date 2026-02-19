@@ -70,17 +70,17 @@ class LayerStyle(models.Model):
                 colormap_spec = color_spec.get('colormap')
                 colormap = Colormap.objects.get(id=colormap_spec.get('id'))
                 map_range = colormap_spec.get('range') or [None, None]
-                colormap_config_args = dict(
-                    color_config=color_config,
-                    colormap=colormap,
-                    color_by=colormap_spec.get('color_by'),
-                    null_color=colormap_spec.get('null_color'),
-                    clamp=colormap_spec.get('clamp', False),
-                    discrete=colormap_spec.get('discrete', False),
-                    n_colors=colormap_spec.get('n_colors'),
-                    range_minimum=map_range[0],
-                    range_maximum=map_range[1],
-                )
+                colormap_config_args = {
+                    'color_config': color_config,
+                    'colormap': colormap,
+                    'color_by': colormap_spec.get('color_by'),
+                    'null_color': colormap_spec.get('null_color'),
+                    'clamp': colormap_spec.get('clamp', False),
+                    'discrete': colormap_spec.get('discrete', False),
+                    'n_colors': colormap_spec.get('n_colors'),
+                    'range_minimum': map_range[0],
+                    'range_maximum': map_range[1],
+                }
                 try:
                     colormap_config = color_config.colormap
                     for key, value in colormap_config_args.items():
@@ -113,14 +113,14 @@ class LayerStyle(models.Model):
                 size_config.single_size = None
                 size_range_spec = size_spec.get('size_range')
                 null_size_spec = size_range_spec.get('null_size')
-                size_range_config_args = dict(
-                    size_config=size_config,
-                    size_by=size_range_spec.get('size_by'),
-                    minimum=size_range_spec.get('minimum'),
-                    maximum=size_range_spec.get('maximum'),
-                    null_size=null_size_spec.get('size'),
-                    null_transparent=null_size_spec.get('transparency'),
-                )
+                size_range_config_args = {
+                    'size_config': size_config,
+                    'size_by': size_range_spec.get('size_by'),
+                    'minimum': size_range_spec.get('minimum'),
+                    'maximum': size_range_spec.get('maximum'),
+                    'null_size': null_size_spec.get('size'),
+                    'null_transparent': null_size_spec.get('transparency'),
+                }
                 try:
                     size_range_config = size_config.size_range
                     for key, value in size_range_config_args.items():
@@ -135,15 +135,15 @@ class LayerStyle(models.Model):
         filter_config_ids = []
         for i, filter_spec in enumerate(filter_specs):
             filter_range = filter_spec.get('range') or [None, None]
-            filter_config_args = dict(
-                style=self,
-                filter_by=filter_spec.get('filter_by'),
-                include=filter_spec.get('include'),
-                transparency=filter_spec.get('transparency'),
-                range_minimum=filter_range[0],
-                range_maximum=filter_range[1],
-                values_list=filter_spec.get('list'),
-            )
+            filter_config_args = {
+                'style': self,
+                'filter_by': filter_spec.get('filter_by'),
+                'include': filter_spec.get('include'),
+                'transparency': filter_spec.get('transparency'),
+                'range_minimum': filter_range[0],
+                'range_maximum': filter_range[1],
+                'values_list': filter_spec.get('list'),
+            }
             if i < len(filter_configs):
                 filter_config = filter_configs[i]
             else:
@@ -192,10 +192,10 @@ class LayerStyle(models.Model):
                 size_range = serialize_fields(
                     size_config.size_range, ['size_by', 'minimum', 'maximum']
                 )
-                size_range['null_size'] = dict(
-                    size=size_config.size_range.null_size,
-                    transparency=size_config.size_range.null_transparent,
-                )
+                size_range['null_size'] = {
+                    'size': size_config.size_range.null_size,
+                    'transparency': size_config.size_range.null_transparent,
+                }
                 size['size_range'] = size_range
             except SizeConfig.size_range.RelatedObjectDoesNotExist:
                 pass
@@ -213,13 +213,13 @@ class LayerStyle(models.Model):
                 filter_['list'] = filter_config.values_list
             filters.append(filter_)
 
-        return dict(
-            default_frame=self.default_frame,
-            opacity=self.opacity,
-            colors=colors,
-            sizes=sizes,
-            filters=filters,
-        )
+        return {
+            'default_frame': self.default_frame,
+            'opacity': self.opacity,
+            'colors': colors,
+            'sizes': sizes,
+            'filters': filters,
+        }
 
 
 def get_default_colormap():

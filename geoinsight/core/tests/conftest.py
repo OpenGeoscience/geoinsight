@@ -31,46 +31,46 @@ def project_follower(user, project: Project) -> User:
 
 
 USER_INFOS = [
-    dict(
-        id='superuser',
-        username='userA',
-        password='testmepassA',
-        email='a@fakeemail.com',
-        is_superuser=True,
-        perm=None,
-    ),
-    dict(
-        id='owner',
-        username='userB',
-        password='testmepassB',
-        email='b@fakeemail.com',
-        is_superuser=False,
-        perm='owner',
-    ),
-    dict(
-        id='collaborator',
-        username='userC',
-        password='testmepassC',
-        email='c@fakeemail.com',
-        is_superuser=False,
-        perm='collaborator',
-    ),
-    dict(
-        id='follower',
-        username='userD',
-        password='testmepassD',
-        email='d@fakeemail.com',
-        is_superuser=False,
-        perm='follower',
-    ),
-    dict(
-        id='no_perms',
-        username='userE',
-        password='testmepassE',
-        email='E@fakeemail.com',
-        is_superuser=False,
-        perm=None,
-    ),
+    {
+        'id': 'superuser',
+        'username': 'userA',
+        'password': 'testmepassA',
+        'email': 'a@fakeemail.com',
+        'is_superuser': True,
+        'perm': None,
+    },
+    {
+        'id': 'owner',
+        'username': 'userB',
+        'password': 'testmepassB',
+        'email': 'b@fakeemail.com',
+        'is_superuser': False,
+        'perm': 'owner',
+    },
+    {
+        'id': 'collaborator',
+        'username': 'userC',
+        'password': 'testmepassC',
+        'email': 'c@fakeemail.com',
+        'is_superuser': False,
+        'perm': 'collaborator',
+    },
+    {
+        'id': 'follower',
+        'username': 'userD',
+        'password': 'testmepassD',
+        'email': 'd@fakeemail.com',
+        'is_superuser': False,
+        'perm': 'follower',
+    },
+    {
+        'id': 'no_perms',
+        'username': 'userE',
+        'password': 'testmepassE',
+        'email': 'E@fakeemail.com',
+        'is_superuser': False,
+        'perm': None,
+    },
 ]
 
 
@@ -104,13 +104,13 @@ def permissions_client(user_info) -> APIClient:
 
 @pytest.fixture
 def multiframe_vector_file(tmp_path):
-    file_info = dict(
-        name='multiframe_vector.geojson',
-        file_type='geojson',
-        content_type='application/json',
-        url='https://data.kitware.com/api/v1/item/6841f7e0dfcff796fee73d1a/download',
-        hash='9c24922c9d95fd49f8fd3bafa7ed60f093ac292891a4301bac2be883eeef65ee',
-    )
+    file_info = {
+        'name': 'multiframe_vector.geojson',
+        'file_type': 'geojson',
+        'content_type': 'application/json',
+        'url': 'https://data.kitware.com/api/v1/item/6841f7e0dfcff796fee73d1a/download',
+        'hash': '9c24922c9d95fd49f8fd3bafa7ed60f093ac292891a4301bac2be883eeef65ee',
+    }
     pooch.retrieve(
         url=file_info['url'],
         known_hash=file_info['hash'],

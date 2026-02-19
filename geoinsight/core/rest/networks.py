@@ -62,6 +62,6 @@ class NetworkViewSet(ModelViewSet):
         if gcc is None:
             return Response(None)
 
-        result = GCCResultSerializer(data=dict(gcc=gcc))
+        result = GCCResultSerializer(data={'gcc': gcc})
         result.is_valid(raise_exception=True)
         return Response(result.validated_data['gcc'], status=200)

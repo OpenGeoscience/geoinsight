@@ -5,25 +5,25 @@ from jsonschema import validate
 
 from .project import Project
 
-MARKER_SCHEMA = dict(
-    type='array',
-    items=dict(
-        type='object',
-        properties=dict(
-            color=dict(
-                type='string',
-            ),
-            value=dict(
-                type='number',
-                minimum=0,
-                maximum=1,
-            ),
-        ),
-        required=['color', 'value'],
-    ),
-    minItems=2,
-    uniqueItems=True,
-)
+MARKER_SCHEMA = {
+    'type': 'array',
+    'items': {
+        'type': 'object',
+        'properties': {
+            'color': {
+                'type': 'string',
+            },
+            'value': {
+                'type': 'number',
+                'minimum': 0,
+                'maximum': 1,
+            },
+        },
+        'required': ['color', 'value'],
+    },
+    'minItems': 2,
+    'uniqueItems': True,
+}
 
 
 class Colormap(models.Model):
