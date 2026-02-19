@@ -8,7 +8,7 @@ from .export_networks import perform_export
 from .import_networks import perform_import
 from .nysdp import create_consolidated_network, create_vector_features
 
-DOWNLOADS_FOLDER = DOWNLOADS_FOLDER = Path('../../sample_data/downloads')
+DOWNLOADS_FOLDER = Path('../../sample_data/downloads')
 PULL_LATEST = False
 
 
