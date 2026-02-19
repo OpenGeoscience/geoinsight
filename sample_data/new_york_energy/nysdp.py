@@ -128,7 +128,8 @@ def download_all_deduped_vector_features(**kwargs):
     gdf.reset_index(inplace=True)
 
     gdf.to_file(filename)
-    print(f'\t\tCompleted download in {(datetime.now(tz=timezone.utc) - start).total_seconds()} seconds.')
+    elapsed = (datetime.now(tz=timezone.utc) - start).total_seconds()
+    print(f'\t\tCompleted download in {elapsed} seconds.')
     return gdf
 
 
