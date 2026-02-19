@@ -82,7 +82,7 @@ COMPLEX_SPEC = {
 
 @pytest.mark.django_db
 def test_style_config_none(layer_style):
-    with pytest.raises(ValueError, match='style_spec must not be None.'):
+    with pytest.raises(ValueError, match=r'style_spec must not be None\.'):
         layer_style.save_style_configs(None)
 
 
@@ -91,7 +91,7 @@ def test_style_config_empty(layer_style):
     with pytest.raises(
         ValueError,
         match=(
-            'style_spec must contain at least one color configuration and one size configuration.'
+            r'style_spec must contain at least one color configuration and one size configuration\.'
         ),
     ):
         layer_style.save_style_configs({})
