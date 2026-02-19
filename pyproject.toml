@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "geoinsight"
 version = "1.28.1"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 license = "Apache-2.0"
 license-files = ["LICENSE", "NOTICE"]
 classifiers = ["Private :: Do Not Upload"]
@@ -139,7 +139,7 @@ packages = [
 [tool.black]
 line-length = 100
 skip-string-normalization = true
-target-version = ["py310"]
+target-version = ["py312"]
 
 [tool.isort]
 profile = "black"
