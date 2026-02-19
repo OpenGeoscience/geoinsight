@@ -49,7 +49,7 @@ def perform_export():
                 'features': features,
             }
             filename = OUTPUT_FOLDER / f'{zone.name}.json'
-            with open(filename, 'w') as f:
+            with filename.open('w') as f:
                 json.dump(geodata, f)
             print(f'Wrote {len(features)} features to {filename}.')
 

@@ -39,7 +39,7 @@ def get_cog_path(file):
     if raster_path is None:
         # if original data cannot be interpreted by large_image, use rasterio
         raster_path = file.parent / 'rasterio.tiff'
-        with open(file, 'rb') as f:
+        with file.open('rb') as f:
             input_data = rasterio.open(f)
             output_data = rasterio.open(
                 raster_path,
@@ -72,7 +72,7 @@ def convert_files(*files, file_item=None, combine=False):
             metadata.update(file_item.metadata)
         metadata['source_filenames'].append(file_item.name)
         if file.name.endswith('.prj'):
-            with open(file, 'rb') as f:
+            with file.open('rb') as f:
                 contents = f.read()
                 source_projection = contents.decode()
                 continue
@@ -82,7 +82,7 @@ def convert_files(*files, file_item=None, combine=False):
                 {'name': file.name, 'features': reader.__geo_interface__['features']}
             )
         elif any(file.name.endswith(suffix) for suffix in ['.json', '.geojson']):
-            with open(file, 'rb') as f:
+            with file.open('rb') as f:
                 data = json.load(f)
                 geodata_set.append({'name': file.name, 'features': data.get('features')})
                 source_projection = data.get('crs', {}).get('properties', {}).get('name')
@@ -129,7 +129,7 @@ def convert_files(*files, file_item=None, combine=False):
             source_file=file_item,
             metadata=metadata,
         )
-        with open(cog_path, 'rb') as f:
+        with cog_path.open('rb') as f:
             raster_data.cloud_optimized_geotiff.save(cog_path.name, ContentFile(f.read()))
         print('\t\t', str(raster_data), 'created for ' + cog.get('name'))
 
@@ -143,7 +143,7 @@ def convert_file_item(file_item):
             for file in zip_archive.infolist():
                 if not file.is_dir():
                     filepath = Path(temp_dir, Path(file.filename).name)
-                    with open(filepath, 'wb') as f:
+                    with filepath.open('wb') as f:
                         f.write(zip_archive.open(file).read())
                     files.append(filepath)
             combine = False

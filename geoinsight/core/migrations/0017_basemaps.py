@@ -11,7 +11,7 @@ from django.db import migrations, models
 def forwards(apps, schema_editor):
     basemap_model = apps.get_model('core', 'Basemap')
     default_basemaps_file = Path(settings.BASE_DIR, 'geoinsight', 'core', 'models', 'basemaps.json')
-    with open(default_basemaps_file) as f:
+    with default_basemaps_file.open() as f:
         default_basemaps = json.load(f)
         for default_basemap in default_basemaps:
             name = default_basemap.get('name')

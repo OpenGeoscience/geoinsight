@@ -16,7 +16,7 @@ def test_upload_and_create_file_item(
     authenticated_api_client,
     s3ff_field_value_factory: Callable[[File[bytes]], str],
 ):
-    with open(multiframe_vector_file['path'], 'rb') as f:
+    with multiframe_vector_file['path'].open('rb') as f:
         s3ff_value = s3ff_field_value_factory(File(file=f, name=multiframe_vector_file['name']))
 
     fileitem_expected = {

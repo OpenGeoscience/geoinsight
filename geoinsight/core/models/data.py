@@ -32,7 +32,7 @@ class RasterData(models.Model):
     def get_image_data(self, resolution: float = 1.0):
         with tempfile.TemporaryDirectory() as tmp:
             raster_path = Path(tmp, 'raster')
-            with open(raster_path, 'wb') as raster_file:
+            with raster_path.open('wb') as raster_file:
                 raster_file.write(self.cloud_optimized_geotiff.read())
             source = large_image.open(raster_path)
             data, _data_format = source.getRegion(format='numpy')

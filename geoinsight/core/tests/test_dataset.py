@@ -89,7 +89,7 @@ def test_rest_create_dataset(authenticated_api_client, user):
 def test_rest_convert_dataset(
     file_item_factory, multiframe_vector_file, authenticated_api_client, project, user
 ):
-    with open(multiframe_vector_file['path'], 'rb') as f:
+    with multiframe_vector_file['path'].open('rb') as f:
         file_item = file_item_factory(
             file=File(f),
             name=multiframe_vector_file['name'],

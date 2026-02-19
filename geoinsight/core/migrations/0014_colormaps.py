@@ -14,7 +14,7 @@ def forwards(apps, schema_editor):
     default_colormaps_file = Path(
         settings.BASE_DIR, 'geoinsight', 'core', 'models', 'colormaps.json'
     )
-    with open(default_colormaps_file) as f:
+    with default_colormaps_file.open() as f:
         default_colormaps = json.load(f)
         for default_colormap in default_colormaps:
             name = default_colormap.get('name')

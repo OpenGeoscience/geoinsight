@@ -14,6 +14,7 @@ from __future__ import annotations
 from datetime import datetime
 import json
 import os
+from pathlib import Path
 
 import click
 from pyproj import Transformer
@@ -243,8 +244,8 @@ def download_stac_sentinel(
     layer = {'name': 'Sequential Test Layers', 'frames': layer_frames}
     dataset_json['layers'].append(layer)
 
-    json_path = os.path.join(output_dir, 'sample.json')
-    with open(json_path, 'w') as jf:
+    json_path = Path(output_dir, 'sample.json')
+    with json_path.open('w') as jf:
         json.dump([project_json, dataset_json], jf, indent=4)
 
 

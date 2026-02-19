@@ -91,7 +91,7 @@ def perform_import(dataset, **kwargs):
     for file_item in dataset.source_files.all():
         with tempfile.TemporaryDirectory() as temp_dir:
             archive_path = Path(temp_dir, 'archive.zip')
-            with open(archive_path, 'wb') as archive_file:
+            with archive_path.open('wb') as archive_file:
                 archive_file.write(file_item.file.open('rb').read())
                 with zipfile.ZipFile(archive_path) as zip_archive:
                     filenames = zip_archive.namelist()
