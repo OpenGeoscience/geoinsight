@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import typing
 
-from django.contrib.auth.models import User
 from django.db import models, transaction
 from guardian.models import UserObjectPermission
 from guardian.shortcuts import assign_perm, get_users_with_perms
 
 from geoinsight.core.tasks.dataset import convert_dataset
+
+if typing.TYPE_CHECKING:
+    from django.contrib.auth.models import User
 
 
 class DatasetTag(models.Model):

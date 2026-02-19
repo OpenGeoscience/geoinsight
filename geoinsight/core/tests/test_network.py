@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import itertools
+from typing import TYPE_CHECKING
 
 import pytest
 
-from geoinsight.core.models import Dataset, Network, NetworkNode, Project
+if TYPE_CHECKING:
+    from geoinsight.core.models import Dataset, Network, NetworkNode, Project
 
 
 @pytest.mark.django_db

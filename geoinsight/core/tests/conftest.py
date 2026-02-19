@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from django.contrib.auth.models import User
 import pooch
@@ -8,9 +9,10 @@ import pytest
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
-from geoinsight.core.models import Project
-
 from .factory_fixtures import *  # noqa: F403
+
+if TYPE_CHECKING:
+    from geoinsight.core.models import Project
 
 
 @pytest.fixture

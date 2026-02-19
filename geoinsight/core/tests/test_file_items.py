@@ -1,9 +1,12 @@
 from __future__ import annotations
 
-from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 from django.core.files.base import File
 import pytest
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 @pytest.mark.django_db

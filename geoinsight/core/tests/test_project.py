@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import faker
 import pytest
 
-from geoinsight.core.models.project import Project
+if TYPE_CHECKING:
+    from geoinsight.core.models.project import Project
 
 
 @pytest.mark.django_db

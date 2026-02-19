@@ -6,13 +6,15 @@ from typing import Any
 from django.contrib.auth.models import User
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import action
-from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from geoinsight.core.models import Project
 from geoinsight.core.rest.access_control import GuardianFilter, GuardianPermission
 from geoinsight.core.rest.serializers import ProjectPermissionsSerializer, ProjectSerializer
+
+if typing.TYPE_CHECKING:
+    from rest_framework.request import Request
 
 
 class ProjectViewSet(ModelViewSet):

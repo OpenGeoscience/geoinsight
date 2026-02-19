@@ -2,13 +2,15 @@ from __future__ import annotations
 
 import typing
 
-from django.contrib.auth.models import User
 from django.contrib.gis.db import models as geo_models
 from django.db import models, transaction
 from guardian.models import UserObjectPermission
 from guardian.shortcuts import assign_perm, get_users_with_perms, remove_perm
 
 from .dataset import Dataset
+
+if typing.TYPE_CHECKING:
+    from django.contrib.auth.models import User
 
 
 class Project(models.Model):

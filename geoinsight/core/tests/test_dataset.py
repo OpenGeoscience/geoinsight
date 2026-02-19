@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from django.core.files.base import File
 import pytest
 
-from geoinsight.core.models.project import Dataset
+if TYPE_CHECKING:
+    from geoinsight.core.models.project import Dataset
 
 
 @pytest.mark.django_db
