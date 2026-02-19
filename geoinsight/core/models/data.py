@@ -64,7 +64,7 @@ class VectorData(models.Model):
         elif isinstance(content, dict):
             data = json.dumps(content)
         else:
-            raise Exception(f'Invalid content type supplied: {type(content)}')
+            raise TypeError(f'Invalid content type supplied: {type(content)}')
 
         self.geojson_data.save('vectordata.geojson', ContentFile(data.encode()))
 
