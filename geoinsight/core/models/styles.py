@@ -233,6 +233,9 @@ class ColorConfig(models.Model):
         max_length=12, null=True, blank=True
     )  # optionally contains a color hex or 'transparent'
 
+    def __str__(self):
+        return self.name
+
 
 class ColormapConfig(models.Model):
     color_config = models.OneToOneField(
@@ -256,6 +259,9 @@ class ColormapConfig(models.Model):
     range_minimum = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     range_maximum = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
+    def __str__(self):
+        return f'{self.color_by} ({self.id})'
+
 
 class SizeConfig(models.Model):
     style = models.ForeignKey(LayerStyle, related_name='size_configs', on_delete=models.CASCADE)
@@ -266,6 +272,9 @@ class SizeConfig(models.Model):
         validators=[MinValueValidator(1)],
         null=True,
     )
+
+    def __str__(self):
+        return self.name
 
 
 class SizeRangeConfig(models.Model):
@@ -290,6 +299,9 @@ class SizeRangeConfig(models.Model):
     )
     null_transparent = models.BooleanField(default=True)
 
+    def __str__(self):
+        return f'{self.size_by} ({self.id})'
+
 
 class FilterConfig(models.Model):
     style = models.ForeignKey(LayerStyle, related_name='filter_configs', on_delete=models.CASCADE)
@@ -299,3 +311,6 @@ class FilterConfig(models.Model):
     range_minimum = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     range_maximum = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     values_list = models.JSONField(null=True)
+
+    def __str__(self):
+        return f'{self.filter_by} ({self.id})'

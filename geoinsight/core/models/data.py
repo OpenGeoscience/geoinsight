@@ -132,6 +132,9 @@ class VectorFeature(models.Model):
     geometry = geomodels.GeometryField()
     properties = models.JSONField()
 
+    def __str__(self):
+        return f'VectorFeature ({self.id})'
+
     @property
     def dataset(self):
         return self.vector_data.dataset
