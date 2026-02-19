@@ -63,16 +63,15 @@ def create_vector_features(dataset, service_name=None, **kwargs):
     VectorData.objects.filter(dataset=dataset).delete()
     vector_data = VectorData.objects.create(dataset=dataset, name=dataset.name)
     feature_sets = fetch_vector_features(service_name=service_name)
-    vector_features = []
-    for feature_set in feature_sets.values():
-        for feature in feature_set:
-            vector_features.append(
-                VectorFeature(
-                    vector_data=vector_data,
-                    geometry=GEOSGeometry(json.dumps(feature['geometry'])),
-                    properties=feature['properties'],
-                )
-            )
+    vector_features = [
+        VectorFeature(
+            vector_data=vector_data,
+            geometry=GEOSGeometry(json.dumps(feature['geometry'])),
+            properties=feature['properties'],
+        )
+        for feature_set in feature_sets.values()
+        for feature in feature_set
+    ]
     VectorFeature.objects.bulk_create(vector_features)
 
 
@@ -113,14 +112,14 @@ def download_all_deduped_vector_features(**kwargs):
                     geoms = [LineString(*line) for line in geometry.coords]
                 elif geometry.geom_type == 'LineString':
                     geoms = [geometry]
-                for geom in geoms:
-                    features.append(
-                        {
-                            'type': 'Feature',
-                            'geometry': json.loads(geom.json),
-                            'properties': properties,
-                        }
-                    )
+                features.extend(
+                    {
+                        'type': 'Feature',
+                        'geometry': json.loads(geom.json),
+                        'properties': properties,
+                    }
+                    for geom in geoms
+                )
     # normalize and eliminate duplicates
     gdf = geopandas.GeoDataFrame.from_features(features, crs='EPSG:4326')
     gdf['geometry'] = gdf.normalize()

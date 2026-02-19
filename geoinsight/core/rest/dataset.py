@@ -53,11 +53,8 @@ class DatasetViewSet(ModelViewSet):
     def data(self, request, **kwargs):
         dataset: Dataset = self.get_object()
 
-        data = []
-        for raster in dataset.rasters.all():
-            data.append(RasterDataSerializer(raster).data)
-        for vector in dataset.vectors.all():
-            data.append(VectorDataSerializer(vector).data)
+        data = [RasterDataSerializer(raster).data for raster in dataset.rasters.all()]
+        data.extend(VectorDataSerializer(vector).data for vector in dataset.vectors.all())
         return Response(data, status=200)
 
     @action(detail=True, methods=['get'])

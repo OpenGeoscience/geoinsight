@@ -58,9 +58,12 @@ class FileItemViewSet(ModelViewSet):
     def data(self, request, **kwargs):
         file_item: FileItem = self.get_object()
 
-        data = []
-        for raster in RasterData.objects.filter(source_file=file_item):
-            data.append(RasterDataSerializer(raster).data)
-        for vector in VectorData.objects.filter(source_file=file_item):
-            data.append(VectorDataSerializer(vector).data)
+        data = [
+            RasterDataSerializer(raster).data
+            for raster in RasterData.objects.filter(source_file=file_item)
+        ]
+        data.extend(
+            VectorDataSerializer(vector).data
+            for vector in VectorData.objects.filter(source_file=file_item)
+        )
         return Response(data, status=200)
