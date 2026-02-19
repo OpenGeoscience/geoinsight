@@ -47,7 +47,7 @@ class TaskResult(models.Model):
     def complete(self):
         self.completed = timezone.now()
         seconds = (self.completed - self.created).total_seconds()
-        self.status = 'Completed in {:.2f} seconds.'.format(seconds)
+        self.status = f'Completed in {seconds:.2f} seconds.'
         self.save()
 
 
