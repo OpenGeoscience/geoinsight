@@ -100,6 +100,7 @@ class Dataset(models.Model):
             return result
         else:
             convert_dataset(self.id, layer_options, network_options, region_options)
+            return None
 
     def get_size(self):
         from geoinsight.core.models import FileItem

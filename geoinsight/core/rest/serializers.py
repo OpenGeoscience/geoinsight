@@ -67,6 +67,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         # Web client expects Lon, Lat
         if obj.default_map_center:
             return [obj.default_map_center.y, obj.default_map_center.x]
+        return None
 
     def get_owner(self, obj: Project):
         return UserSerializer(obj.owner()).data
@@ -119,6 +120,7 @@ class DatasetSerializer(serializers.ModelSerializer):
         owner = obj.owner()
         if owner is not None:
             return UserSerializer(owner).data
+        return None
 
     def get_n_layers(self, obj):
         return Layer.objects.filter(dataset=obj).count()
