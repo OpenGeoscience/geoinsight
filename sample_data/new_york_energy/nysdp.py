@@ -36,7 +36,7 @@ def fetch_vector_features(service_name=None, **kwargs):
     if service_name is None:
         return feature_sets
     service_url = f'{NYDSP_URL}/{service_name}/{SERVICE_SUFFIX}'
-    service_info = requests.get(f'{service_url}?{FORMAT_SUFFIX}').json()
+    service_info = requests.get(f'{service_url}?{FORMAT_SUFFIX}', timeout=30).json()
     for layer in service_info.get('layers', []):
         feature_set = []
         layer_id = layer.get('id')
@@ -45,7 +45,8 @@ def fetch_vector_features(service_name=None, **kwargs):
             result_offset = 0
             while feature_page is None or len(feature_page) == RECORDS_PER_PAGE:
                 query_response = requests.get(
-                    f'{service_url}/{layer_id}/query?resultOffset={result_offset}&{QUERY_CONTENT}'
+                    f'{service_url}/{layer_id}/query?resultOffset={result_offset}&{QUERY_CONTENT}',
+                    timeout=30,
                 )
                 try:
                     query_json = query_response.json()

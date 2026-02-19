@@ -189,6 +189,7 @@ class GeoInsightExplorer:
                     'username': email,
                     'password': password,
                 },
+                timeout=30,
             )
             if response.status_code == 200:
                 self.token = response.json().get('token')
