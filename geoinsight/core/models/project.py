@@ -19,6 +19,13 @@ class Project(models.Model):
     default_map_zoom = models.FloatField(default=10)
     datasets = models.ManyToManyField(Dataset, blank=True)
 
+    class Meta:
+        permissions = [
+            ('owner', 'Can read, write, and delete'),
+            ('collaborator', 'Can read and write'),
+            ('follower', 'Can read'),
+        ]
+
     def __str__(self):
         return f'{self.name} ({self.id})'
 
@@ -96,10 +103,3 @@ class Project(models.Model):
         self.set_owner(owner)
         self.set_collaborators(collaborator or [])
         self.set_followers(follower or [])
-
-    class Meta:
-        permissions = [
-            ('owner', 'Can read, write, and delete'),
-            ('collaborator', 'Can read and write'),
-            ('follower', 'Can read'),
-        ]
