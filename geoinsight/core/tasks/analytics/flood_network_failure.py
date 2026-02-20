@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import math
 
 from celery import shared_task
 from django.conf import settings
 from django_large_image import tilesource, utilities
-import numpy
+import numpy as np
 
 from geoinsight.core.models import Layer, Network, TaskResult
 
@@ -14,20 +16,20 @@ from .flood_simulation import FloodSimulation
 class FloodNetworkFailure(AnalysisType):
     def __init__(self):
         super().__init__()
-        self.name = 'Flood Network Failure'
+        self.name = "Flood Network Failure"
         self.description = (
-            'Select an urban network and flood simulation result '
-            'to determine network failures during the flood event.'
+            "Select an urban network and flood simulation result "
+            "to determine network failures during the flood event."
         )
-        self.db_value = 'flood_network_failure'
+        self.db_value = "flood_network_failure"
         self.input_types = {
-            'network': 'Network',
-            'flood_simulation': 'TaskResult',
-            'depth_tolerance_meters': 'number',
-            'station_radius_meters': 'number',
+            "network": "Network",
+            "flood_simulation": "TaskResult",
+            "depth_tolerance_meters": "number",
+            "station_radius_meters": "number",
         }
-        self.output_types = {'failures': 'network_animation'}
-        self.attribution = 'Northeastern University & Kitware, Inc.'
+        self.output_types = {"failures": "network_animation"}
+        self.attribution = "Northeastern University & Kitware, Inc."
 
     @classmethod
     def is_enabled(cls):
@@ -35,19 +37,19 @@ class FloodNetworkFailure(AnalysisType):
 
     def get_input_options(self):
         return {
-            'network': Network.objects.all(),
-            'flood_simulation': TaskResult.objects.filter(task_type=FloodSimulation().db_value),
-            'depth_tolerance_meters': [0.1, 0.5, 1, 2, 3],
-            'station_radius_meters': [10, 15, 20, 25, 30, 35, 40, 45, 50],
+            "network": Network.objects.all(),
+            "flood_simulation": TaskResult.objects.filter(task_type=FloodSimulation().db_value),
+            "depth_tolerance_meters": [0.1, 0.5, 1, 2, 3],
+            "station_radius_meters": [10, 15, 20, 25, 30, 35, 40, 45, 50],
         }
 
     def run_task(self, *, project, **inputs):
         result = TaskResult.objects.create(
-            name='Flood Network Failure',
+            name="Flood Network Failure",
             task_type=self.db_value,
             inputs=inputs,
             project=project,
-            status='Initializing task...',
+            status="Initializing task...",
         )
         flood_network_failure.delay(result.id)
         return result
@@ -60,60 +62,59 @@ def flood_network_failure(result_id):
     try:
         # Verify inputs
         network = None
-        network_id = result.inputs.get('network')
+        network_id = result.inputs.get("network")
         if network_id is None:
-            result.write_error('Network not provided')
+            result.write_error("Network not provided")
         else:
             try:
                 network = Network.objects.get(id=network_id)
             except Network.DoesNotExist:
-                result.write_error('Network not found')
+                result.write_error("Network not found")
 
         flood_sim = None
-        flood_sim_id = result.inputs.get('flood_simulation')
+        flood_sim_id = result.inputs.get("flood_simulation")
         if flood_sim_id is None:
-            result.write_error('Flood simulation not provided')
+            result.write_error("Flood simulation not provided")
         else:
             try:
                 flood_sim = TaskResult.objects.get(id=flood_sim_id)
             except TaskResult.DoesNotExist:
-                result.write_error('Flood simulation not found')
+                result.write_error("Flood simulation not found")
 
-        tolerance = result.inputs.get('depth_tolerance_meters')
+        tolerance = result.inputs.get("depth_tolerance_meters")
         if tolerance is None:
-            result.write_error('Depth tolerance not provided')
+            result.write_error("Depth tolerance not provided")
         else:
             try:
                 tolerance = float(tolerance)
             except ValueError:
-                result.write_error('Depth tolerance not valid')
+                result.write_error("Depth tolerance not valid")
             if tolerance <= 0:
-                result.write_error('Depth tolerance must be greater than 0')
+                result.write_error("Depth tolerance must be greater than 0")
 
-        radius_meters = result.inputs.get('station_radius_meters')
+        radius_meters = result.inputs.get("station_radius_meters")
         if radius_meters is None:
-            result.write_error('Station radius not provided')
+            result.write_error("Station radius not provided")
         else:
             try:
                 radius_meters = float(radius_meters)
             except ValueError:
-                result.write_error('Station radius not valid')
+                result.write_error("Station radius not valid")
             if radius_meters < 10:
                 # data is at 10 meter resolution
-                result.write_error('Station radius must be greater than 10')
+                result.write_error("Station radius must be greater than 10")
 
         # Run task
         if result.error is None:
-
             # Update name
             result.name = (
-                f'Failures for Network {network.id} with Flood Result {flood_sim.id}, '
-                f'{tolerance} Tolerance, {radius_meters} Radius'
+                f"Failures for Network {network.id} with Flood Result {flood_sim.id}, "
+                f"{tolerance} Tolerance, {radius_meters} Radius"
             )
             result.save()
 
             n_nodes = network.nodes.count()
-            flood_dataset_id = flood_sim.outputs.get('flood')
+            flood_dataset_id = flood_sim.outputs.get("flood")
             flood_layer = Layer.objects.get(dataset__id=flood_dataset_id)
 
             # this uses radius_meters to get a rectangular region, not a circular one
@@ -125,13 +126,13 @@ def flood_network_failure(result_id):
                     * (180 / math.pi)
                     / math.cos(point.y * math.pi / 180)
                 )
-                return dict(
-                    top=point.y + lat_delta,
-                    bottom=point.y - lat_delta,
-                    left=point.x - lon_delta,
-                    right=point.x + lon_delta,
-                    units='EPSG:4326',
-                )
+                return {
+                    "top": point.y + lat_delta,
+                    "bottom": point.y - lat_delta,
+                    "left": point.x - lon_delta,
+                    "right": point.x + lon_delta,
+                    "units": "EPSG:4326",
+                }
 
             # Precompute node regions
             node_regions = {
@@ -146,23 +147,21 @@ def flood_network_failure(result_id):
 
             animation_results = {}
             node_failures = []
-            for frame in metadata.get('frames', []):
-                frame_index = frame.get('Index')
+            for frame in metadata.get("frames", []):
+                frame_index = frame.get("Index")
                 result.write_status(
-                    f'Evaluating flood levels at {n_nodes} nodes for frame {frame_index}...'
+                    f"Evaluating flood levels at {n_nodes} nodes for frame {frame_index}..."
                 )
                 for node_id, node_region in node_regions.items():
                     region_data, _ = source.getRegion(
                         region=node_region,
                         frame=frame_index,
-                        format='numpy',
+                        format="numpy",
                     )
-                    if node_id not in node_failures and numpy.any(
-                        numpy.where(region_data > tolerance)
-                    ):
+                    if node_id not in node_failures and np.any(np.where(region_data > tolerance)):
                         node_failures.append(node_id)
                 animation_results[frame_index] = node_failures.copy()
-            result.outputs = dict(failures=animation_results)
+            result.outputs = {"failures": animation_results}
     except Exception as e:
         result.error = str(e)
     result.complete()

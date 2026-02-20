@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.db import models
 
 from .data import RasterData, VectorData
@@ -5,19 +7,19 @@ from .dataset import Dataset
 
 
 def default_source_filters():
-    return dict(band=1)
+    return {"band": 1}
 
 
 class Layer(models.Model):
-    name = models.CharField(max_length=255, default='Layer')
-    dataset = models.ForeignKey(Dataset, related_name='layers', on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, default="Layer")
+    dataset = models.ForeignKey(Dataset, related_name="layers", on_delete=models.CASCADE)
     metadata = models.JSONField(blank=True, null=True)
     default_style = models.ForeignKey(
-        'LayerStyle', null=True, related_name='default_layer', on_delete=models.SET_NULL
+        "LayerStyle", null=True, related_name="default_layer", on_delete=models.SET_NULL
     )
 
     def __str__(self):
-        return f'{self.name} ({self.id})'
+        return f"{self.name} ({self.id})"
 
     @classmethod
     def filter_queryset_by_projects(cls, queryset, projects):
@@ -25,8 +27,8 @@ class Layer(models.Model):
 
 
 class LayerFrame(models.Model):
-    name = models.CharField(max_length=255, default='Layer Frame')
-    layer = models.ForeignKey(Layer, related_name='frames', on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, default="Layer Frame")
+    layer = models.ForeignKey(Layer, related_name="frames", on_delete=models.CASCADE)
     vector = models.ForeignKey(VectorData, null=True, on_delete=models.CASCADE)
     raster = models.ForeignKey(RasterData, null=True, on_delete=models.CASCADE)
     index = models.PositiveIntegerField(default=0)
@@ -38,12 +40,12 @@ class LayerFrame(models.Model):
             models.CheckConstraint(
                 condition=(models.Q(raster__isnull=False) & models.Q(vector__isnull=True))
                 | (models.Q(raster__isnull=True) & models.Q(vector__isnull=False)),
-                name='exactly_one_data',
+                name="exactly_one_data",
             )
         ]
 
     def __str__(self):
-        return f'{self.name} ({self.id})'
+        return f"{self.name} ({self.id})"
 
     @classmethod
     def filter_queryset_by_projects(cls, queryset, projects):

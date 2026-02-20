@@ -1,6 +1,8 @@
-import pytest
+from __future__ import annotations
 
-from geoinsight.core.models import Project
+from typing import TYPE_CHECKING
+
+import pytest
 
 from .factories import (
     DatasetFactory,
@@ -17,6 +19,9 @@ from .factories import (
     UserFactory,
     VectorDataFactory,
 )
+
+if TYPE_CHECKING:
+    from geoinsight.core.models import Project
 
 
 # User

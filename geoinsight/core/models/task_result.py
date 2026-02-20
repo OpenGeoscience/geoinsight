@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 
 from asgiref.sync import async_to_sync
@@ -14,7 +16,7 @@ class TaskResult(models.Model):
     name = models.CharField(max_length=255)
     task_type = models.CharField(max_length=25)
     project = models.ForeignKey(
-        Project, on_delete=models.CASCADE, related_name='task_results', null=True
+        Project, on_delete=models.CASCADE, related_name="task_results", null=True
     )
     inputs = models.JSONField(blank=True, null=True)
     outputs = models.JSONField(blank=True, null=True)
@@ -24,7 +26,7 @@ class TaskResult(models.Model):
     completed = models.DateTimeField(null=True)
 
     def __str__(self):
-        return f'{self.name} ({self.id})'
+        return f"{self.name} ({self.id})"
 
     @classmethod
     def filter_queryset_by_projects(cls, queryset, projects):
@@ -32,9 +34,9 @@ class TaskResult(models.Model):
 
     def write_error(self, err):
         if self.error is None:
-            self.error = ''
+            self.error = ""
         else:
-            self.error += ', '
+            self.error += ", "
         self.error += err
         self.save()
 
@@ -45,7 +47,7 @@ class TaskResult(models.Model):
     def complete(self):
         self.completed = timezone.now()
         seconds = (self.completed - self.created).total_seconds()
-        self.status = 'Completed in %.2f seconds.' % seconds
+        self.status = f"Completed in {seconds:.2f} seconds."
         self.save()
 
 
@@ -54,10 +56,10 @@ def result_post_save(sender, instance, **kwargs):
     from geoinsight.core.rest.serializers import TaskResultSerializer
 
     payload = TaskResultSerializer(instance).data
-    group_name = 'conversion'
+    group_name = "conversion"
     if instance.project:
-        group_name = f'analytics_{instance.project.id}'
+        group_name = f"analytics_{instance.project.id}"
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
-        group_name, {'type': 'send_notification', 'message': json.dumps(payload)}
+        group_name, {"type": "send_notification", "message": json.dumps(payload)}
     )

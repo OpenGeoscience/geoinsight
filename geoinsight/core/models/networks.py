@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.contrib.gis.db import models as geo_models
 from django.db import connection, models
 
@@ -45,13 +47,13 @@ GCC_QUERY_ITERATION_THRESHOLD = 50
 
 
 class Network(models.Model):
-    name = models.CharField(max_length=255, default='Network')
-    vector_data = models.ForeignKey(VectorData, on_delete=models.CASCADE, related_name='networks')
+    name = models.CharField(max_length=255, default="Network")
+    vector_data = models.ForeignKey(VectorData, on_delete=models.CASCADE, related_name="networks")
     category = models.CharField(max_length=25)
     metadata = models.JSONField(blank=True, null=True)
 
     def __str__(self):
-        return f'{self.name} ({self.id})'
+        return f"{self.name} ({self.id})"
 
     @classmethod
     def filter_queryset_by_projects(cls, queryset, projects):
@@ -81,13 +83,13 @@ class Network(models.Model):
                 cursor.execute(
                     GCC_QUERY,
                     {
-                        'excluded_nodes': cur_excluded_nodes,
-                        'network_id': self.pk,
+                        "excluded_nodes": cur_excluded_nodes,
+                        "network_id": self.pk,
                     },
                 )
                 nodes: list[int] = [x[0] for x in cursor.fetchall()]
                 if not nodes:
-                    raise Exception('Expected to find nodes but found none')
+                    raise RuntimeError("Expected to find nodes but found none")
 
                 cur_excluded_nodes.extend(nodes)
                 if len(nodes) > len(gcc):
@@ -103,15 +105,15 @@ class Network(models.Model):
 class NetworkNode(models.Model):
     name = models.CharField(max_length=255)
     vector_feature = models.ForeignKey(
-        VectorFeature, on_delete=models.CASCADE, related_name='nodes', null=True
+        VectorFeature, on_delete=models.CASCADE, related_name="nodes", null=True
     )
-    network = models.ForeignKey(Network, on_delete=models.CASCADE, related_name='nodes')
+    network = models.ForeignKey(Network, on_delete=models.CASCADE, related_name="nodes")
     metadata = models.JSONField(blank=True, null=True)
     capacity = models.IntegerField(null=True)
     location = geo_models.PointField()
 
     def __str__(self):
-        return f'{self.name} ({self.id})'
+        return f"{self.name} ({self.id})"
 
     @classmethod
     def filter_queryset_by_projects(cls, queryset, projects):
@@ -124,12 +126,12 @@ class NetworkNode(models.Model):
     def get_adjacent_nodes(self) -> models.QuerySet:
         entering_node_ids = (
             NetworkEdge.objects.filter(to_node=self.id)
-            .values_list('from_node_id', flat=True)
+            .values_list("from_node_id", flat=True)
             .distinct()
         )
         exiting_node_ids = (
             NetworkEdge.objects.filter(from_node=self.id)
-            .values_list('to_node_id', flat=True)
+            .values_list("to_node_id", flat=True)
             .distinct()
         )
         return NetworkNode.objects.exclude(id=self.id).filter(
@@ -140,18 +142,18 @@ class NetworkNode(models.Model):
 class NetworkEdge(models.Model):
     name = models.CharField(max_length=255)
     vector_feature = models.ForeignKey(
-        VectorFeature, on_delete=models.CASCADE, related_name='edges', null=True
+        VectorFeature, on_delete=models.CASCADE, related_name="edges", null=True
     )
-    network = models.ForeignKey(Network, on_delete=models.CASCADE, related_name='edges')
+    network = models.ForeignKey(Network, on_delete=models.CASCADE, related_name="edges")
     metadata = models.JSONField(blank=True, null=True)
     capacity = models.IntegerField(null=True)
     line_geometry = geo_models.LineStringField()
     directed = models.BooleanField(default=False)
-    from_node = models.ForeignKey(NetworkNode, related_name='+', on_delete=models.CASCADE)
-    to_node = models.ForeignKey(NetworkNode, related_name='+', on_delete=models.CASCADE)
+    from_node = models.ForeignKey(NetworkNode, related_name="+", on_delete=models.CASCADE)
+    to_node = models.ForeignKey(NetworkNode, related_name="+", on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.name} ({self.id})'
+        return f"{self.name} ({self.id})"
 
     @classmethod
     def filter_queryset_by_projects(cls, queryset, projects):

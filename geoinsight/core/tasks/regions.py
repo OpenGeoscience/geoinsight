@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import secrets
 
 from django.contrib.gis.geos import GEOSGeometry
@@ -11,14 +13,14 @@ def create_source_regions(vector_data, region_options):
     dataset = vector_data.dataset
     Region.objects.filter(dataset=dataset).delete()
 
-    name_property = region_options.get('name_property')
+    name_property = region_options.get("name_property")
     geodata = vector_data.read_geojson_data()
 
     region_count = 0
     new_feature_set = []
-    for feature in geodata['features']:
-        properties = feature['properties']
-        geometry = feature['geometry']
+    for feature in geodata["features"]:
+        properties = feature["properties"]
+        geometry = feature["geometry"]
 
         # Ensure a name field
         name = secrets.token_hex(10)
@@ -26,9 +28,9 @@ def create_source_regions(vector_data, region_options):
             name = properties[name_property]
 
         # Convert Polygon to MultiPolygon if necessary
-        if geometry['type'] == 'Polygon':
-            geometry['type'] = 'MultiPolygon'
-            geometry['coordinates'] = [geometry['coordinates']]
+        if geometry["type"] == "Polygon":
+            geometry["type"] = "MultiPolygon"
+            geometry["coordinates"] = [geometry["coordinates"]]
 
         # Create region with properties and MultiPolygon
         region = Region.objects.create(
@@ -45,15 +47,15 @@ def create_source_regions(vector_data, region_options):
         region.save()
         region_count += 1
 
-        properties['region_id'] = region.id
-        properties['region_name'] = region.name
-        properties['dataset_id'] = region.dataset.id
+        properties["region_id"] = region.id
+        properties["region_name"] = region.name
+        properties["dataset_id"] = region.dataset.id
         new_feature_set.append(
             {
-                'id': region.id,
-                'type': 'Feature',
-                'geometry': geometry,
-                'properties': properties,
+                "id": region.id,
+                "type": "Feature",
+                "geometry": geometry,
+                "properties": properties,
             }
         )
 
@@ -62,7 +64,7 @@ def create_source_regions(vector_data, region_options):
     new_geodata.to_crs(4326)
     vector_data.write_geojson_data(new_geodata.to_json())
     vector_data.save()
-    print('\t\t', f'{region_count} regions created.')
+    print("\t\t", f"{region_count} regions created.")
 
     all_features = VectorFeature.objects.filter(vector_data=vector_data)
-    print('\t\t', f'{all_features.count()} vector features created.')
+    print("\t\t", f"{all_features.count()} vector features created.")

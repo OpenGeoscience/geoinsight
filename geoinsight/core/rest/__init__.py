@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .analytics import AnalyticsViewSet
 from .basemap import BasemapViewSet
 from .chart import ChartViewSet
@@ -12,19 +14,19 @@ from .regions import RegionViewSet
 from .user import UserViewSet
 
 __all__ = [
-    'AnalyticsViewSet',
-    'BasemapViewSet',
-    'ChartViewSet',
-    'ColormapViewSet',
-    'LayerViewSet',
-    'LayerFrameViewSet',
-    'LayerStyleViewSet',
-    'RasterDataViewSet',
-    'VectorDataViewSet',
-    'DatasetViewSet',
-    'FileItemViewSet',
-    'NetworkViewSet',
-    'ProjectViewSet',
-    'RegionViewSet',
-    'UserViewSet',
+    "AnalyticsViewSet",
+    "BasemapViewSet",
+    "ChartViewSet",
+    "ColormapViewSet",
+    "DatasetViewSet",
+    "FileItemViewSet",
+    "LayerFrameViewSet",
+    "LayerStyleViewSet",
+    "LayerViewSet",
+    "NetworkViewSet",
+    "ProjectViewSet",
+    "RasterDataViewSet",
+    "RegionViewSet",
+    "UserViewSet",
+    "VectorDataViewSet",
 ]

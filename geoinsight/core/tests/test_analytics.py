@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import re
 
 from django.core.management import call_command
@@ -13,58 +15,58 @@ def test_rest_list_analysis_types(user, authenticated_api_client, project):
     user.save()
 
     analysis_type_instances = [at() for at in analysis_types]
-    resp = authenticated_api_client.get(f'/api/v1/analytics/project/{project.id}/types/')
+    resp = authenticated_api_client.get(f"/api/v1/analytics/project/{project.id}/types/")
     data = resp.json()
     assert len(data) == len(analysis_type_instances)
-    assert set(type_info.get('name') for type_info in data) == set(
+    assert {type_info.get("name") for type_info in data} == {
         i.name for i in analysis_type_instances
-    )
+    }
     for type_info in data:
-        instance = next(iter(i for i in analysis_type_instances if i.name == type_info.get('name')))
-        assert type_info.get('description') == instance.description
-        assert type_info.get('attribution') == instance.attribution
-        assert type_info.get('input_types') == instance.input_types
-        assert type_info.get('output_types') == instance.output_types
-        input_options = type_info.get('input_options')
+        instance = next(iter(i for i in analysis_type_instances if i.name == type_info.get("name")))
+        assert type_info.get("description") == instance.description
+        assert type_info.get("attribution") == instance.attribution
+        assert type_info.get("input_types") == instance.input_types
+        assert type_info.get("output_types") == instance.output_types
+        input_options = type_info.get("input_options")
         for k, v in instance.get_input_options().items():
             assert len(input_options.get(k)) == len(v)
 
 
 @pytest.mark.parametrize(
-    'task',
+    "task",
     [
-        'flood_simulation',
-        'flood_network_failure',
-        'network_recovery',
-        'create_road_network',
+        "flood_simulation",
+        "flood_network_failure",
+        "network_recovery",
+        "create_road_network",
     ],
 )
 @pytest.mark.django_db
 def test_rest_run_analysis_task_no_inputs(authenticated_api_client, user, project, task):
     project.set_followers([user])
     resp = authenticated_api_client.post(
-        f'/api/v1/analytics/project/{project.id}/types/{task}/run/'
+        f"/api/v1/analytics/project/{project.id}/types/{task}/run/"
     )
     data = resp.json()
 
     # evaluate initial response
-    assert data.get('task_type') == task
-    assert data.get('project') == project.id
-    assert data.get('status') == 'Initializing task...'
-    assert data.get('inputs') == {}
-    assert data.get('error') is None
-    assert data.get('outputs') is None
-    assert data.get('completed') is None
+    assert data.get("task_type") == task
+    assert data.get("project") == project.id
+    assert data.get("status") == "Initializing task..."
+    assert data.get("inputs") == {}
+    assert data.get("error") is None
+    assert data.get("outputs") is None
+    assert data.get("completed") is None
 
     # result object should encounter error due to lack of inputs
-    result_id = data.get('id')
-    resp = authenticated_api_client.get(f'/api/v1/analytics/{result_id}/')
+    result_id = data.get("id")
+    resp = authenticated_api_client.get(f"/api/v1/analytics/{result_id}/")
     data = resp.json()
-    assert data.get('id') == result_id
-    assert data.get('task_type') == task
-    assert data.get('error') is not None
-    assert re.search(r'(.+) not provided', data.get('error')) is not None
-    assert re.search(r'Completed in (\d|.)+ seconds.', data.get('status')) is not None
+    assert data.get("id") == result_id
+    assert data.get("task_type") == task
+    assert data.get("error") is not None
+    assert re.search(r"(.+) not provided", data.get("error")) is not None
+    assert re.search(r"Completed in (\d|.)+ seconds.", data.get("status")) is not None
 
 
 @pytest.mark.slow
@@ -80,46 +82,46 @@ def test_flood_analysis_chain(project):
     )
 
     # ensure a superuser exists
-    User.objects.create_superuser('testsuper')
+    User.objects.create_superuser("testsuper")
 
     # ingest necessary objects
     call_command(
-        'ingest',
-        './tests/analytics.json',
+        "ingest",
+        "./tests/analytics.json",
     )
-    network = Network.objects.get(name='MBTA Rapid Transit Network 1')
-    chart = Chart.objects.get(name='Charles River Hydrograph (Short Flow Length)')
+    network = Network.objects.get(name="MBTA Rapid Transit Network 1")
+    chart = Chart.objects.get(name="Charles River Hydrograph (Short Flow Length)")
 
     # run flood simulation task
     result_1 = FloodSimulation().run_task(
         project=project,
         hydrograph=chart.id,
-        time_period='2031-2050',
+        time_period="2031-2050",
         annual_probability=0.25,
         potential_evapotranspiration_percentile=50,
         soil_moisture_percentile=50,
         ground_water_percentile=50,
-        initial_conditions_id='001',
+        initial_conditions_id="001",
     )
     result_1.refresh_from_db()
     assert result_1.completed is not None
     assert result_1.error is None
     assert result_1.outputs is not None
 
-    flood_dataset_id = result_1.outputs.get('flood')
+    flood_dataset_id = result_1.outputs.get("flood")
     assert flood_dataset_id is not None
     flood_dataset = Dataset.objects.get(id=flood_dataset_id)
     assert flood_dataset.name == (
-        '2031-2050 0.25 Flood Simulation with Charles River '
-        'Hydrograph (Short Flow Length), initial condition set 001, and percentiles 50, 50, 50'
+        "2031-2050 0.25 Flood Simulation with Charles River "
+        "Hydrograph (Short Flow Length), initial condition set 001, and percentiles 50, 50, 50"
     )
-    assert flood_dataset.description == 'Generated by Flood Simulation Analytics Task'
-    assert flood_dataset.category == 'flood'
+    assert flood_dataset.description == "Generated by Flood Simulation Analytics Task"
+    assert flood_dataset.category == "flood"
 
     metadata = flood_dataset.metadata
-    assert metadata.get('inputs', {}) == dict(
-        time_period='2031-2050',
-        hydrograph=[
+    assert metadata.get("inputs", {}) == {
+        "time_period": "2031-2050",
+        "hydrograph": [
             0.006,
             0.026,
             0.066,
@@ -145,12 +147,12 @@ def test_flood_analysis_chain(project):
             0.001,
             0.001,
         ],
-        pet_percentile=50,
-        sm_percentile=50,
-        gw_percentile=50,
-        annual_probability=0.25,
-        initial_conditions_id='001',
-    )
+        "pet_percentile": 50,
+        "sm_percentile": 50,
+        "gw_percentile": 50,
+        "annual_probability": 0.25,
+        "initial_conditions_id": "001",
+    }
 
     layer = flood_dataset.layers.first()
     assert layer.frames.count() == 24
@@ -168,19 +170,19 @@ def test_flood_analysis_chain(project):
     assert result_2.error is None
     assert result_2.outputs is not None
 
-    failures = result_2.outputs.get('failures')
+    failures = result_2.outputs.get("failures")
     assert len(failures) == 24
 
     # run network recovery task
     result_3 = NetworkRecovery().run_task(
         project=project,
         network_failure=result_2.id,
-        recovery_mode='degree',
+        recovery_mode="degree",
     )
     result_3.refresh_from_db()
     assert result_3.completed is not None
     assert result_3.error is None
     assert result_3.outputs is not None
 
-    recoveries = result_3.outputs.get('recoveries')
+    recoveries = result_3.outputs.get("recoveries")
     assert len(recoveries) == 57
