@@ -29,13 +29,13 @@ from geoinsight.core.models import (
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'is_superuser']
+        fields = ["id", "username", "email", "first_name", "last_name", "is_superuser"]
 
 
 class BasemapSerializer(serializers.ModelSerializer):
     class Meta:
         model = Basemap
-        fields = '__all__'
+        fields = "__all__"
 
 
 class ProjectPermissionsSerializer(serializers.Serializer):
@@ -44,24 +44,24 @@ class ProjectPermissionsSerializer(serializers.Serializer):
     follower_ids = serializers.ListField(child=serializers.IntegerField())
 
     def validate(self, attrs):
-        collaborators = set(attrs['collaborator_ids'])
-        followers = set(attrs['follower_ids'])
-        owner = attrs['owner_id']
+        collaborators = set(attrs["collaborator_ids"])
+        followers = set(attrs["follower_ids"])
+        owner = attrs["owner_id"]
 
         if collaborators & followers or owner in (collaborators | followers):
             raise serializers.ValidationError(
-                'A user cannot have multiple permissions on a single project'
+                "A user cannot have multiple permissions on a single project"
             )
 
         return super().validate(attrs)
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    default_map_center = serializers.SerializerMethodField('get_center')
-    owner = serializers.SerializerMethodField('get_owner')
-    collaborators = serializers.SerializerMethodField('get_collaborators')
-    followers = serializers.SerializerMethodField('get_followers')
-    item_counts = serializers.SerializerMethodField('get_item_counts')
+    default_map_center = serializers.SerializerMethodField("get_center")
+    owner = serializers.SerializerMethodField("get_owner")
+    collaborators = serializers.SerializerMethodField("get_collaborators")
+    followers = serializers.SerializerMethodField("get_followers")
+    item_counts = serializers.SerializerMethodField("get_item_counts")
 
     def get_center(self, obj):
         # Web client expects Lon, Lat
@@ -80,28 +80,28 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     def get_item_counts(self, obj):
         return {
-            'datasets': obj.datasets.count(),
-            'charts': obj.charts.count(),
-            'analyses': obj.task_results.count(),
+            "datasets": obj.datasets.count(),
+            "charts": obj.charts.count(),
+            "analyses": obj.task_results.count(),
         }
 
     def to_internal_value(self, data):
-        center = data.get('default_map_center')
+        center = data.get("default_map_center")
         data = super().to_internal_value(data)
         if isinstance(center, list):
-            data['default_map_center'] = Point(center[1], center[0])
+            data["default_map_center"] = Point(center[1], center[0])
         return data
 
     class Meta:
         model = Project
-        fields = '__all__'
+        fields = "__all__"
 
 
 class TagsField(serializers.Field):
     def to_internal_value(self, data):
         if not isinstance(data, list) or any(not isinstance(v, str) for v in data):
             raise serializers.ValidationError(
-                'Dataset tags must be expressed as a list of strings.'
+                "Dataset tags must be expressed as a list of strings."
             )
         for tag in data:
             DatasetTag.objects.get_or_create(tag=tag)
@@ -112,8 +112,8 @@ class TagsField(serializers.Field):
 
 
 class DatasetSerializer(serializers.ModelSerializer):
-    owner = serializers.SerializerMethodField('get_owner')
-    n_layers = serializers.SerializerMethodField('get_n_layers')
+    owner = serializers.SerializerMethodField("get_owner")
+    n_layers = serializers.SerializerMethodField("get_n_layers")
     tags = TagsField()
 
     def get_owner(self, obj):
@@ -127,29 +127,29 @@ class DatasetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Dataset
-        fields = '__all__'
+        fields = "__all__"
 
 
 class FileItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = FileItem
-        fields = '__all__'
+        fields = "__all__"
 
 
 class ChartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chart
-        fields = '__all__'
+        fields = "__all__"
 
 
 class ColormapSerializer(serializers.ModelSerializer):
     class Meta:
         model = Colormap
-        fields = '__all__'
+        fields = "__all__"
 
 
 class LayerStyleSerializer(serializers.ModelSerializer):
-    is_default = serializers.SerializerMethodField('get_is_default')
+    is_default = serializers.SerializerMethodField("get_is_default")
 
     def get_is_default(self, obj):
         if obj.layer.default_style is None:
@@ -158,23 +158,23 @@ class LayerStyleSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data['style_spec'] = instance.repr_style_configs()
+        data["style_spec"] = instance.repr_style_configs()
         return data
 
     def create(self, validated_data):
-        style_spec = self.initial_data.pop('style_spec', None)
+        style_spec = self.initial_data.pop("style_spec", None)
         instance = super().create(validated_data)
         instance.save_style_configs(style_spec)
         return instance
 
     def update(self, instance, validated_data):
-        style_spec = self.initial_data.pop('style_spec', None)
+        style_spec = self.initial_data.pop("style_spec", None)
         instance.save_style_configs(style_spec)
         return super().update(instance, validated_data)
 
     class Meta:
         model = LayerStyle
-        exclude = ['default_frame', 'opacity']
+        exclude = ["default_frame", "opacity"]
 
 
 class LayerSerializer(serializers.ModelSerializer):
@@ -182,11 +182,11 @@ class LayerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Layer
-        fields = ['id', 'name', 'metadata', 'dataset', 'default_style']
+        fields = ["id", "name", "metadata", "dataset", "default_style"]
 
 
 class VectorDataSerializer(serializers.ModelSerializer):
-    file_size = serializers.SerializerMethodField('get_file_size')
+    file_size = serializers.SerializerMethodField("get_file_size")
 
     def get_file_size(self, obj):
         if obj.geojson_data:
@@ -195,11 +195,11 @@ class VectorDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VectorData
-        fields = '__all__'
+        fields = "__all__"
 
 
 class RasterDataSerializer(serializers.ModelSerializer):
-    file_size = serializers.SerializerMethodField('get_file_size')
+    file_size = serializers.SerializerMethodField("get_file_size")
 
     def get_file_size(self, obj):
         if obj.cloud_optimized_geotiff:
@@ -208,7 +208,7 @@ class RasterDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RasterData
-        fields = '__all__'
+        fields = "__all__"
 
 
 class LayerFrameSerializer(serializers.ModelSerializer):
@@ -217,20 +217,20 @@ class LayerFrameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LayerFrame
-        fields = '__all__'
+        fields = "__all__"
 
 
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Region
-        fields = '__all__'
+        fields = "__all__"
 
 
 class RegionFeatureCollectionSerializer(geojson.Serializer):
     # Override this method to ensure the pk field is a number instead of a string
     def get_dump_object(self, obj):
         val = super().get_dump_object(obj)
-        val['properties']['id'] = int(val['properties'].pop('pk'))
+        val["properties"]["id"] = int(val["properties"].pop("pk"))
 
         return val
 
@@ -238,17 +238,17 @@ class RegionFeatureCollectionSerializer(geojson.Serializer):
 class NetworkNodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = NetworkNode
-        fields = '__all__'
+        fields = "__all__"
 
 
 class NetworkEdgeSerializer(serializers.ModelSerializer):
     class Meta:
         model = NetworkEdge
-        fields = '__all__'
+        fields = "__all__"
 
 
 class NetworkSerializer(serializers.ModelSerializer):
-    dataset = serializers.SerializerMethodField('get_dataset')
+    dataset = serializers.SerializerMethodField("get_dataset")
     nodes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     def get_dataset(self, obj):
@@ -256,7 +256,7 @@ class NetworkSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Network
-        fields = '__all__'
+        fields = "__all__"
 
 
 class AnalysisTypeSerializer(serializers.Serializer):
@@ -270,14 +270,14 @@ class AnalysisTypeSerializer(serializers.Serializer):
 
 
 class TaskResultSerializer(serializers.ModelSerializer):
-    name = serializers.SerializerMethodField('get_name')
+    name = serializers.SerializerMethodField("get_name")
 
     def get_name(self, obj):
         if obj.name and obj.created:
-            timestamp = obj.created.strftime('%I:%M %p %d %b %Y')
-            return f'{timestamp} - {obj.name}'
+            timestamp = obj.created.strftime("%I:%M %p %d %b %Y")
+            return f"{timestamp} - {obj.name}"
         return obj.name
 
     class Meta:
         model = TaskResult
-        fields = '__all__'
+        fields = "__all__"

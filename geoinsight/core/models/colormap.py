@@ -6,23 +6,23 @@ from jsonschema import validate
 from .project import Project
 
 MARKER_SCHEMA = {
-    'type': 'array',
-    'items': {
-        'type': 'object',
-        'properties': {
-            'color': {
-                'type': 'string',
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "color": {
+                "type": "string",
             },
-            'value': {
-                'type': 'number',
-                'minimum': 0,
-                'maximum': 1,
+            "value": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
             },
         },
-        'required': ['color', 'value'],
+        "required": ["color", "value"],
     },
-    'minItems': 2,
-    'uniqueItems': True,
+    "minItems": 2,
+    "uniqueItems": True,
 }
 
 
@@ -31,13 +31,13 @@ class Colormap(models.Model):
     markers = models.JSONField(default=list)
     project = models.ForeignKey(
         Project,
-        related_name='colormaps',
+        related_name="colormaps",
         on_delete=models.CASCADE,
         null=True,
     )
 
     def __str__(self):
-        return f'{self.name} ({self.id})'
+        return f"{self.name} ({self.id})"
 
     def save(self, *args, **kwargs):
         self.full_clean()

@@ -5,76 +5,76 @@ import pytest
 from geoinsight.core.models import ColorConfig, SizeConfig
 
 SIMPLE_SPEC = {
-    'default_frame': 1,
-    'opacity': 0.5,
-    'colors': [
+    "default_frame": 1,
+    "opacity": 0.5,
+    "colors": [
         {
-            'name': 'all',
-            'visible': True,
-            'use_feature_props': True,
-            'single_color': '#ffffff',
+            "name": "all",
+            "visible": True,
+            "use_feature_props": True,
+            "single_color": "#ffffff",
         }
     ],
-    'sizes': [
+    "sizes": [
         {
-            'name': 'all',
-            'zoom_scaling': True,
-            'single_size': 4,
+            "name": "all",
+            "zoom_scaling": True,
+            "single_size": 4,
         }
     ],
-    'filters': [],
+    "filters": [],
 }
 
 COMPLEX_SPEC = {
-    'default_frame': 1,
-    'opacity': 0.5,
-    'colors': [
+    "default_frame": 1,
+    "opacity": 0.5,
+    "colors": [
         {
-            'name': 'all',
-            'visible': True,
-            'use_feature_props': False,
+            "name": "all",
+            "visible": True,
+            "use_feature_props": False,
             # Discretely apply 5 colors of terrain colormap by 'depth' with range [-1.5, 1.5]
-            'colormap': {
-                'id': 1,
-                'discrete': True,
-                'clamp': False,
-                'n_colors': 5,
-                'color_by': 'depth',
-                'null_color': '#000000',
-                'range': [-1.5, 1.5],
+            "colormap": {
+                "id": 1,
+                "discrete": True,
+                "clamp": False,
+                "n_colors": 5,
+                "color_by": "depth",
+                "null_color": "#000000",
+                "range": [-1.5, 1.5],
             },
         }
     ],
-    'sizes': [
+    "sizes": [
         {
-            'name': 'all',
-            'zoom_scaling': True,
+            "name": "all",
+            "zoom_scaling": True,
             # Size features between 2 and 8 by 'magnitude' (1 if null)
-            'size_range': {
-                'size_by': 'magnitude',
-                'minimum': 2,
-                'maximum': 8,
-                'null_size': {
-                    'transparency': False,
-                    'size': 1,
+            "size_range": {
+                "size_by": "magnitude",
+                "minimum": 2,
+                "maximum": 8,
+                "null_size": {
+                    "transparency": False,
+                    "size": 1,
                 },
             },
         }
     ],
-    'filters': [
+    "filters": [
         {
             # Exclude features with 'timestep' 0-10
-            'filter_by': 'timestep',
-            'include': False,
-            'transparency': True,
-            'range': [0, 10],
+            "filter_by": "timestep",
+            "include": False,
+            "transparency": True,
+            "range": [0, 10],
         },
         {
             # Include features where 'day' is a weekend day
-            'filter_by': 'day',
-            'include': True,
-            'transparency': True,
-            'list': ['sunday', 'saturday'],
+            "filter_by": "day",
+            "include": True,
+            "transparency": True,
+            "list": ["sunday", "saturday"],
         },
     ],
 }
@@ -82,7 +82,7 @@ COMPLEX_SPEC = {
 
 @pytest.mark.django_db
 def test_style_config_none(layer_style):
-    with pytest.raises(ValueError, match=r'style_spec must not be None\.'):
+    with pytest.raises(ValueError, match=r"style_spec must not be None\."):
         layer_style.save_style_configs(None)
 
 
@@ -91,7 +91,7 @@ def test_style_config_empty(layer_style):
     with pytest.raises(
         ValueError,
         match=(
-            r'style_spec must contain at least one color configuration and one size configuration\.'
+            r"style_spec must contain at least one color configuration and one size configuration\."
         ),
     ):
         layer_style.save_style_configs({})
@@ -141,25 +141,25 @@ def test_rest_style_create_and_update(authenticated_api_client, layer, project, 
     project.datasets.set([layer.dataset])
 
     style = {
-        'name': 'Test Style',
-        'layer': layer.id,
-        'project': project.id,
+        "name": "Test Style",
+        "layer": layer.id,
+        "project": project.id,
     }
 
     # Create style with simple spec
-    style['style_spec'] = SIMPLE_SPEC
-    resp = authenticated_api_client.post('/api/v1/layer-styles/', style)
+    style["style_spec"] = SIMPLE_SPEC
+    resp = authenticated_api_client.post("/api/v1/layer-styles/", style)
     assert resp.status_code == 200
     serialized_result = resp.json()
-    style_id = serialized_result.pop('id')
-    assert serialized_result.pop('is_default') is not None
+    style_id = serialized_result.pop("id")
+    assert serialized_result.pop("is_default") is not None
     assert serialized_result == style
 
     # Update style with complex spec
-    style['style_spec'] = COMPLEX_SPEC
-    resp = authenticated_api_client.patch(f'/api/v1/layer-styles/{style_id}/', style)
+    style["style_spec"] = COMPLEX_SPEC
+    resp = authenticated_api_client.patch(f"/api/v1/layer-styles/{style_id}/", style)
     assert resp.status_code == 200
     serialized_result = resp.json()
-    assert serialized_result.pop('id') is not None
-    assert serialized_result.pop('is_default') is not None
+    assert serialized_result.pop("id") is not None
+    assert serialized_result.pop("is_default") is not None
     assert serialized_result == style

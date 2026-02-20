@@ -10,15 +10,15 @@ import django.db.models.deletion
 
 
 def forwards(apps, schema_editor):
-    colormap_model = apps.get_model('core', 'Colormap')
+    colormap_model = apps.get_model("core", "Colormap")
     default_colormaps_file = Path(
-        settings.BASE_DIR, 'geoinsight', 'core', 'models', 'colormaps.json'
+        settings.BASE_DIR, "geoinsight", "core", "models", "colormaps.json"
     )
     with default_colormaps_file.open() as f:
         default_colormaps = json.load(f)
         for default_colormap in default_colormaps:
-            name = default_colormap.get('name')
-            markers = default_colormap.get('markers')
+            name = default_colormap.get("name")
+            markers = default_colormap.get("markers")
             if name is not None and markers is not None:
                 colormap_model.objects.create(
                     name=name,
@@ -28,28 +28,28 @@ def forwards(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('core', '0013_task_results'),
+        ("core", "0013_task_results"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Colormap',
+            name="Colormap",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
-                ('name', models.CharField(max_length=255)),
-                ('markers', models.JSONField(default=list)),
+                ("name", models.CharField(max_length=255)),
+                ("markers", models.JSONField(default=list)),
                 (
-                    'project',
+                    "project",
                     models.ForeignKey(
                         null=True,
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name='colormaps',
-                        to='core.project',
+                        related_name="colormaps",
+                        to="core.project",
                     ),
                 ),
             ],

@@ -16,7 +16,7 @@ from geoinsight.core.rest.serializers import (
 
 
 class GCCQueryParamSerializer(serializers.Serializer):
-    exclude_nodes = serializers.RegexField(r'^\d+(,\s?\d+)*$')
+    exclude_nodes = serializers.RegexField(r"^\d+(,\s?\d+)*$")
 
 
 class GCCResultSerializer(serializers.Serializer):
@@ -28,9 +28,9 @@ class NetworkViewSet(ModelViewSet):
     serializer_class = NetworkSerializer
     permission_classes = [GuardianPermission]
     filter_backends = [GuardianFilter]
-    lookup_field = 'id'
+    lookup_field = "id"
 
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=["get"])
     def nodes(self, request, **kwargs):
         network: Network = self.get_object()
         page = self.paginate_queryset(network.nodes.all())
@@ -39,7 +39,7 @@ class NetworkViewSet(ModelViewSet):
             status=200,
         )
 
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=["get"])
     def edges(self, request, **kwargs):
         network: Network = self.get_object()
         page = self.paginate_queryset(network.edges.all())
@@ -49,19 +49,19 @@ class NetworkViewSet(ModelViewSet):
         )
 
     @swagger_auto_schema(query_serializer=GCCQueryParamSerializer)
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=["get"])
     def gcc(self, request, **kwargs):
         network: Network = self.get_object()
 
         # Validate and de-serialize query params
         serializer = GCCQueryParamSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
-        exclude_nodes = [int(n) for n in serializer.validated_data['exclude_nodes'].split(',')]
+        exclude_nodes = [int(n) for n in serializer.validated_data["exclude_nodes"].split(",")]
 
         gcc = network.get_gcc(excluded_nodes=exclude_nodes)
         if gcc is None:
             return Response(None)
 
-        result = GCCResultSerializer(data={'gcc': gcc})
+        result = GCCResultSerializer(data={"gcc": gcc})
         result.is_valid(raise_exception=True)
-        return Response(result.validated_data['gcc'], status=200)
+        return Response(result.validated_data["gcc"], status=200)

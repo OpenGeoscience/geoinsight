@@ -7,24 +7,24 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('core', '0012_layer_styles'),
+        ("core", "0012_layer_styles"),
     ]
 
     operations = [
-        migrations.RenameModel('AnalysisResult', 'TaskResult'),
+        migrations.RenameModel("AnalysisResult", "TaskResult"),
         migrations.RenameField(
-            model_name='taskresult',
-            old_name='analysis_type',
-            new_name='task_type',
+            model_name="taskresult",
+            old_name="analysis_type",
+            new_name="task_type",
         ),
         migrations.AlterField(
-            model_name='taskresult',
-            name='project',
+            model_name="taskresult",
+            name="project",
             field=models.ForeignKey(
                 null=True,
                 on_delete=django.db.models.deletion.CASCADE,
-                related_name='task_results',
-                to='core.project',
+                related_name="task_results",
+                to="core.project",
             ),
         ),
     ]

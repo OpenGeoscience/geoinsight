@@ -15,413 +15,413 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Chart',
+            name="Chart",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
-                ('name', models.CharField(max_length=255, unique=True)),
-                ('description', models.TextField(blank=True, null=True)),
-                ('metadata', models.JSONField(blank=True, null=True)),
-                ('chart_data', models.JSONField(blank=True, null=True)),
-                ('chart_options', models.JSONField(blank=True, null=True)),
-                ('editable', models.BooleanField(default=False)),
+                ("name", models.CharField(max_length=255, unique=True)),
+                ("description", models.TextField(blank=True, null=True)),
+                ("metadata", models.JSONField(blank=True, null=True)),
+                ("chart_data", models.JSONField(blank=True, null=True)),
+                ("chart_options", models.JSONField(blank=True, null=True)),
+                ("editable", models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(
-            name='Context',
+            name="Context",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
-                ('name', models.CharField(max_length=255, unique=True)),
-                ('default_map_center', django.contrib.gis.db.models.fields.PointField(srid=4326)),
-                ('default_map_zoom', models.IntegerField(default=10)),
+                ("name", models.CharField(max_length=255, unique=True)),
+                ("default_map_center", django.contrib.gis.db.models.fields.PointField(srid=4326)),
+                ("default_map_zoom", models.IntegerField(default=10)),
             ],
         ),
         migrations.CreateModel(
-            name='Dataset',
+            name="Dataset",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
-                ('name', models.CharField(max_length=255, unique=True)),
-                ('description', models.TextField(blank=True, null=True)),
-                ('category', models.CharField(max_length=25)),
-                ('processing', models.BooleanField(default=False)),
-                ('metadata', models.JSONField(blank=True, null=True)),
+                ("name", models.CharField(max_length=255, unique=True)),
+                ("description", models.TextField(blank=True, null=True)),
+                ("category", models.CharField(max_length=25)),
+                ("processing", models.BooleanField(default=False)),
+                ("metadata", models.JSONField(blank=True, null=True)),
                 (
-                    'dataset_type',
+                    "dataset_type",
                     models.CharField(
-                        choices=[('VECTOR', 'Vector'), ('RASTER', 'Raster')], max_length=6
+                        choices=[("VECTOR", "Vector"), ("RASTER", "Raster")], max_length=6
                     ),
                 ),
                 (
-                    'classification',
+                    "classification",
                     models.CharField(
-                        choices=[('Network', 'Network'), ('Region', 'Region'), ('Other', 'Other')],
-                        default='Other',
+                        choices=[("Network", "Network"), ("Region", "Region"), ("Other", "Other")],
+                        default="Other",
                         max_length=16,
                     ),
                 ),
             ],
         ),
         migrations.CreateModel(
-            name='FileItem',
+            name="FileItem",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
                 (
-                    'created',
+                    "created",
                     django_extensions.db.fields.CreationDateTimeField(
-                        auto_now_add=True, verbose_name='created'
+                        auto_now_add=True, verbose_name="created"
                     ),
                 ),
                 (
-                    'modified',
+                    "modified",
                     django_extensions.db.fields.ModificationDateTimeField(
-                        auto_now=True, verbose_name='modified'
+                        auto_now=True, verbose_name="modified"
                     ),
                 ),
-                ('name', models.CharField(max_length=50)),
-                ('file', s3_file_field.fields.S3FileField()),
-                ('file_type', models.CharField(max_length=25)),
-                ('file_size', models.IntegerField(null=True)),
-                ('metadata', models.JSONField(blank=True, null=True)),
-                ('index', models.IntegerField(null=True)),
+                ("name", models.CharField(max_length=50)),
+                ("file", s3_file_field.fields.S3FileField()),
+                ("file_type", models.CharField(max_length=25)),
+                ("file_size", models.IntegerField(null=True)),
+                ("metadata", models.JSONField(blank=True, null=True)),
+                ("index", models.IntegerField(null=True)),
                 (
-                    'chart',
+                    "chart",
                     models.ForeignKey(
-                        null=True, on_delete=django.db.models.deletion.CASCADE, to='core.chart'
+                        null=True, on_delete=django.db.models.deletion.CASCADE, to="core.chart"
                     ),
                 ),
                 (
-                    'dataset',
+                    "dataset",
                     models.ForeignKey(
                         null=True,
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name='source_files',
-                        to='core.dataset',
+                        related_name="source_files",
+                        to="core.dataset",
                     ),
                 ),
             ],
             options={
-                'get_latest_by': 'modified',
-                'abstract': False,
+                "get_latest_by": "modified",
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='VectorMapLayer',
+            name="VectorMapLayer",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
                 (
-                    'created',
+                    "created",
                     django_extensions.db.fields.CreationDateTimeField(
-                        auto_now_add=True, verbose_name='created'
+                        auto_now_add=True, verbose_name="created"
                     ),
                 ),
                 (
-                    'modified',
+                    "modified",
                     django_extensions.db.fields.ModificationDateTimeField(
-                        auto_now=True, verbose_name='modified'
+                        auto_now=True, verbose_name="modified"
                     ),
                 ),
-                ('metadata', models.JSONField(blank=True, null=True)),
-                ('default_style', models.JSONField(blank=True, null=True)),
-                ('index', models.IntegerField(null=True)),
-                ('geojson_file', s3_file_field.fields.S3FileField(null=True)),
+                ("metadata", models.JSONField(blank=True, null=True)),
+                ("default_style", models.JSONField(blank=True, null=True)),
+                ("index", models.IntegerField(null=True)),
+                ("geojson_file", s3_file_field.fields.S3FileField(null=True)),
                 (
-                    'file_item',
+                    "file_item",
                     models.ForeignKey(
-                        null=True, on_delete=django.db.models.deletion.CASCADE, to='core.fileitem'
+                        null=True, on_delete=django.db.models.deletion.CASCADE, to="core.fileitem"
                     ),
                 ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='VectorTile',
+            name="VectorTile",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
-                ('geojson_data', models.JSONField(blank=True, null=True)),
-                ('x', models.IntegerField(default=0)),
-                ('y', models.IntegerField(default=0)),
-                ('z', models.IntegerField(default=0)),
+                ("geojson_data", models.JSONField(blank=True, null=True)),
+                ("x", models.IntegerField(default=0)),
+                ("y", models.IntegerField(default=0)),
+                ("z", models.IntegerField(default=0)),
                 (
-                    'map_layer',
+                    "map_layer",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to='core.vectormaplayer'
+                        on_delete=django.db.models.deletion.CASCADE, to="core.vectormaplayer"
                     ),
                 ),
             ],
         ),
         migrations.CreateModel(
-            name='SourceRegion',
+            name="SourceRegion",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
-                ('name', models.CharField(max_length=255)),
-                ('metadata', models.JSONField(blank=True, null=True)),
-                ('boundary', django.contrib.gis.db.models.fields.MultiPolygonField(srid=4326)),
+                ("name", models.CharField(max_length=255)),
+                ("metadata", models.JSONField(blank=True, null=True)),
+                ("boundary", django.contrib.gis.db.models.fields.MultiPolygonField(srid=4326)),
                 (
-                    'dataset',
+                    "dataset",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name='regions',
-                        to='core.dataset',
+                        related_name="regions",
+                        to="core.dataset",
                     ),
                 ),
             ],
         ),
         migrations.CreateModel(
-            name='SimulationResult',
+            name="SimulationResult",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
                 (
-                    'created',
+                    "created",
                     django_extensions.db.fields.CreationDateTimeField(
-                        auto_now_add=True, verbose_name='created'
+                        auto_now_add=True, verbose_name="created"
                     ),
                 ),
                 (
-                    'modified',
+                    "modified",
                     django_extensions.db.fields.ModificationDateTimeField(
-                        auto_now=True, verbose_name='modified'
+                        auto_now=True, verbose_name="modified"
                     ),
                 ),
                 (
-                    'simulation_type',
+                    "simulation_type",
                     models.CharField(
                         choices=[
-                            ('FLOOD_1', 'Flood Scenario 1'),
-                            ('RECOVERY', 'Recovery Scenario'),
+                            ("FLOOD_1", "Flood Scenario 1"),
+                            ("RECOVERY", "Recovery Scenario"),
                         ],
                         max_length=8,
                     ),
                 ),
-                ('input_args', models.JSONField(blank=True, null=True)),
-                ('output_data', models.JSONField(blank=True, null=True)),
-                ('error_message', models.TextField(blank=True, null=True)),
+                ("input_args", models.JSONField(blank=True, null=True)),
+                ("output_data", models.JSONField(blank=True, null=True)),
+                ("error_message", models.TextField(blank=True, null=True)),
                 (
-                    'context',
+                    "context",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name='simulation_results',
-                        to='core.context',
+                        related_name="simulation_results",
+                        to="core.context",
                     ),
                 ),
             ],
             options={
-                'get_latest_by': 'modified',
-                'abstract': False,
+                "get_latest_by": "modified",
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='RasterMapLayer',
+            name="RasterMapLayer",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
                 (
-                    'created',
+                    "created",
                     django_extensions.db.fields.CreationDateTimeField(
-                        auto_now_add=True, verbose_name='created'
+                        auto_now_add=True, verbose_name="created"
                     ),
                 ),
                 (
-                    'modified',
+                    "modified",
                     django_extensions.db.fields.ModificationDateTimeField(
-                        auto_now=True, verbose_name='modified'
+                        auto_now=True, verbose_name="modified"
                     ),
                 ),
-                ('metadata', models.JSONField(blank=True, null=True)),
-                ('default_style', models.JSONField(blank=True, null=True)),
-                ('index', models.IntegerField(null=True)),
-                ('cloud_optimized_geotiff', s3_file_field.fields.S3FileField()),
+                ("metadata", models.JSONField(blank=True, null=True)),
+                ("default_style", models.JSONField(blank=True, null=True)),
+                ("index", models.IntegerField(null=True)),
+                ("cloud_optimized_geotiff", s3_file_field.fields.S3FileField()),
                 (
-                    'file_item',
+                    "file_item",
                     models.ForeignKey(
-                        null=True, on_delete=django.db.models.deletion.CASCADE, to='core.fileitem'
+                        null=True, on_delete=django.db.models.deletion.CASCADE, to="core.fileitem"
                     ),
                 ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='NetworkNode',
+            name="NetworkNode",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
-                ('name', models.CharField(max_length=255, unique=True)),
-                ('metadata', models.JSONField(blank=True, null=True)),
-                ('capacity', models.IntegerField(null=True)),
-                ('location', django.contrib.gis.db.models.fields.PointField(srid=4326)),
+                ("name", models.CharField(max_length=255, unique=True)),
+                ("metadata", models.JSONField(blank=True, null=True)),
+                ("capacity", models.IntegerField(null=True)),
+                ("location", django.contrib.gis.db.models.fields.PointField(srid=4326)),
                 (
-                    'dataset',
+                    "dataset",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name='network_nodes',
-                        to='core.dataset',
+                        related_name="network_nodes",
+                        to="core.dataset",
                     ),
                 ),
             ],
         ),
         migrations.CreateModel(
-            name='NetworkEdge',
+            name="NetworkEdge",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
-                ('name', models.CharField(max_length=255, unique=True)),
-                ('metadata', models.JSONField(blank=True, null=True)),
-                ('capacity', models.IntegerField(null=True)),
-                ('line_geometry', django.contrib.gis.db.models.fields.LineStringField(srid=4326)),
-                ('directed', models.BooleanField(default=False)),
+                ("name", models.CharField(max_length=255, unique=True)),
+                ("metadata", models.JSONField(blank=True, null=True)),
+                ("capacity", models.IntegerField(null=True)),
+                ("line_geometry", django.contrib.gis.db.models.fields.LineStringField(srid=4326)),
+                ("directed", models.BooleanField(default=False)),
                 (
-                    'dataset',
+                    "dataset",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name='network_edges',
-                        to='core.dataset',
-                    ),
-                ),
-                (
-                    'from_node',
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name='+',
-                        to='core.networknode',
+                        related_name="network_edges",
+                        to="core.dataset",
                     ),
                 ),
                 (
-                    'to_node',
+                    "from_node",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name='+',
-                        to='core.networknode',
+                        related_name="+",
+                        to="core.networknode",
+                    ),
+                ),
+                (
+                    "to_node",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="+",
+                        to="core.networknode",
                     ),
                 ),
             ],
         ),
         migrations.CreateModel(
-            name='DerivedRegion',
+            name="DerivedRegion",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
-                ('name', models.CharField(max_length=255)),
-                ('metadata', models.JSONField(blank=True, null=True)),
-                ('boundary', django.contrib.gis.db.models.fields.MultiPolygonField(srid=4326)),
+                ("name", models.CharField(max_length=255)),
+                ("metadata", models.JSONField(blank=True, null=True)),
+                ("boundary", django.contrib.gis.db.models.fields.MultiPolygonField(srid=4326)),
                 (
-                    'operation',
+                    "operation",
                     models.CharField(
-                        choices=[('UNION', 'Union'), ('INTERSECTION', 'Intersection')],
+                        choices=[("UNION", "Union"), ("INTERSECTION", "Intersection")],
                         max_length=12,
                     ),
                 ),
                 (
-                    'context',
+                    "context",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name='derived_regions',
-                        to='core.context',
+                        related_name="derived_regions",
+                        to="core.context",
                     ),
                 ),
                 (
-                    'map_layer',
+                    "map_layer",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.PROTECT, to='core.vectormaplayer'
+                        on_delete=django.db.models.deletion.PROTECT, to="core.vectormaplayer"
                     ),
                 ),
                 (
-                    'source_regions',
-                    models.ManyToManyField(related_name='derived_regions', to='core.sourceregion'),
+                    "source_regions",
+                    models.ManyToManyField(related_name="derived_regions", to="core.sourceregion"),
                 ),
             ],
         ),
         migrations.AddField(
-            model_name='context',
-            name='datasets',
-            field=models.ManyToManyField(blank=True, to='core.dataset'),
+            model_name="context",
+            name="datasets",
+            field=models.ManyToManyField(blank=True, to="core.dataset"),
         ),
         migrations.AddField(
-            model_name='chart',
-            name='context',
+            model_name="chart",
+            name="context",
             field=models.ForeignKey(
                 on_delete=django.db.models.deletion.CASCADE,
-                related_name='charts',
-                to='core.context',
+                related_name="charts",
+                to="core.context",
             ),
         ),
         migrations.AddIndex(
-            model_name='vectortile',
-            index=models.Index(fields=['z', 'x', 'y'], name='vectortile-coordinates-index'),
+            model_name="vectortile",
+            index=models.Index(fields=["z", "x", "y"], name="vectortile-coordinates-index"),
         ),
         migrations.AddConstraint(
-            model_name='vectortile',
+            model_name="vectortile",
             constraint=models.UniqueConstraint(
-                fields=('map_layer', 'z', 'x', 'y'), name='unique-map-layer-index'
+                fields=("map_layer", "z", "x", "y"), name="unique-map-layer-index"
             ),
         ),
         migrations.AddConstraint(
-            model_name='sourceregion',
+            model_name="sourceregion",
             constraint=models.UniqueConstraint(
-                fields=('dataset', 'name'), name='unique-source-region-name'
+                fields=("dataset", "name"), name="unique-source-region-name"
             ),
         ),
         migrations.AddConstraint(
-            model_name='derivedregion',
+            model_name="derivedregion",
             constraint=models.UniqueConstraint(
-                fields=('context', 'name'), name='unique-derived-region-name'
+                fields=("context", "name"), name="unique-derived-region-name"
             ),
         ),
     ]

@@ -11,21 +11,21 @@ TOLERANCE = 0.0001
 
 def get_properties(feature):
     properties = json.loads(
-        feature.drop(['geometry', 'index'], errors='ignore').fillna('').to_json()
+        feature.drop(["geometry", "index"], errors="ignore").fillna("").to_json()
     )
     properties.update(
         {
-            'colors': ','.join(
+            "colors": ",".join(
                 [
                     name_to_hex(
                         (
                             properties.get(
-                                'color',
+                                "color",
                             )
-                            or 'black'
-                        ).replace(' ', '')
+                            or "black"
+                        ).replace(" ", "")
                     ),
-                    '#ffffff',
+                    "#ffffff",
                 ]
             )
         }
@@ -41,12 +41,12 @@ def merge_properties(p1, p2):
         return p1
     for k1, v1 in p1.items():
         v2 = p2.get(k1)
-        if v2 is None or v2 == '':
+        if v2 is None or v2 == "":
             properties[k1] = v1
-        elif v1 is None or v1 == '':
+        elif v1 is None or v1 == "":
             properties[k1] = v2
         else:
-            properties[k1] = ','.join([str(v1), str(v2)])
+            properties[k1] = ",".join([str(v1), str(v2)])
     # update p2 with merged properties to catch keys not in p1
     return p2.update(properties)
 
@@ -56,7 +56,7 @@ def cut_crossed_lines(gdf):
     separated_features = []
     for _, feature in gdf.iterrows():
         properties = json.loads(
-            feature.drop(['geometry', 'index'], errors='ignore').fillna('').to_json()
+            feature.drop(["geometry", "index"], errors="ignore").fillna("").to_json()
         )
         curr_geom = feature.geometry
         crosses = gdf[gdf.geometry.crosses(curr_geom)]
@@ -65,9 +65,9 @@ def cut_crossed_lines(gdf):
             split_points = []
             for _, cross in crosses.iterrows():
                 p = cross.geometry.intersection(curr_geom)
-                if p.geom_type == 'MultiPoint':
+                if p.geom_type == "MultiPoint":
                     split_points.append(p.geoms[0])
-                elif p.geom_type == 'Point':
+                elif p.geom_type == "Point":
                     split_points.append(p)
             separated = shapely.ops.split(curr_geom, shapely.MultiPoint(split_points)).geoms
         else:
@@ -75,9 +75,9 @@ def cut_crossed_lines(gdf):
         separated_features.extend(
             [
                 {
-                    'type': 'Feature',
-                    'geometry': json.loads(shapely.to_geojson(s)),
-                    'properties': properties,
+                    "type": "Feature",
+                    "geometry": json.loads(shapely.to_geojson(s)),
+                    "properties": properties,
                 }
                 for s in separated
             ]
@@ -93,7 +93,7 @@ def merge_lines(gdf):
         if feat_index not in visited:
             visited.append(feat_index)
             properties = json.loads(
-                feature.drop(['geometry', 'index'], errors='ignore').fillna('').to_json()
+                feature.drop(["geometry", "index"], errors="ignore").fillna("").to_json()
             )
             curr_geom = feature.geometry
             not_visited = gdf[~gdf.index.isin(visited)]
@@ -101,22 +101,22 @@ def merge_lines(gdf):
             snapped = touching.snap(curr_geom, TOLERANCE * 2)
             merge = shapely.line_merge(shapely.union_all([*snapped.geometry, curr_geom]))
             curr_segment = None
-            if merge.geom_type == 'MultiLineString':
+            if merge.geom_type == "MultiLineString":
                 for segment in merge.geoms:
                     if segment.contains(curr_geom) and not any(
                         s.touches(segment) for s in merge.geoms if s != segment
                     ):
                         curr_segment = segment
-            elif merge.geom_type == 'LineString':
+            elif merge.geom_type == "LineString":
                 curr_segment = merge
 
             if curr_segment is None:
                 # no valid merge segment, include feature as-is
                 merged_features.append(
                     {
-                        'type': 'Feature',
-                        'geometry': json.loads(shapely.to_geojson(curr_geom)),
-                        'properties': properties,
+                        "type": "Feature",
+                        "geometry": json.loads(shapely.to_geojson(curr_geom)),
+                        "properties": properties,
                     }
                 )
             else:
@@ -128,16 +128,16 @@ def merge_lines(gdf):
                     properties = merge_properties(
                         properties,
                         json.loads(
-                            v_feature.drop(['geometry', 'index'], errors='ignore')
-                            .fillna('')
+                            v_feature.drop(["geometry", "index"], errors="ignore")
+                            .fillna("")
                             .to_json()
                         ),
                     )
                 merged_features.append(
                     {
-                        'type': 'Feature',
-                        'geometry': json.loads(shapely.to_geojson(curr_segment)),
-                        'properties': properties,
+                        "type": "Feature",
+                        "geometry": json.loads(shapely.to_geojson(curr_segment)),
+                        "properties": properties,
                     }
                 )
     gdf = geopandas.GeoDataFrame.from_features(merged_features)
@@ -154,20 +154,20 @@ def find_nodes(gdf):
         # create nodes at line endpoints
         for endpoint in [points[0], points[-1]]:
             # touching_lines = gdf[gdf.geometry.snap(endpoint, TOLERANCE).touches(endpoint)]
-            existing_node_locations = geopandas.GeoSeries([n['location'] for n in nodes])
+            existing_node_locations = geopandas.GeoSeries([n["location"] for n in nodes])
             if (
                 # allow endpoints (1 touching) and intersections (>2 touching)
                 # (len(touching_lines) == 1 or len(touching_lines) > 2 ) and
                 # omit duplicates within tolerance radius
                 not existing_node_locations.dwithin(endpoint, TOLERANCE).any()
             ):
-                nodes.append({'location': endpoint, 'metadata': properties})
+                nodes.append({"location": endpoint, "metadata": properties})
     return nodes
 
 
 def find_edges(gdf, nodes):
     edges = []
-    existing_node_locations = geopandas.GeoSeries([n['location'] for n in nodes])
+    existing_node_locations = geopandas.GeoSeries([n["location"] for n in nodes])
     for _, feature in gdf.iterrows():
         properties = get_properties(feature)
         curr_geom = feature.geometry
@@ -179,7 +179,7 @@ def find_edges(gdf, nodes):
             shapely.MultiPoint(list(nearby_nodes.geometry)), curr_geom, TOLERANCE
         )
         separated = shapely.ops.split(shapely.LineString(points), snapped).geoms
-        existing_edge_geometries = geopandas.GeoSeries([e['line_geometry'] for e in edges])
+        existing_edge_geometries = geopandas.GeoSeries([e["line_geometry"] for e in edges])
         for segment in separated:
             endpoints = [
                 shapely.Point(segment.coords[0]),
@@ -196,23 +196,23 @@ def find_edges(gdf, nodes):
             ):
                 edges.append(
                     {
-                        'line_geometry': segment,
-                        'from_point': from_points.iloc[0],
-                        'to_point': to_points.iloc[0],
-                        'metadata': properties,
+                        "line_geometry": segment,
+                        "from_point": from_points.iloc[0],
+                        "to_point": to_points.iloc[0],
+                        "metadata": properties,
                     }
                 )
     return edges
 
 
 def interpret_group(gdf):
-    print(f'\t\t Reading group with {len(gdf)} features.')
+    print(f"\t\t Reading group with {len(gdf)} features.")
     # iteratively merge lines until no more merging can be done
     merged_gdf = merge_lines(gdf)
     while len(merged_gdf) < len(gdf):
         gdf = merged_gdf
         merged_gdf = merge_lines(gdf)
-    print(f'\t\tMerged to {len(gdf)} lines.')
+    print(f"\t\tMerged to {len(gdf)} lines.")
 
     nodes = find_nodes(gdf)
     edges = find_edges(gdf, nodes)

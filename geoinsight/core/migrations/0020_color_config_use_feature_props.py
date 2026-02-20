@@ -6,13 +6,13 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('core', '0019_merge'),
+        ("core", "0019_merge"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='colorconfig',
-            name='use_feature_props',
+            model_name="colorconfig",
+            name="use_feature_props",
             field=models.BooleanField(default=True),
         ),
     ]

@@ -25,11 +25,11 @@ from geoinsight.core.models import (
 @pytest.mark.django_db
 def test_ingest():
     # ensure a superuser exists
-    User.objects.create_superuser('testsuper')
+    User.objects.create_superuser("testsuper")
 
     call_command(
-        'ingest',
-        './tests/ingest.json',
+        "ingest",
+        "./tests/ingest.json",
     )
 
     assert Chart.objects.all().count() == 1

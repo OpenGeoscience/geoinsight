@@ -15,100 +15,100 @@ def create_layers_and_frames(dataset, layer_options=None):
 
     if layer_options is None:
         layer_options = [
-            {'name': data.name.split('.')[0].replace('_', ' '), 'frames': None, 'data': data.name}
+            {"name": data.name.split(".")[0].replace("_", " "), "frames": None, "data": data.name}
             for data in [*vectors.all(), *rasters.all()]
         ]
 
     for layer_info in layer_options:
         layer = Layer.objects.create(
             dataset=dataset,
-            name=layer_info.get('name', dataset.name),
-            metadata=layer_info.get('metadata', {}),
+            name=layer_info.get("name", dataset.name),
+            metadata=layer_info.get("metadata", {}),
         )
-        frames = layer_info.get('frames')
+        frames = layer_info.get("frames")
         if frames is None:
             frames = []
-            kwargs = {'dataset': dataset}
-            data_name = layer_info.get('data')
-            source_file_names = layer_info.get('source_files')
+            kwargs = {"dataset": dataset}
+            data_name = layer_info.get("data")
+            source_file_names = layer_info.get("source_files")
             if data_name is not None:
-                kwargs['name'] = data_name
+                kwargs["name"] = data_name
             if source_file_names is not None:
-                kwargs['source_file__name__in'] = source_file_names
+                kwargs["source_file__name__in"] = source_file_names
 
             for layer_data in [
-                *VectorData.objects.filter(**kwargs).order_by('name').all(),
-                *RasterData.objects.filter(**kwargs).order_by('name').all(),
+                *VectorData.objects.filter(**kwargs).order_by("name").all(),
+                *RasterData.objects.filter(**kwargs).order_by("name").all(),
             ]:
-                frame_property = layer_info.get('frame_property')
-                additional_filters = layer_info.get('additional_filters', {})
+                frame_property = layer_info.get("frame_property")
+                additional_filters = layer_info.get("additional_filters", {})
                 metadata = layer_data.metadata or {}
-                bands = metadata.get('bands')
-                raster_frames = metadata.get('frames')
-                summary = layer_data.summary if hasattr(layer_data, 'summary') else {}
-                properties = summary.get('properties')
+                bands = metadata.get("bands")
+                raster_frames = metadata.get("frames")
+                summary = layer_data.summary if hasattr(layer_data, "summary") else {}
+                properties = summary.get("properties")
                 if properties and frame_property and frame_property in properties:
                     property_summary = properties.get(frame_property)
                     if property_summary is not None:
-                        value_set = property_summary.get('value_set')
+                        value_set = property_summary.get("value_set")
                         if value_set is not None:
                             for value in value_set:
                                 frames.append(
                                     {
-                                        'name': value,
-                                        'index': len(frames),
-                                        'data': layer_data.name,
-                                        'source_filters': dict(
+                                        "name": value,
+                                        "index": len(frames),
+                                        "data": layer_data.name,
+                                        "source_filters": dict(
                                             **{frame_property: value}, **additional_filters
                                         ),
                                     }
                                 )
-                        value_range = property_summary.get('range')
+                        value_range = property_summary.get("range")
                         if value_range is not None:
                             for i in range(*value_range):
                                 frames.append(
                                     {
-                                        'name': f'Frame {i}',
-                                        'index': len(frames),
-                                        'data': layer_data.name,
-                                        'source_filters': dict(
+                                        "name": f"Frame {i}",
+                                        "index": len(frames),
+                                        "data": layer_data.name,
+                                        "source_filters": dict(
                                             **{frame_property: i}, **additional_filters
                                         ),
                                     }
                                 )
-                elif frame_property == 'frame' and raster_frames and len(raster_frames) > 1:
+                elif frame_property == "frame" and raster_frames and len(raster_frames) > 1:
                     for raster_frame in raster_frames:
-                        i = raster_frame.get('Index')
+                        i = raster_frame.get("Index")
                         frames.append(
                             {
-                                'name': i,
-                                'index': i,
-                                'data': layer_data.name,
-                                'source_filters': {'frame': i},
+                                "name": i,
+                                "index": i,
+                                "data": layer_data.name,
+                                "source_filters": {"frame": i},
                             }
                         )
-                elif frame_property == 'band' and bands and len(bands) > 1:
+                elif frame_property == "band" and bands and len(bands) > 1:
                     for band in bands:
                         frames.append(
                             {
-                                'name': band,
-                                'index': len(frames),
-                                'data': layer_data.name,
-                                'source_filters': {'band': band},
+                                "name": band,
+                                "index": len(frames),
+                                "data": layer_data.name,
+                                "source_filters": {"band": band},
                             }
                         )
                 else:
                     frames.append(
                         {
-                            'name': layer_data.name,
-                            'index': len(frames),
-                            'data': layer_data.name,
-                            'source_filters': {},
+                            "name": layer_data.name,
+                            "index": len(frames),
+                            "data": layer_data.name,
+                            "source_filters": {},
                         }
                     )
         for i, frame_info in enumerate(frames):
-            index = frame_info.get('index', i)
-            data_name = frame_info.get('data')
+            index = frame_info.get("index", i)
+            data_name = frame_info.get("data")
             if data_name:
                 vector, raster = None, None
                 vectors = VectorData.objects.filter(dataset=dataset, name=data_name)
@@ -118,12 +118,12 @@ def create_layers_and_frames(dataset, layer_options=None):
                 if rasters.count():
                     raster = rasters.first()
                 LayerFrame.objects.create(
-                    name=frame_info.get('name', f'Frame {index}'),
+                    name=frame_info.get("name", f"Frame {index}"),
                     layer=layer,
                     index=index,
                     vector=vector,
                     raster=raster,
-                    source_filters=frame_info.get('source_filters', {'band': 1}),
+                    source_filters=frame_info.get("source_filters", {"band": 1}),
                 )
 
 
@@ -156,13 +156,13 @@ def convert_dataset(
 
     for file_to_convert in FileItem.objects.filter(dataset=dataset):
         if result is not None:
-            result.write_status(f'Converting file {file_to_convert.name}...')
+            result.write_status(f"Converting file {file_to_convert.name}...")
         convert_file_item(file_to_convert)
 
     vectors = VectorData.objects.filter(dataset=dataset)
     for vector_data in vectors.all():
         if result is not None:
-            result.write_status(f'Processing vector data {vector_data.name}...')
+            result.write_status(f"Processing vector data {vector_data.name}...")
 
         if network_options:
             create_network(vector_data, network_options)

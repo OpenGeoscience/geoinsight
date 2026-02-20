@@ -12,7 +12,7 @@ from .dataset import Dataset
 class FileItem(TimeStampedModel):
     name = models.CharField(max_length=50)
     dataset = models.ForeignKey(
-        Dataset, on_delete=models.CASCADE, related_name='source_files', null=True
+        Dataset, on_delete=models.CASCADE, related_name="source_files", null=True
     )
     chart = models.ForeignKey(Chart, on_delete=models.CASCADE, null=True)
     file = S3FileField()
@@ -22,7 +22,7 @@ class FileItem(TimeStampedModel):
     index = models.IntegerField(null=True)
 
     def __str__(self):
-        return f'{self.name} ({self.id})'
+        return f"{self.name} ({self.id})"
 
     @classmethod
     def filter_queryset_by_projects(cls, queryset, projects):

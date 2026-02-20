@@ -44,11 +44,11 @@ def test_project_set_followers_collaborators(project, user_factory):
 def test_rest_project_create_no_datasets(authenticated_api_client):
     fake = faker.Faker()
     resp = authenticated_api_client.post(
-        '/api/v1/projects/',
+        "/api/v1/projects/",
         data={
-            'name': fake.name(),
-            'default_map_zoom': fake.pyfloat(min_value=0, max_value=22),
-            'default_map_center': [fake.latitude(), fake.longitude()],
+            "name": fake.name(),
+            "default_map_zoom": fake.pyfloat(min_value=0, max_value=22),
+            "default_map_center": [fake.latitude(), fake.longitude()],
         },
     )
 
@@ -61,12 +61,12 @@ def test_rest_project_create_with_datasets(authenticated_api_client, dataset_fac
 
     datasets = [dataset_factory().id for _ in range(3)]
     resp = authenticated_api_client.post(
-        '/api/v1/projects/',
+        "/api/v1/projects/",
         data={
-            'name': fake.name(),
-            'default_map_zoom': fake.pyfloat(min_value=0, max_value=22),
-            'default_map_center': [fake.latitude(), fake.longitude()],
-            'datasets': datasets,
+            "name": fake.name(),
+            "default_map_zoom": fake.pyfloat(min_value=0, max_value=22),
+            "default_map_center": [fake.latitude(), fake.longitude()],
+            "datasets": datasets,
         },
     )
 
@@ -76,34 +76,34 @@ def test_rest_project_create_with_datasets(authenticated_api_client, dataset_fac
 @pytest.mark.django_db
 def test_rest_project_retrieve(authenticated_api_client, user, project: Project):
     # Not found because user is not added to project
-    resp = authenticated_api_client.get(f'/api/v1/projects/{project.id}/')
+    resp = authenticated_api_client.get(f"/api/v1/projects/{project.id}/")
     assert resp.status_code == 404
 
     project.set_followers([user])
-    resp = authenticated_api_client.get(f'/api/v1/projects/{project.id}/')
+    resp = authenticated_api_client.get(f"/api/v1/projects/{project.id}/")
 
-    assert resp.json()['owner']['id']
-    assert not resp.json()['collaborators']
+    assert resp.json()["owner"]["id"]
+    assert not resp.json()["collaborators"]
 
-    followers = resp.json()['followers']
+    followers = resp.json()["followers"]
     assert len(followers) == 1
-    assert followers[0]['id'] == user.id
+    assert followers[0]["id"] == user.id
 
-    assert resp.json()['item_counts'] == {
-        'datasets': 0,
-        'charts': 0,
-        'analyses': 0,
+    assert resp.json()["item_counts"] == {
+        "datasets": 0,
+        "charts": 0,
+        "analyses": 0,
     }
 
 
 @pytest.mark.django_db
 def test_rest_project_set_permissions_not_allowed(authenticated_api_client, user, project: Project):
     resp = authenticated_api_client.put(
-        f'/api/v1/projects/{project.id}/permissions/',
+        f"/api/v1/projects/{project.id}/permissions/",
         {
-            'owner_id': user.id,
-            'collaborator_ids': [],
-            'follower_ids': [],
+            "owner_id": user.id,
+            "collaborator_ids": [],
+            "follower_ids": [],
         },
     )
     # 404 because user is not added to the project at all
@@ -111,11 +111,11 @@ def test_rest_project_set_permissions_not_allowed(authenticated_api_client, user
 
     project.set_followers([user])
     resp = authenticated_api_client.put(
-        f'/api/v1/projects/{project.id}/permissions/',
+        f"/api/v1/projects/{project.id}/permissions/",
         {
-            'owner_id': user.id,
-            'collaborator_ids': [],
-            'follower_ids': [],
+            "owner_id": user.id,
+            "collaborator_ids": [],
+            "follower_ids": [],
         },
     )
     # User is added, but without sufficient perms, so 403 is returned
@@ -128,11 +128,11 @@ def test_rest_project_set_permissions_change_owner_collaborator(
 ):
     project.set_collaborators([user])
     resp = authenticated_api_client.put(
-        f'/api/v1/projects/{project.id}/permissions/',
+        f"/api/v1/projects/{project.id}/permissions/",
         {
-            'owner_id': user.id,
-            'collaborator_ids': [],
-            'follower_ids': [],
+            "owner_id": user.id,
+            "collaborator_ids": [],
+            "follower_ids": [],
         },
     )
     assert resp.status_code == 403
@@ -143,31 +143,31 @@ def test_rest_project_set_permissions_change_owner(api_client, user, project: Pr
     owner = project.owner()
     api_client.force_authenticate(user=owner)
     resp = api_client.put(
-        f'/api/v1/projects/{project.id}/permissions/',
+        f"/api/v1/projects/{project.id}/permissions/",
         {
-            'owner_id': user.id,
-            'collaborator_ids': [owner.id],
-            'follower_ids': [],
+            "owner_id": user.id,
+            "collaborator_ids": [owner.id],
+            "follower_ids": [],
         },
     )
     assert resp.status_code == 200
-    assert resp.json()['owner']['id'] == user.id
-    assert resp.json()['collaborators'][0]['id'] == owner.id
+    assert resp.json()["owner"]["id"] == user.id
+    assert resp.json()["collaborators"][0]["id"] == owner.id
 
 
 @pytest.mark.django_db
 def test_rest_project_delete(authenticated_api_client, user, project: Project):
-    resp = authenticated_api_client.delete(f'/api/v1/projects/{project.id}/')
+    resp = authenticated_api_client.delete(f"/api/v1/projects/{project.id}/")
     assert resp.status_code == 404
 
     project.set_followers([user])
-    resp = authenticated_api_client.delete(f'/api/v1/projects/{project.id}/')
+    resp = authenticated_api_client.delete(f"/api/v1/projects/{project.id}/")
     assert resp.status_code == 403
 
     project.set_collaborators([user])
-    resp = authenticated_api_client.delete(f'/api/v1/projects/{project.id}/')
+    resp = authenticated_api_client.delete(f"/api/v1/projects/{project.id}/")
     assert resp.status_code == 403
 
     project.set_owner(user)
-    resp = authenticated_api_client.delete(f'/api/v1/projects/{project.id}/')
+    resp = authenticated_api_client.delete(f"/api/v1/projects/{project.id}/")
     assert resp.status_code == 204

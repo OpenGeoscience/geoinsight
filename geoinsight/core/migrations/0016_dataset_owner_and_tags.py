@@ -6,32 +6,32 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('core', '0015_style_configs'),
+        ("core", "0015_style_configs"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='DatasetTag',
+            name="DatasetTag",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
-                ('tag', models.CharField(max_length=255, unique=True)),
+                ("tag", models.CharField(max_length=255, unique=True)),
             ],
             options={
-                'ordering': ['tag'],
+                "ordering": ["tag"],
             },
         ),
         migrations.AlterModelOptions(
-            name='dataset',
-            options={'permissions': [('owner', 'Can read, write, and delete')]},
+            name="dataset",
+            options={"permissions": [("owner", "Can read, write, and delete")]},
         ),
         migrations.AddField(
-            model_name='dataset',
-            name='tags',
-            field=models.ManyToManyField(blank=True, to='core.datasettag'),
+            model_name="dataset",
+            name="tags",
+            field=models.ManyToManyField(blank=True, to="core.datasettag"),
         ),
     ]

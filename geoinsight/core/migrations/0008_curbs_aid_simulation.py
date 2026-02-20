@@ -6,18 +6,18 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('core', '0007_delete_derivedregion'),
+        ("core", "0007_delete_derivedregion"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='simulationresult',
-            name='simulation_type',
+            model_name="simulationresult",
+            name="simulation_type",
             field=models.CharField(
                 choices=[
-                    ('FLOOD_1', 'Flood Scenario 1'),
-                    ('RECOVERY', 'Recovery Scenario'),
-                    ('SEGMENT_CURBS', 'Segment Curbs'),
+                    ("FLOOD_1", "Flood Scenario 1"),
+                    ("RECOVERY", "Recovery Scenario"),
+                    ("SEGMENT_CURBS", "Segment Curbs"),
                 ],
                 max_length=13,
             ),

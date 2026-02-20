@@ -8,30 +8,30 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('core', '0001_models_redesign'),
+        ("core", "0001_models_redesign"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='VectorFeature',
+            name="VectorFeature",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
-                ('geometry', django.contrib.gis.db.models.fields.GeometryField(srid=4326)),
-                ('properties', models.JSONField()),
+                ("geometry", django.contrib.gis.db.models.fields.GeometryField(srid=4326)),
+                ("properties", models.JSONField()),
                 (
-                    'map_layer',
+                    "map_layer",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to='core.vectormaplayer'
+                        on_delete=django.db.models.deletion.CASCADE, to="core.vectormaplayer"
                     ),
                 ),
             ],
         ),
         migrations.DeleteModel(
-            name='VectorTile',
+            name="VectorTile",
         ),
     ]

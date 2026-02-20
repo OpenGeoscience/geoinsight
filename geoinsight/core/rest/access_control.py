@@ -12,14 +12,14 @@ class GuardianPermission(IsAuthenticated):
     def has_object_permission(self, request, view, obj):
         if request.user.is_superuser:
             return True
-        if not hasattr(obj, 'filter_queryset_by_projects'):
+        if not hasattr(obj, "filter_queryset_by_projects"):
             raise NotImplementedError
 
-        perms = ['follower', 'collaborator', 'owner']
+        perms = ["follower", "collaborator", "owner"]
         if request.method not in SAFE_METHODS:
-            perms = ['collaborator', 'owner']
-        if request.method == 'DELETE':
-            perms = ['owner']
+            perms = ["collaborator", "owner"]
+        if request.method == "DELETE":
+            perms = ["owner"]
 
         # Create queryset out of single object, so it can be passed to the filter function
         queryset = obj.__class__.objects.filter(pk=obj.pk)
@@ -42,15 +42,15 @@ class DatasetGuardianPermission(GuardianPermission):
             return True
 
         # Prohibit delete and patch requests unless user is owner
-        return request.method not in ['DELETE', 'PATCH'] or obj.owner() == request.user
+        return request.method not in ["DELETE", "PATCH"] or obj.owner() == request.user
 
 
 class GuardianFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
-        if not hasattr(queryset.model, 'filter_queryset_by_projects'):
+        if not hasattr(queryset.model, "filter_queryset_by_projects"):
             raise NotImplementedError
 
-        ids = request.query_params.get('project', request.query_params.get('project_id'))
+        ids = request.query_params.get("project", request.query_params.get("project_id"))
         if ids:
             # Return queryset filtered by objects that are within these projects
             return queryset.model.filter_queryset_by_projects(
@@ -63,7 +63,7 @@ class GuardianFilter(BaseFilterBackend):
         user_projects = get_objects_for_user(
             klass=models.Project,
             user=request.user,
-            perms=['follower', 'collaborator', 'owner'],
+            perms=["follower", "collaborator", "owner"],
             any_perm=True,
         )
 

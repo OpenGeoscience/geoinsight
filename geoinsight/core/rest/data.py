@@ -74,11 +74,11 @@ SELECT ST_AsMVT(mvtgeom.*) FROM mvtgeom
 
 def get_filter_string(filters: dict | None = None):
     if filters is None:
-        return ''
+        return ""
 
-    return_str = ''
+    return_str = ""
     for key, value in filters.items():
-        key_path = key.replace('.', ',')
+        key_path = key.replace(".", ",")
         return_str += f" AND t.properties #>> '{{{key_path}}}' = '{value}'"
     return return_str
 
@@ -86,7 +86,7 @@ def get_filter_string(filters: dict | None = None):
 class GenericDataViewSet(GenericViewSet, mixins.RetrieveModelMixin):
     permission_classes = [GuardianPermission]
     filter_backends = [GuardianFilter]
-    lookup_field = 'id'
+    lookup_field = "id"
 
     @property
     def authentication_classes(self):
@@ -100,24 +100,24 @@ class GenericDataViewSet(GenericViewSet, mixins.RetrieveModelMixin):
 
 
 class RasterDataViewSet(GenericDataViewSet, LargeImageFileDetailMixin):
-    queryset = RasterData.objects.select_related('dataset').all()
+    queryset = RasterData.objects.select_related("dataset").all()
     serializer_class = RasterDataSerializer
-    FILE_FIELD_NAME = 'cloud_optimized_geotiff'
+    FILE_FIELD_NAME = "cloud_optimized_geotiff"
 
     @action(
         detail=True,
-        methods=['get'],
-        url_path=r'raster-data/(?P<resolution>[\d*\.?\d*]+)',
-        url_name='raster_data',
+        methods=["get"],
+        url_path=r"raster-data/(?P<resolution>[\d*\.?\d*]+)",
+        url_name="raster_data",
     )
-    def get_raster_data(self, request, resolution: str = '1', **kwargs):
+    def get_raster_data(self, request, resolution: str = "1", **kwargs):
         raster_data = self.get_object()
         data = raster_data.get_image_data(float(resolution))
         return HttpResponse(json.dumps(data), status=200)
 
 
 class VectorDataViewSet(GenericDataViewSet):
-    queryset = VectorData.objects.select_related('dataset').all()
+    queryset = VectorData.objects.select_related("dataset").all()
     serializer_class = VectorDataSerializer
 
     def retrieve(self, request, *args, **kwargs):
@@ -125,37 +125,37 @@ class VectorDataViewSet(GenericDataViewSet):
         serializer = VectorDataSerializer(instance)
         return Response(serializer.data)
 
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=["get"])
     def bounds(self, request, **kwargs):
         instance = self.get_object()
         features = VectorFeature.objects.filter(vector_data=instance)
-        extent = features.aggregate(Extent('geometry')).get('geometry__extent')
+        extent = features.aggregate(Extent("geometry")).get("geometry__extent")
         return Response(extent, status=200)
 
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=["get"])
     def summary(self, request, **kwargs):
         instance = self.get_object()
         return Response(instance.get_summary(), status=200)
 
     @action(
         detail=True,
-        methods=['get'],
-        url_path=r'tiles/(?P<z>\d+)/(?P<x>\d+)/(?P<y>\d+)',
-        url_name='tiles',
+        methods=["get"],
+        url_path=r"tiles/(?P<z>\d+)/(?P<x>\d+)/(?P<y>\d+)",
+        url_name="tiles",
     )
     def get_vector_tile(self, request, pk: str, x: str, y: str, z: str):
         filters = request.query_params.copy()
-        filters.pop('token', None)
+        filters.pop("token", None)
         filters_string = get_filter_string(filters)
         with connection.cursor() as cursor:
             cursor.execute(
-                VECTOR_TILE_SQL.replace('REPLACE_WITH_FILTERS', filters_string),
+                VECTOR_TILE_SQL.replace("REPLACE_WITH_FILTERS", filters_string),
                 {
-                    'z': z,
-                    'x': x,
-                    'y': y,
-                    'srid': 3857,
-                    'vector_data_id': pk,
+                    "z": z,
+                    "x": x,
+                    "y": y,
+                    "srid": 3857,
+                    "vector_data_id": pk,
                 },
             )
             row = cursor.fetchone()
@@ -163,6 +163,6 @@ class VectorDataViewSet(GenericDataViewSet):
         tile = row[0]
         return HttpResponse(
             tile,
-            content_type='application/octet-stream',
+            content_type="application/octet-stream",
             status=200 if tile else 204,
         )

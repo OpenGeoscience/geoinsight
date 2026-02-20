@@ -12,4 +12,4 @@ class BasemapViewSet(ModelViewSet):
     serializer_class = BasemapSerializer
     permission_classes = [GuardianPermission]
     filter_backends = [GuardianFilter]
-    lookup_field = 'id'
+    lookup_field = "id"

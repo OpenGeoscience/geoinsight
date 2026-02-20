@@ -8,7 +8,7 @@ from rest_framework.authentication import BaseAuthentication
 
 class IPyLeafletTokenAuth(BaseAuthentication):
     def authenticate(self, request):
-        token = request.query_params.get('token')
+        token = request.query_params.get("token")
         if token is None:
             return None
 

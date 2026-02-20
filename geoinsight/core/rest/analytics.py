@@ -19,12 +19,12 @@ class AnalyticsViewSet(ReadOnlyModelViewSet):
     serializer_class = geoinsight_serializers.TaskResultSerializer
     permission_classes = [GuardianPermission]
     filter_backends = [GuardianFilter]
-    lookup_field = 'id'
+    lookup_field = "id"
 
     @action(
         detail=False,
-        methods=['get'],
-        url_path=r'project/(?P<project_id>[\d*]+)/types',
+        methods=["get"],
+        url_path=r"project/(?P<project_id>[\d*]+)/types",
     )
     def list_types(self, request, project_id: int, **kwargs):
         # TODO: remove this when analytics are ready to be shown to all users
@@ -42,19 +42,19 @@ class AnalyticsViewSet(ReadOnlyModelViewSet):
                     filtered_queryset = v.model.filter_queryset_by_projects(
                         v, Project.objects.filter(id=project_id)
                     )
-                    v = [{'id': o.id, 'name': o.name} for o in filtered_queryset]
+                    v = [{"id": o.id, "name": o.name} for o in filtered_queryset]
                 elif any(not isinstance(o, dict) for o in v):
-                    v = [{'id': o, 'name': o} for o in v]
+                    v = [{"id": o, "name": o} for o in v]
                 filtered_input_options[k] = v
             serializer = geoinsight_serializers.AnalysisTypeSerializer(
                 data={
-                    'name': instance.name,
-                    'db_value': instance.db_value,
-                    'description': instance.description,
-                    'attribution': instance.attribution,
-                    'input_options': filtered_input_options,
-                    'input_types': instance.input_types,
-                    'output_types': instance.output_types,
+                    "name": instance.name,
+                    "db_value": instance.db_value,
+                    "description": instance.description,
+                    "attribution": instance.attribution,
+                    "input_options": filtered_input_options,
+                    "input_types": instance.input_types,
+                    "output_types": instance.output_types,
                 }
             )
             serializer.is_valid(raise_exception=True)
@@ -63,8 +63,8 @@ class AnalyticsViewSet(ReadOnlyModelViewSet):
 
     @action(
         detail=False,
-        methods=['get'],
-        url_path=r'project/(?P<project_id>[\d*]+)/types/(?P<task_type>.+)/results',
+        methods=["get"],
+        url_path=r"project/(?P<project_id>[\d*]+)/types/(?P<task_type>.+)/results",
     )
     def list_results(self, request, project_id: int, task_type: str, **kwargs):
         results = TaskResult.objects.filter(
@@ -78,8 +78,8 @@ class AnalyticsViewSet(ReadOnlyModelViewSet):
 
     @action(
         detail=False,
-        methods=['post'],
-        url_path=r'project/(?P<project_id>[\d*]+)/types/(?P<task_type>.+)/run',
+        methods=["post"],
+        url_path=r"project/(?P<project_id>[\d*]+)/types/(?P<task_type>.+)/run",
     )
     def run(self, request, project_id: int, task_type: str, **kwargs):
         project = Project.objects.get(id=project_id)

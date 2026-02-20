@@ -6,18 +6,18 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('core', '0002_vector_features'),
+        ("core", "0002_vector_features"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='networkedge',
-            name='name',
+            model_name="networkedge",
+            name="name",
             field=models.CharField(max_length=255),
         ),
         migrations.AlterField(
-            model_name='networknode',
-            name='name',
+            model_name="networknode",
+            name="name",
             field=models.CharField(max_length=255),
         ),
     ]

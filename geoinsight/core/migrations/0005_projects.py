@@ -7,74 +7,74 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('core', '0004_files_and_networks'),
+        ("core", "0004_files_and_networks"),
     ]
 
     operations = [
         migrations.RenameModel(
-            old_name='Context',
-            new_name='Project',
+            old_name="Context",
+            new_name="Project",
         ),
         migrations.AlterModelOptions(
-            name='project',
+            name="project",
             options={
-                'permissions': [
-                    ('owner', 'Can read, write, and delete'),
-                    ('collaborator', 'Can read and write'),
-                    ('follower', 'Can read'),
+                "permissions": [
+                    ("owner", "Can read, write, and delete"),
+                    ("collaborator", "Can read and write"),
+                    ("follower", "Can read"),
                 ]
             },
         ),
         migrations.RemoveConstraint(
-            model_name='derivedregion',
-            name='unique-derived-region-name',
+            model_name="derivedregion",
+            name="unique-derived-region-name",
         ),
         migrations.RemoveField(
-            model_name='chart',
-            name='context',
+            model_name="chart",
+            name="context",
         ),
         migrations.RemoveField(
-            model_name='derivedregion',
-            name='context',
+            model_name="derivedregion",
+            name="context",
         ),
         migrations.RemoveField(
-            model_name='simulationresult',
-            name='context',
+            model_name="simulationresult",
+            name="context",
         ),
         migrations.AddField(
-            model_name='chart',
-            name='project',
+            model_name="chart",
+            name="project",
             field=models.ForeignKey(
                 null=True,
                 on_delete=django.db.models.deletion.CASCADE,
-                related_name='charts',
-                to='core.project',
+                related_name="charts",
+                to="core.project",
             ),
         ),
         migrations.AddField(
-            model_name='derivedregion',
-            name='project',
+            model_name="derivedregion",
+            name="project",
             field=models.ForeignKey(
                 null=True,
                 on_delete=django.db.models.deletion.CASCADE,
-                related_name='derived_regions',
-                to='core.project',
+                related_name="derived_regions",
+                to="core.project",
             ),
         ),
         migrations.AddField(
-            model_name='simulationresult',
-            name='project',
+            model_name="simulationresult",
+            name="project",
             field=models.ForeignKey(
                 null=True,
                 on_delete=django.db.models.deletion.CASCADE,
-                related_name='simulation_results',
-                to='core.project',
+                related_name="simulation_results",
+                to="core.project",
             ),
         ),
         migrations.AddConstraint(
-            model_name='derivedregion',
+            model_name="derivedregion",
             constraint=models.UniqueConstraint(
-                fields=('project', 'name'), name='unique-derived-region-name'
+                fields=("project", "name"), name="unique-derived-region-name"
             ),
         ),
     ]
