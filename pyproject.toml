@@ -17,6 +17,7 @@ dependencies = [
   "django[argon2]",
   "django-allauth",
   "django-auth-style",
+  "django-click",
   "django-cors-headers",
   "django-environ",
   "django-extensions",
