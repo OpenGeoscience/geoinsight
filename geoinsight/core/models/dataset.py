@@ -78,6 +78,7 @@ class Dataset(models.Model):
 
     def spawn_conversion_task(
         self,
+        *,
         layer_options=None,
         network_options=None,
         region_options=None,

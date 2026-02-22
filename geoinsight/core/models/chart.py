@@ -24,6 +24,7 @@ class Chart(models.Model):
 
     def spawn_conversion_task(
         self,
+        *,
         conversion_options=None,
         asynchronous=True,
     ):

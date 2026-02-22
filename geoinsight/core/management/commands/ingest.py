@@ -98,7 +98,7 @@ class ChartItem(TypedDict, total=False):
     conversion_options: ConversionOptions
 
 
-def ingest_file(file_info, index=0, dataset=None, chart=None, replace=False, skip_cache=False):
+def ingest_file(file_info, *, index=0, dataset=None, chart=None, replace=False, skip_cache=False):
     file_path = file_info.get("path")
     file_name = file_info.get("name", file_path.split("/")[-1])
     file_url = file_info.get("url")
@@ -150,7 +150,7 @@ def ingest_file(file_info, index=0, dataset=None, chart=None, replace=False, ski
             new_file_item.file.save(file_path, ContentFile(f.read()))
 
 
-def ingest_projects(data: list[ProjectItem], replace=False) -> None:
+def ingest_projects(data: list[ProjectItem], *, replace=False) -> None:
     for project in data:
         click.echo(f"\t- {project['name']}")
         existing = Project.objects.filter(name=project["name"])
@@ -189,7 +189,7 @@ def ingest_projects(data: list[ProjectItem], replace=False) -> None:
         project_for_setting.datasets.set(Dataset.objects.filter(name__in=project["datasets"]))
 
 
-def ingest_charts(data: list[ChartItem], replace=False, skip_cache=False) -> None:
+def ingest_charts(data: list[ChartItem], *, replace=False, skip_cache=False) -> None:
     for chart in data:
         click.echo(f"\t- {chart['name']}")
         existing = Chart.objects.filter(name=chart["name"])
@@ -261,7 +261,7 @@ def default_conversion_process(dataset: Dataset, options: DatasetItem):
 
 
 def ingest_datasets(
-    data: list[DatasetItem], json_file_path: Path, replace=False, skip_cache=False
+    data: list[DatasetItem], json_file_path: Path, *, replace=False, skip_cache=False
 ) -> None:
     superuser = User.objects.filter(is_superuser=True).first()
     if superuser is None:
@@ -345,7 +345,7 @@ def ingest_datasets(
     default=False,
     help="Do not use cached downloaded files",
 )
-def ingest(file_path, replace, clear, skip_cache):
+def ingest(*, file_path, replace, clear, skip_cache):
     file_path = DATA_FOLDER / file_path
     if not file_path.exists():
         click.echo(f"File {file_path} does not exist.")
