@@ -18,8 +18,9 @@ RIDERSHIP_DATA_URL = 'https://data.kitware.com/api/v1/item/69938a5d92fec64197f41
 
 STATION_NAME_ABBREVIATIONS = {
     'Northeastern University': 'Northeastern',
-    'Massachusetts Avenue':  'Massachusetts Ave',
+    'Massachusetts Avenue': 'Massachusetts Ave',
 }
+
 
 def convert_dataset(dataset, options):
     # Run standard conversion task first
