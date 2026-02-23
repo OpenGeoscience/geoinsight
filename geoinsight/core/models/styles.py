@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+import contextlib
+
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
@@ -5,9 +9,9 @@ from geoinsight.core.models import Colormap, Layer, Project
 
 
 class LayerStyle(models.Model):
-    name = models.CharField(max_length=255, default='Layer Style')
-    layer = models.ForeignKey(Layer, related_name='styles', on_delete=models.CASCADE)
-    project = models.ForeignKey(Project, related_name='styles', on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, default="Layer Style")
+    layer = models.ForeignKey(Layer, related_name="styles", on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, related_name="styles", on_delete=models.CASCADE)
     default_frame = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     opacity = models.DecimalField(
         default=1,
@@ -22,12 +26,12 @@ class LayerStyle(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['name', 'layer', 'project'], name='unique_name_layer_project'
+                fields=["name", "layer", "project"], name="unique_name_layer_project"
             )
         ]
 
     def __str__(self):
-        return f'{self.name} ({self.id})'
+        return f"{self.name} ({self.id})"
 
     @classmethod
     def filter_queryset_by_projects(cls, queryset, projects):
@@ -35,50 +39,48 @@ class LayerStyle(models.Model):
 
     def save_style_configs(self, style_spec):
         if style_spec is None:
-            raise ValueError('style_spec must not be None.')
-        self.default_frame = style_spec.get('default_frame', 0)
-        self.opacity = style_spec.get('opacity')
-        color_specs = style_spec.get('colors', [])
-        size_specs = style_spec.get('sizes', [])
-        filter_specs = style_spec.get('filters', [])
+            raise ValueError("style_spec must not be None.")
+        self.default_frame = style_spec.get("default_frame", 0)
+        self.opacity = style_spec.get("opacity")
+        color_specs = style_spec.get("colors", [])
+        size_specs = style_spec.get("sizes", [])
+        filter_specs = style_spec.get("filters", [])
         if not len(color_specs) or not len(size_specs):
             raise ValueError(
-                'style_spec must contain at least one color '
-                'configuration and one size configuration.'
+                "style_spec must contain at least one color "
+                "configuration and one size configuration."
             )
 
         color_config_names = []
         for color_spec in color_specs:
-            color_config_name = color_spec.get('name')
+            color_config_name = color_spec.get("name")
             if color_config_name is None:
                 continue
             color_config_names.append(color_config_name)
             color_config, _ = ColorConfig.objects.get_or_create(style=self, name=color_config_name)
-            color_config.visible = color_spec.get('visible', True)
-            color_config.use_feature_props = color_spec.get('use_feature_props', True)
-            single_color = color_spec.get('single_color')
+            color_config.visible = color_spec.get("visible", True)
+            color_config.use_feature_props = color_spec.get("use_feature_props", True)
+            single_color = color_spec.get("single_color")
             if single_color is not None:
                 color_config.single_color = single_color
-                try:
+                with contextlib.suppress(ColorConfig.colormap.RelatedObjectDoesNotExist):
                     color_config.colormap.delete()
-                except ColorConfig.colormap.RelatedObjectDoesNotExist:
-                    pass
             else:
                 color_config.single_color = None
-                colormap_spec = color_spec.get('colormap')
-                colormap = Colormap.objects.get(id=colormap_spec.get('id'))
-                map_range = colormap_spec.get('range') or [None, None]
-                colormap_config_args = dict(
-                    color_config=color_config,
-                    colormap=colormap,
-                    color_by=colormap_spec.get('color_by'),
-                    null_color=colormap_spec.get('null_color'),
-                    clamp=colormap_spec.get('clamp', False),
-                    discrete=colormap_spec.get('discrete', False),
-                    n_colors=colormap_spec.get('n_colors'),
-                    range_minimum=map_range[0],
-                    range_maximum=map_range[1],
-                )
+                colormap_spec = color_spec.get("colormap")
+                colormap = Colormap.objects.get(id=colormap_spec.get("id"))
+                map_range = colormap_spec.get("range") or [None, None]
+                colormap_config_args = {
+                    "color_config": color_config,
+                    "colormap": colormap,
+                    "color_by": colormap_spec.get("color_by"),
+                    "null_color": colormap_spec.get("null_color"),
+                    "clamp": colormap_spec.get("clamp", False),
+                    "discrete": colormap_spec.get("discrete", False),
+                    "n_colors": colormap_spec.get("n_colors"),
+                    "range_minimum": map_range[0],
+                    "range_maximum": map_range[1],
+                }
                 try:
                     colormap_config = color_config.colormap
                     for key, value in colormap_config_args.items():
@@ -91,7 +93,7 @@ class LayerStyle(models.Model):
 
         size_config_names = []
         for size_spec in size_specs:
-            size_config_name = size_spec.get('name')
+            size_config_name = size_spec.get("name")
             if size_config_name is None:
                 continue
             size_config_names.append(size_config_name)
@@ -99,26 +101,24 @@ class LayerStyle(models.Model):
                 style=self,
                 name=size_config_name,
             )
-            size_config.zoom_scaling = size_spec.get('zoom_scaling')
-            single_size = size_spec.get('single_size')
+            size_config.zoom_scaling = size_spec.get("zoom_scaling")
+            single_size = size_spec.get("single_size")
             if single_size is not None:
                 size_config.single_size = single_size
-                try:
+                with contextlib.suppress(SizeConfig.size_range.RelatedObjectDoesNotExist):
                     size_config.size_range.delete()
-                except SizeConfig.size_range.RelatedObjectDoesNotExist:
-                    pass
             else:
                 size_config.single_size = None
-                size_range_spec = size_spec.get('size_range')
-                null_size_spec = size_range_spec.get('null_size')
-                size_range_config_args = dict(
-                    size_config=size_config,
-                    size_by=size_range_spec.get('size_by'),
-                    minimum=size_range_spec.get('minimum'),
-                    maximum=size_range_spec.get('maximum'),
-                    null_size=null_size_spec.get('size'),
-                    null_transparent=null_size_spec.get('transparency'),
-                )
+                size_range_spec = size_spec.get("size_range")
+                null_size_spec = size_range_spec.get("null_size")
+                size_range_config_args = {
+                    "size_config": size_config,
+                    "size_by": size_range_spec.get("size_by"),
+                    "minimum": size_range_spec.get("minimum"),
+                    "maximum": size_range_spec.get("maximum"),
+                    "null_size": null_size_spec.get("size"),
+                    "null_transparent": null_size_spec.get("transparency"),
+                }
                 try:
                     size_range_config = size_config.size_range
                     for key, value in size_range_config_args.items():
@@ -132,16 +132,16 @@ class LayerStyle(models.Model):
         filter_configs = list(FilterConfig.objects.filter(style=self))
         filter_config_ids = []
         for i, filter_spec in enumerate(filter_specs):
-            filter_range = filter_spec.get('range') or [None, None]
-            filter_config_args = dict(
-                style=self,
-                filter_by=filter_spec.get('filter_by'),
-                include=filter_spec.get('include'),
-                transparency=filter_spec.get('transparency'),
-                range_minimum=filter_range[0],
-                range_maximum=filter_range[1],
-                values_list=filter_spec.get('list'),
-            )
+            filter_range = filter_spec.get("range") or [None, None]
+            filter_config_args = {
+                "style": self,
+                "filter_by": filter_spec.get("filter_by"),
+                "include": filter_spec.get("include"),
+                "transparency": filter_spec.get("transparency"),
+                "range_minimum": filter_range[0],
+                "range_maximum": filter_range[1],
+                "values_list": filter_spec.get("list"),
+            }
             if i < len(filter_configs):
                 filter_config = filter_configs[i]
             else:
@@ -162,62 +162,62 @@ class LayerStyle(models.Model):
         colors = []
         for color_config in ColorConfig.objects.filter(style=self):
             color = serialize_fields(
-                color_config, ['name', 'visible', 'use_feature_props', 'single_color']
+                color_config, ["name", "visible", "use_feature_props", "single_color"]
             )
             try:
                 colormap = serialize_fields(
                     color_config.colormap,
-                    ['discrete', 'clamp', 'n_colors', 'color_by', 'null_color'],
+                    ["discrete", "clamp", "n_colors", "color_by", "null_color"],
                 )
-                colormap['id'] = color_config.colormap.colormap.id
+                colormap["id"] = color_config.colormap.colormap.id
                 if (
                     color_config.colormap.range_minimum is not None
                     and color_config.colormap.range_maximum is not None
                 ):
-                    colormap['range'] = [
+                    colormap["range"] = [
                         float(color_config.colormap.range_minimum),
                         float(color_config.colormap.range_maximum),
                     ]
-                color['colormap'] = colormap
+                color["colormap"] = colormap
             except ColorConfig.colormap.RelatedObjectDoesNotExist:
                 pass
             colors.append(color)
 
         sizes = []
         for size_config in SizeConfig.objects.filter(style=self):
-            size = serialize_fields(size_config, ['name', 'zoom_scaling', 'single_size'])
+            size = serialize_fields(size_config, ["name", "zoom_scaling", "single_size"])
             try:
                 size_range = serialize_fields(
-                    size_config.size_range, ['size_by', 'minimum', 'maximum']
+                    size_config.size_range, ["size_by", "minimum", "maximum"]
                 )
-                size_range['null_size'] = dict(
-                    size=size_config.size_range.null_size,
-                    transparency=size_config.size_range.null_transparent,
-                )
-                size['size_range'] = size_range
+                size_range["null_size"] = {
+                    "size": size_config.size_range.null_size,
+                    "transparency": size_config.size_range.null_transparent,
+                }
+                size["size_range"] = size_range
             except SizeConfig.size_range.RelatedObjectDoesNotExist:
                 pass
             sizes.append(size)
 
         filters = []
         for filter_config in FilterConfig.objects.filter(style=self):
-            filter_ = serialize_fields(filter_config, ['filter_by', 'include', 'transparency'])
+            filter_ = serialize_fields(filter_config, ["filter_by", "include", "transparency"])
             if filter_config.range_minimum is not None and filter_config.range_maximum is not None:
-                filter_['range'] = [
+                filter_["range"] = [
                     float(filter_config.range_minimum),
                     float(filter_config.range_maximum),
                 ]
             if filter_config.values_list is not None:
-                filter_['list'] = filter_config.values_list
+                filter_["list"] = filter_config.values_list
             filters.append(filter_)
 
-        return dict(
-            default_frame=self.default_frame,
-            opacity=self.opacity,
-            colors=colors,
-            sizes=sizes,
-            filters=filters,
-        )
+        return {
+            "default_frame": self.default_frame,
+            "opacity": self.opacity,
+            "colors": colors,
+            "sizes": sizes,
+            "filters": filters,
+        }
 
 
 def get_default_colormap():
@@ -225,7 +225,7 @@ def get_default_colormap():
 
 
 class ColorConfig(models.Model):
-    style = models.ForeignKey(LayerStyle, related_name='color_configs', on_delete=models.CASCADE)
+    style = models.ForeignKey(LayerStyle, related_name="color_configs", on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     visible = models.BooleanField(default=True)
     use_feature_props = models.BooleanField(default=True)
@@ -233,16 +233,19 @@ class ColorConfig(models.Model):
         max_length=12, null=True, blank=True
     )  # optionally contains a color hex or 'transparent'
 
+    def __str__(self):
+        return self.name
+
 
 class ColormapConfig(models.Model):
     color_config = models.OneToOneField(
         ColorConfig,
-        related_name='colormap',
+        related_name="colormap",
         on_delete=models.CASCADE,
     )
     colormap = models.ForeignKey(
         Colormap,
-        related_name='colormap_configs',
+        related_name="colormap_configs",
         null=True,
         on_delete=models.SET(get_default_colormap),
     )
@@ -256,9 +259,12 @@ class ColormapConfig(models.Model):
     range_minimum = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     range_maximum = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
+    def __str__(self):
+        return f"{self.color_by} ({self.id})"
+
 
 class SizeConfig(models.Model):
-    style = models.ForeignKey(LayerStyle, related_name='size_configs', on_delete=models.CASCADE)
+    style = models.ForeignKey(LayerStyle, related_name="size_configs", on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     zoom_scaling = models.BooleanField(default=True)
     single_size = models.IntegerField(
@@ -267,11 +273,14 @@ class SizeConfig(models.Model):
         null=True,
     )
 
+    def __str__(self):
+        return self.name
+
 
 class SizeRangeConfig(models.Model):
     size_config = models.OneToOneField(
         SizeConfig,
-        related_name='size_range',
+        related_name="size_range",
         on_delete=models.CASCADE,
     )
     size_by = models.CharField(max_length=255)  # contains property name
@@ -290,12 +299,18 @@ class SizeRangeConfig(models.Model):
     )
     null_transparent = models.BooleanField(default=True)
 
+    def __str__(self):
+        return f"{self.size_by} ({self.id})"
+
 
 class FilterConfig(models.Model):
-    style = models.ForeignKey(LayerStyle, related_name='filter_configs', on_delete=models.CASCADE)
+    style = models.ForeignKey(LayerStyle, related_name="filter_configs", on_delete=models.CASCADE)
     filter_by = models.CharField(max_length=255)  # contains property name
     include = models.BooleanField(default=True)
     transparency = models.BooleanField(default=True)
     range_minimum = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     range_maximum = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     values_list = models.JSONField(null=True)
+
+    def __str__(self):
+        return f"{self.filter_by} ({self.id})"

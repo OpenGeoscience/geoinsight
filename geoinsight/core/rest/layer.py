@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.db import transaction
 import jsonschema
 from rest_framework.decorators import action
@@ -14,13 +16,13 @@ from geoinsight.core.rest.serializers import (
 
 
 class LayerViewSet(ReadOnlyModelViewSet):
-    queryset = Layer.objects.select_related('dataset').all()
+    queryset = Layer.objects.select_related("dataset").all()
     serializer_class = LayerSerializer
     permission_classes = [GuardianPermission]
     filter_backends = [GuardianFilter]
-    lookup_field = 'id'
+    lookup_field = "id"
 
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=["get"])
     def frames(self, request, **kwargs):
         layer: Layer = self.get_object()
         frames = list(layer.frames.all())
@@ -33,7 +35,7 @@ class LayerFrameViewSet(ReadOnlyModelViewSet):
     serializer_class = LayerFrameSerializer
     permission_classes = [GuardianPermission]
     filter_backends = [GuardianFilter]
-    lookup_field = 'id'
+    lookup_field = "id"
 
 
 class LayerStyleViewSet(ModelViewSet):
@@ -41,20 +43,20 @@ class LayerStyleViewSet(ModelViewSet):
     serializer_class = LayerStyleSerializer
     permission_classes = [GuardianPermission]
     filter_backends = [GuardianFilter]
-    lookup_field = 'id'
+    lookup_field = "id"
 
     def get_queryset(self):
         qs = super().get_queryset()
-        project_id = int(self.request.query_params.get('project', -1))
+        project_id = int(self.request.query_params.get("project", -1))
         if project_id > -1:
             qs = qs.filter(project=int(project_id))
-        layer_id = int(self.request.query_params.get('layer', -1))
+        layer_id = int(self.request.query_params.get("layer", -1))
         if layer_id > -1:
             qs = qs.filter(layer=int(layer_id))
         return qs
 
     def create(self, request, **kwargs):
-        is_default = request.data.pop('is_default', False)
+        is_default = request.data.pop("is_default", False)
         serializer = LayerStyleSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         with transaction.atomic():
@@ -69,7 +71,7 @@ class LayerStyleViewSet(ModelViewSet):
 
     def partial_update(self, request, **kwargs):
         instance = self.get_object()
-        is_default = request.data.pop('is_default', False)
+        is_default = request.data.pop("is_default", False)
         serializer = LayerStyleSerializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         with transaction.atomic():

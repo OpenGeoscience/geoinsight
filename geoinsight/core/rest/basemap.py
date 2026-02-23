@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from rest_framework.viewsets import ModelViewSet
 
 from geoinsight.core.models import Basemap
@@ -10,4 +12,4 @@ class BasemapViewSet(ModelViewSet):
     serializer_class = BasemapSerializer
     permission_classes = [GuardianPermission]
     filter_backends = [GuardianFilter]
-    lookup_field = 'id'
+    lookup_field = "id"
