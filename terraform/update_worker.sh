@@ -17,11 +17,11 @@ echo "==> Uploading env file to remote machine..."
 scp "$ENV_FILE" "$SSH_TARGET:/home/ubuntu/geoinsight.prod.env"
 rm "$ENV_FILE"
 
-echo "==> Adding SOURCE_VERSION to env file..."
-ssh "$SSH_TARGET" 'echo "SOURCE_VERSION=$(git -C /home/ubuntu/geoinsight rev-parse HEAD)" >> /home/ubuntu/geoinsight.prod.env'
-
 echo "==> Pulling changes..."
 ssh "$SSH_TARGET" 'cd /home/ubuntu/geoinsight && git pull'
+
+echo "==> Adding SOURCE_VERSION to env file..."
+ssh "$SSH_TARGET" 'echo "SOURCE_VERSION=$(git -C /home/ubuntu/geoinsight rev-parse HEAD)" >> /home/ubuntu/geoinsight.prod.env'
 
 echo "==> Restarting celery service..."
 ssh "$SSH_TARGET" 'sudo systemctl restart celery'
