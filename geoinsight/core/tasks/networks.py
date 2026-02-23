@@ -93,12 +93,13 @@ def create_network(vector_data, network_options):
                         and str(v).lower() != 'nan'
                     },
                 )
-            from_node_obj.vector_feature = VectorFeature.objects.create(
-                vector_data=vector_data,
-                geometry=from_node_obj.location,
-                properties=from_node_obj.metadata,
-            )
-            from_node_obj.save()
+            if from_node_obj.vector_feature is None:
+                from_node_obj.vector_feature = VectorFeature.objects.create(
+                    vector_data=vector_data,
+                    geometry=from_node_obj.location,
+                    properties=from_node_obj.metadata,
+                )
+                from_node_obj.save()
 
             if i < len(route_nodes) - 1:
                 next_node = route_nodes.iloc[i + 1]
@@ -128,12 +129,13 @@ def create_network(vector_data, network_options):
                             and str(v).lower() != 'nan'
                         },
                     )
-                to_node_obj.vector_feature = VectorFeature.objects.create(
-                    vector_data=vector_data,
-                    geometry=to_node_obj.location,
-                    properties=to_node_obj.metadata,
-                )
-                to_node_obj.save()
+                if to_node_obj.vector_feature is None:
+                    to_node_obj.vector_feature = VectorFeature.objects.create(
+                        vector_data=vector_data,
+                        geometry=to_node_obj.location,
+                        properties=to_node_obj.metadata,
+                    )
+                    to_node_obj.save()
 
                 route_points_start_index = route_points_reprojected.index[
                     route_points_reprojected['geometry'] == cutoff_points[current_node_name]
