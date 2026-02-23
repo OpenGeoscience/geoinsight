@@ -57,7 +57,7 @@ def convert_dataset(dataset, options):
             station_name = STATION_NAME_ABBREVIATIONS[station_name]
         total_offs = int(station.loc['total_offs'])
         node_matches = NetworkNode.objects.filter(
-            network__vector_data__dataset=dataset, metadata__STATION__icontains=station_name
+            network__vector_data__dataset=dataset, metadata__STATION__iexact=station_name
         )
         if node_matches.count():
             new = dict(total_ridership=total_offs)
