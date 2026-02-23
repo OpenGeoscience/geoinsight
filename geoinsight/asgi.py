@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
@@ -7,19 +9,19 @@ from geoinsight.core.notifications import AnalyticsConsumer, ConversionConsumer
 
 application = ProtocolTypeRouter(
     {
-        'http': get_asgi_application(),
-        'websocket': AuthMiddlewareStack(
+        "http": get_asgi_application(),
+        "websocket": AuthMiddlewareStack(
             URLRouter(
                 [
                     path(
-                        'ws/analytics/project/<int:project_id>/results/',
+                        "ws/analytics/project/<int:project_id>/results/",
                         AnalyticsConsumer.as_asgi(),
-                        name='analytics-ws',
+                        name="analytics-ws",
                     ),
                     path(
-                        'ws/conversion/',
+                        "ws/conversion/",
                         ConversionConsumer.as_asgi(),
-                        name='conversion-ws',
+                        name="conversion-ws",
                     ),
                 ]
             )

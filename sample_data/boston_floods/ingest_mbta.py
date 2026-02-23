@@ -1,3 +1,4 @@
+from __future__ import annotations
 import io
 
 import pandas
@@ -6,11 +7,11 @@ import requests
 from geoinsight.core.models import NetworkNode, VectorData, VectorFeature
 
 LINE_COLORS = {
-    'RED': '#D31414',
-    'GREEN': '#188A00',
-    'BLUE': '#1F63AC',
-    'ORANGE': '#D88901',
-    'SILVER': '#7B8B86',
+    "RED": "#D31414",
+    "GREEN": "#188A00",
+    "BLUE": "#1F63AC",
+    "ORANGE": "#D88901",
+    "SILVER": "#7B8B86",
 }
 
 RIDERSHIP_DATA_URL = 'https://data.kitware.com/api/v1/item/69938a5d92fec64197f41dc3/download'
@@ -25,9 +26,9 @@ STATION_NAME_ABBREVIATIONS = {
 def convert_dataset(dataset, options):
     # Run standard conversion task first
     dataset.spawn_conversion_task(
-        layer_options=options.get('layers'),
-        network_options=options.get('network_options'),
-        region_options=options.get('region_options'),
+        layer_options=options.get("layers"),
+        network_options=options.get("network_options"),
+        region_options=options.get("region_options"),
         asynchronous=False,
     )
 
@@ -36,14 +37,14 @@ def convert_dataset(dataset, options):
     # For each associated vector feature, add style properties
     # To color features by the LINE property
     for feature in VectorFeature.objects.filter(vector_data__dataset=dataset):
-        lines = feature.properties.get('LINE', '').split('/')
+        lines = feature.properties.get("LINE", "").split("/")
         colors = [LINE_COLORS[line] for line in lines if line in LINE_COLORS]
-        if len(colors):
+        if colors:
             fill = colors[0]
             stroke = colors[1] if len(colors) > 1 else fill
             default_style = {
-                'fill': fill,
-                'stroke': stroke,
+                "fill": fill,
+                "stroke": stroke,
             }
             feature.properties = feature.properties | default_style
             feature.save()

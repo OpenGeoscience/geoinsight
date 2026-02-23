@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.contrib.auth.models import User
 from django.core.management import call_command
 import pytest
@@ -23,11 +25,11 @@ from geoinsight.core.models import (
 @pytest.mark.django_db
 def test_ingest():
     # ensure a superuser exists
-    User.objects.create_superuser('testsuper')
+    User.objects.create_superuser("testsuper")
 
     call_command(
-        'ingest',
-        './tests/ingest.json',
+        "ingest",
+        "./tests/ingest.json",
     )
 
     assert Chart.objects.all().count() == 1

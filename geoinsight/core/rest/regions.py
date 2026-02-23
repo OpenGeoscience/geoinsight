@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from rest_framework import mixins
 from rest_framework.viewsets import GenericViewSet
 
@@ -12,4 +14,4 @@ class RegionViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVie
     serializer_class = RegionSerializer
     permission_classes = [GuardianPermission]
     filter_backends = [GuardianFilter]
-    lookup_field = 'id'
+    lookup_field = "id"

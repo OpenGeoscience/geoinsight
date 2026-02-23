@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.db import models
 
 from .project import Project
@@ -6,7 +8,7 @@ from .project import Project
 class Chart(models.Model):
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(null=True, blank=True)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='charts', null=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="charts", null=True)
     metadata = models.JSONField(blank=True, null=True)
 
     chart_data = models.JSONField(blank=True, null=True)
@@ -14,7 +16,7 @@ class Chart(models.Model):
     editable = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'{self.name} ({self.id})'
+        return f"{self.name} ({self.id})"
 
     @classmethod
     def filter_queryset_by_projects(cls, queryset, projects):
