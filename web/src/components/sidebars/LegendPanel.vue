@@ -46,10 +46,10 @@ function getColormapPreviews(layer: Layer) {
                 ]
             }
         }
-        if (discrete && colorBy && colormap && colorConfig.colormap) {
-            const propsSpec = vector?.summary?.properties;
-            if (propsSpec) {
-                const colorByProp = propsSpec[colorBy]
+        const propsSpec = vector?.summary?.properties;
+        if (propsSpec && colorBy) {
+            const colorByProp = propsSpec[colorBy]
+            if (discrete && colormap && colorConfig.colormap) {
                 const valueSet = Array.from(new Set(colorByProp.value_set.filter((v) => v)))
                 const sortedValues = valueSet.sort((a: any, b: any) => a - b)
                 const markers = colormapMarkersSubsample(colormap, colorConfig.colormap, nColors)
@@ -61,6 +61,8 @@ function getColormapPreviews(layer: Layer) {
                         }
                     }
                 })
+            } else if (!discrete && colorByProp.range) {
+                range = colorByProp.range
             }
         }
         return {
