@@ -1,7 +1,8 @@
 from __future__ import annotations
+
 import io
 
-import pandas
+import pandas as pd
 import requests
 
 from geoinsight.core.models import NetworkNode, VectorData, VectorFeature
@@ -14,12 +15,12 @@ LINE_COLORS = {
     "SILVER": "#7B8B86",
 }
 
-RIDERSHIP_DATA_URL = 'https://data.kitware.com/api/v1/item/69938a5d92fec64197f41dc3/download'
+RIDERSHIP_DATA_URL = "https://data.kitware.com/api/v1/item/69938a5d92fec64197f41dc3/download"
 
 
 STATION_NAME_ABBREVIATIONS = {
-    'Northeastern University': 'Northeastern',
-    'Massachusetts Avenue': 'Massachusetts Ave',
+    "Northeastern University": "Northeastern",
+    "Massachusetts Avenue": "Massachusetts Ave",
 }
 
 
@@ -50,18 +51,18 @@ def convert_dataset(dataset, options):
             feature.save()
 
     # Add ridership data to stations
-    response = requests.get(RIDERSHIP_DATA_URL)
-    ridership_data = pandas.read_csv(io.StringIO(response.text.replace('\r', '')))
+    response = requests.get(RIDERSHIP_DATA_URL, timeout=1000)
+    ridership_data = pd.read_csv(io.StringIO(response.text.replace("\r", "")))
     for _, station in ridership_data.iterrows():
-        station_name = station.loc['stop_name'].replace("'", '')
+        station_name = station.loc["stop_name"].replace("'", "")
         if station_name in STATION_NAME_ABBREVIATIONS:
             station_name = STATION_NAME_ABBREVIATIONS[station_name]
-        total_offs = int(station.loc['total_offs'])
+        total_offs = int(station.loc["total_offs"])
         node_matches = NetworkNode.objects.filter(
             network__vector_data__dataset=dataset, metadata__STATION__iexact=station_name
         )
         if node_matches.count():
-            new = dict(total_ridership=total_offs)
+            new = {"total_ridership": total_offs}
             node = node_matches.first()
             node.metadata = node.metadata | new
             node.save()
@@ -69,7 +70,7 @@ def convert_dataset(dataset, options):
             feature.properties = feature.properties | new
             feature.save()
         else:
-            print(f'Could not find node for {station_name}')
+            print(f"Could not find node for {station_name}")
 
     # Update vector data summary
     for vector in VectorData.objects.filter(dataset=dataset):
