@@ -16,6 +16,11 @@ LINE_COLORS = {
 RIDERSHIP_DATA_URL = 'https://data.kitware.com/api/v1/item/69938a5d92fec64197f41dc3/download'
 
 
+STATION_NAME_ABBREVIATIONS = {
+    'Northeastern University': 'Northeastern',
+    'Massachusetts Avenue':  'Massachusetts Ave',
+}
+
 def convert_dataset(dataset, options):
     # Run standard conversion task first
     dataset.spawn_conversion_task(
@@ -46,10 +51,12 @@ def convert_dataset(dataset, options):
     response = requests.get(RIDERSHIP_DATA_URL)
     ridership_data = pandas.read_csv(io.StringIO(response.text.replace('\r', '')))
     for _, station in ridership_data.iterrows():
-        station_name = station.loc['stop_name']
+        station_name = station.loc['stop_name'].replace("'", '')
+        if station_name in STATION_NAME_ABBREVIATIONS:
+            station_name = STATION_NAME_ABBREVIATIONS[station_name]
         total_offs = int(station.loc['total_offs'])
         node_matches = NetworkNode.objects.filter(
-            network__vector_data__dataset=dataset, metadata__STATION=station_name
+            network__vector_data__dataset=dataset, metadata__STATION__icontains=station_name
         )
         if node_matches.count():
             new = dict(total_ridership=total_offs)
