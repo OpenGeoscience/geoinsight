@@ -112,7 +112,7 @@ class NetworkNode(models.Model):
     capacity = models.IntegerField(null=True)
     location = geo_models.PointField()
 
-    project_filter_path = "network__dataset__project"
+    project_filter_path = "network__vector_data__dataset__project"
     objects = ProjectQuerySet.as_manager()
 
     def __str__(self):
@@ -151,7 +151,7 @@ class NetworkEdge(models.Model):
     from_node = models.ForeignKey(NetworkNode, related_name="+", on_delete=models.CASCADE)
     to_node = models.ForeignKey(NetworkNode, related_name="+", on_delete=models.CASCADE)
 
-    project_filter_path = "network__dataset__project"
+    project_filter_path = "network__vector_data__dataset__project"
     objects = ProjectQuerySet.as_manager()
 
     def __str__(self):
