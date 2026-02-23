@@ -10,6 +10,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 
 from .project import Project
+from .querysets import ProjectQuerySet
 
 
 class TaskResult(models.Model):
@@ -25,12 +26,12 @@ class TaskResult(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False)
     completed = models.DateTimeField(null=True)
 
+    project_filter_path = "project"
+    project_filter_allow_null = True
+    objects = ProjectQuerySet.as_manager()
+
     def __str__(self):
         return f"{self.name} ({self.id})"
-
-    @classmethod
-    def filter_queryset_by_projects(cls, queryset, projects):
-        return queryset.filter(models.Q(project__isnull=True) | models.Q(project__in=projects))
 
     def write_error(self, err):
         if self.error is None:

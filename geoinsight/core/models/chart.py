@@ -3,6 +3,7 @@ from __future__ import annotations
 from django.db import models
 
 from .project import Project
+from .querysets import ProjectQuerySet
 
 
 class Chart(models.Model):
@@ -10,17 +11,15 @@ class Chart(models.Model):
     description = models.TextField(null=True, blank=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="charts", null=True)
     metadata = models.JSONField(blank=True, null=True)
-
     chart_data = models.JSONField(blank=True, null=True)
     chart_options = models.JSONField(blank=True, null=True)
     editable = models.BooleanField(default=False)
 
+    project_filter_path = "project"
+    objects = ProjectQuerySet.as_manager()
+
     def __str__(self):
         return f"{self.name} ({self.id})"
-
-    @classmethod
-    def filter_queryset_by_projects(cls, queryset, projects):
-        return queryset.filter(project__in=projects)
 
     def spawn_conversion_task(
         self,
