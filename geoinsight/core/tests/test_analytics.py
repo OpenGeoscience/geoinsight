@@ -54,7 +54,7 @@ def test_rest_run_analysis_task_no_inputs(authenticated_api_client, user, projec
     assert data.get("project") == project.id
     assert data.get("status") == "Initializing task..."
     assert data.get("inputs") == {}
-    assert data.get("error") is None
+    assert data.get("error") == ""
     assert data.get("outputs") is None
     assert data.get("completed") is None
 
@@ -105,7 +105,7 @@ def test_flood_analysis_chain(project):
     )
     result_1.refresh_from_db()
     assert result_1.completed is not None
-    assert result_1.error is None
+    assert result_1.error == ""
     assert result_1.outputs is not None
 
     flood_dataset_id = result_1.outputs.get("flood")
@@ -167,7 +167,7 @@ def test_flood_analysis_chain(project):
     )
     result_2.refresh_from_db()
     assert result_2.completed is not None
-    assert result_2.error is None
+    assert result_2.error == ""
     assert result_2.outputs is not None
 
     failures = result_2.outputs.get("failures")
@@ -181,7 +181,7 @@ def test_flood_analysis_chain(project):
     )
     result_3.refresh_from_db()
     assert result_3.completed is not None
-    assert result_3.error is None
+    assert result_3.error == ""
     assert result_3.outputs is not None
 
     recoveries = result_3.outputs.get("recoveries")

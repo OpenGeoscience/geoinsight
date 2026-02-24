@@ -66,7 +66,7 @@ class LayerStyle(models.Model):
                 with contextlib.suppress(ColorConfig.colormap.RelatedObjectDoesNotExist):
                     color_config.colormap.delete()
             else:
-                color_config.single_color = None
+                color_config.single_color = ""
                 colormap_spec = color_spec.get("colormap")
                 colormap = Colormap.objects.get(id=colormap_spec.get("id"))
                 map_range = colormap_spec.get("range") or [None, None]
@@ -155,8 +155,9 @@ class LayerStyle(models.Model):
             serialized = {}
             for field in fields:
                 value = getattr(obj, field)
-                if value is not None:
-                    serialized[field] = value
+                if value is None or value == "":
+                    continue
+                serialized[field] = value
             return serialized
 
         colors = []
@@ -230,7 +231,7 @@ class ColorConfig(models.Model):
     visible = models.BooleanField(default=True)
     use_feature_props = models.BooleanField(default=True)
     single_color = models.CharField(
-        max_length=12, null=True, blank=True
+        max_length=12, blank=True, default=""
     )  # optionally contains a color hex or 'transparent'
 
     def __str__(self):

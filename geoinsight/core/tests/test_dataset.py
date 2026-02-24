@@ -109,7 +109,7 @@ def test_rest_convert_dataset(
         },
         "status": "Initializing task...",
         "outputs": None,
-        "error": None,
+        "error": "",
         "completed": None,
         "project": None,
     }

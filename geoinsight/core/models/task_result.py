@@ -20,8 +20,8 @@ class TaskResult(models.Model):
     )
     inputs = models.JSONField(blank=True, null=True)
     outputs = models.JSONField(blank=True, null=True)
-    status = models.TextField(null=True, blank=True)
-    error = models.TextField(null=True, blank=True)
+    status = models.TextField(blank=True, default="")
+    error = models.TextField(blank=True, default="")
     created = models.DateTimeField(auto_now_add=True, editable=False)
     completed = models.DateTimeField(null=True)
 

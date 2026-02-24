@@ -173,7 +173,6 @@ ignore = [
   "ARG003", # unused-class-method-argument
   "BLE001", # blind-except
   "C901", # complex-structure
-  "DJ001", # django-nullable-model-string-field
   "FBT002", # boolean-default-value-positional-argument
   "PLC0415", # import-outside-top-level
   "PLR0912", # too-many-branches
