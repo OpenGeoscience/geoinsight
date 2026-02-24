@@ -27,7 +27,8 @@ def convert_chart(chart_id, conversion_options):
 
     chart_file = chart.fileitem_set.first()
     if chart_file.file_type == "csv":
-        raw_data = pd.read_csv(chart_file.file.open())
+        with chart_file.file.open() as f:
+            raw_data = pd.read_csv(f)
     else:
         raise NotImplementedError(
             f"Convert chart data for file type {chart_file.file_type}",
