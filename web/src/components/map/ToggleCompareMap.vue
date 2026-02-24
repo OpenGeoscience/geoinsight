@@ -246,6 +246,7 @@ const swiperColor = computed(() => {
             }"
             layer-order="bottommost"
             :attribution-control="false"
+            :preserve-drawing-buffer="true"
             @panend="compareStore.updateMapStats($event)"
             @zoomend="compareStore.updateMapStats($event)"
             @pitchend="compareStore.updateMapStats($event)"
