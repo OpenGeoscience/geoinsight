@@ -29,10 +29,11 @@ class Chart(models.Model):
     ):
         from geoinsight.core.tasks.chart import convert_chart
 
+        convert_chart_signature = convert_chart.s(self.id, conversion_options)
         if asynchronous:
-            convert_chart.delay(self.id, conversion_options)
+            convert_chart_signature.delay()
         else:
-            convert_chart(self.id, conversion_options)
+            convert_chart_signature.apply()
 
     def new_line(self):
         # TODO: new line
