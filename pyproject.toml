@@ -171,7 +171,6 @@ ignore = [
   # Project-specific
   "BLE001", # blind-except
   "C901", # complex-structure
-  "DJ001", # django-nullable-model-string-field
   "PLC0415", # import-outside-top-level
   "PLR0912", # too-many-branches
   "PLR0913", # too-many-arguments

@@ -18,7 +18,7 @@ export interface Basemap {
 export interface Dataset {
   id: number;
   name?: string;
-  description?: string;
+  description: string;
   category?: string;
   tags?: string[];
   processing?: boolean;

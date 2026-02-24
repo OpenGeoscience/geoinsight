@@ -8,7 +8,7 @@ from .querysets import ProjectQuerySet
 
 class Chart(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(blank=True, default="")
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="charts", null=True)
     metadata = models.JSONField(blank=True, null=True)
     chart_data = models.JSONField(blank=True, null=True)

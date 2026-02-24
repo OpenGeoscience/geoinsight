@@ -25,7 +25,7 @@ class DatasetTag(models.Model):
 
 class Dataset(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(blank=True, default="")
     category = models.CharField(max_length=25)
     processing = models.BooleanField(default=False)
     tags = models.ManyToManyField(DatasetTag, blank=True)
