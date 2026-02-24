@@ -181,7 +181,6 @@ ignore = [
   "PLR0915", # too-many-statements
   "PLW2901", # redefined-loop-name
   "SLF001", # private-member-access
-  "T201", # print
   "TRY301", # raise-within-try
 ]
 
@@ -204,6 +203,9 @@ ignore = [
   "PLR0913", # too-many-arguments
   "S", # flake8-bandit
   "SLF001", # private-member-access
+]
+"{jupyter,sample_data}/**" = [
+  "T201", # print
 ]
 
 [tool.ruff.lint.flake8-boolean-trap]
