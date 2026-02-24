@@ -12,8 +12,6 @@ class GuardianPermission(IsAuthenticated):
     def has_object_permission(self, request, view, obj):
         if request.user.is_superuser:
             return True
-        if not hasattr(obj, "filter_queryset_by_projects"):
-            raise NotImplementedError
 
         perms = ["follower", "collaborator", "owner"]
         if request.method not in SAFE_METHODS:
@@ -21,8 +19,10 @@ class GuardianPermission(IsAuthenticated):
         if request.method == "DELETE":
             perms = ["owner"]
 
-        # Create queryset out of single object, so it can be passed to the filter function
-        queryset = obj.__class__.objects.filter(pk=obj.pk)
+        # Create queryset out of single object, so it can be passed to the filter method
+        queryset = type(obj).objects.filter(pk=obj.pk)
+        if not hasattr(queryset, "filter_by_projects"):
+            raise NotImplementedError
 
         # Get all projects user has access to
         user_projects = get_objects_for_user(
@@ -31,9 +31,7 @@ class GuardianPermission(IsAuthenticated):
 
         # If the object remains in the queryset after this function filters it, then the user has
         # the required permission on at least one associated project
-        return queryset.model.filter_queryset_by_projects(
-            queryset=queryset, projects=user_projects
-        ).exists()
+        return queryset.filter_by_projects(user_projects).exists()
 
 
 class DatasetGuardianPermission(GuardianPermission):
@@ -47,15 +45,13 @@ class DatasetGuardianPermission(GuardianPermission):
 
 class GuardianFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
-        if not hasattr(queryset.model, "filter_queryset_by_projects"):
+        if not hasattr(queryset, "filter_by_projects"):
             raise NotImplementedError
 
         ids = request.query_params.get("project", request.query_params.get("project_id"))
         if ids:
             # Return queryset filtered by objects that are within these projects
-            return queryset.model.filter_queryset_by_projects(
-                queryset=queryset, projects=Project.objects.filter(id__in=ids)
-            )
+            return queryset.filter_by_projects(Project.objects.filter(id__in=ids))
 
         if request.user.is_superuser:
             return queryset
@@ -68,4 +64,4 @@ class GuardianFilter(BaseFilterBackend):
         )
 
         # Return queryset filtered by objects that are within these projects
-        return queryset.model.filter_queryset_by_projects(queryset=queryset, projects=user_projects)
+        return queryset.filter_by_projects(user_projects)

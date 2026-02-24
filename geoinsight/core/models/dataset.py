@@ -6,6 +6,7 @@ from django.db import models, transaction
 from guardian.models import UserObjectPermission
 from guardian.shortcuts import assign_perm, get_users_with_perms
 
+from geoinsight.core.models.querysets import ProjectQuerySet
 from geoinsight.core.tasks.dataset import convert_dataset
 
 if typing.TYPE_CHECKING:
@@ -30,16 +31,15 @@ class Dataset(models.Model):
     tags = models.ManyToManyField(DatasetTag, blank=True)
     metadata = models.JSONField(blank=True, null=True)
 
+    # Dataset permissions are not determined by Project permissions
+    project_filter_path = None
+    objects = ProjectQuerySet.as_manager()
+
     class Meta:
         permissions = [("owner", "Can read, write, and delete")]
 
     def __str__(self):
         return f"{self.name} ({self.id})"
-
-    @classmethod
-    def filter_queryset_by_projects(cls, queryset, projects):
-        # Dataset permissions are not determined by Project permissions
-        return queryset
 
     def owner(self) -> User | None:
         users = typing.cast(

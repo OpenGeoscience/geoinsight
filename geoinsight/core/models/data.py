@@ -13,6 +13,7 @@ from s3_file_field import S3FileField
 
 from .dataset import Dataset
 from .file_item import FileItem
+from .querysets import ProjectQuerySet
 
 
 class RasterData(models.Model):
@@ -22,12 +23,11 @@ class RasterData(models.Model):
     cloud_optimized_geotiff = S3FileField(null=True)
     metadata = models.JSONField(blank=True, null=True)
 
+    project_filter_path = "dataset__project"
+    objects = ProjectQuerySet.as_manager()
+
     def __str__(self):
         return f"{self.name} ({self.id})"
-
-    @classmethod
-    def filter_queryset_by_projects(cls, queryset, projects):
-        return queryset.filter(dataset__project__in=projects)
 
     def get_image_data(self, resolution: float = 1.0):
         with tempfile.TemporaryDirectory() as tmp:
@@ -51,12 +51,11 @@ class VectorData(models.Model):
     summary = models.JSONField(blank=True, null=True)
     metadata = models.JSONField(blank=True, null=True)
 
+    project_filter_path = "dataset__project"
+    objects = ProjectQuerySet.as_manager()
+
     def __str__(self):
         return f"{self.name} ({self.id})"
-
-    @classmethod
-    def filter_queryset_by_projects(cls, queryset, projects):
-        return queryset.filter(dataset__project__in=projects)
 
     def write_geojson_data(self, content: str | dict):
         if isinstance(content, str):

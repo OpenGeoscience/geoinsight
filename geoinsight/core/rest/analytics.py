@@ -39,9 +39,7 @@ class AnalyticsViewSet(ReadOnlyModelViewSet):
             filtered_input_options = {}
             for k, v in instance.get_input_options().items():
                 if isinstance(v, QuerySet):
-                    filtered_queryset = v.model.filter_queryset_by_projects(
-                        v, Project.objects.filter(id=project_id)
-                    )
+                    filtered_queryset = v.filter_by_projects(Project.objects.filter(id=project_id))
                     v = [{"id": o.id, "name": o.name} for o in filtered_queryset]
                 elif any(not isinstance(o, dict) for o in v):
                     v = [{"id": o, "name": o} for o in v]

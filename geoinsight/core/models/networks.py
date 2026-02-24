@@ -4,6 +4,7 @@ from django.contrib.gis.db import models as geo_models
 from django.db import connection, models
 
 from .data import VectorData, VectorFeature
+from .querysets import ProjectQuerySet
 
 GCC_QUERY = """
 WITH RECURSIVE n as (
@@ -52,12 +53,11 @@ class Network(models.Model):
     category = models.CharField(max_length=25)
     metadata = models.JSONField(blank=True, null=True)
 
+    project_filter_path = "vector_data__dataset__project"
+    objects = ProjectQuerySet.as_manager()
+
     def __str__(self):
         return f"{self.name} ({self.id})"
-
-    @classmethod
-    def filter_queryset_by_projects(cls, queryset, projects):
-        return queryset.filter(vector_data__dataset__project__in=projects)
 
     @property
     def dataset(self):
@@ -112,12 +112,11 @@ class NetworkNode(models.Model):
     capacity = models.IntegerField(null=True)
     location = geo_models.PointField()
 
+    project_filter_path = "network__vector_data__dataset__project"
+    objects = ProjectQuerySet.as_manager()
+
     def __str__(self):
         return f"{self.name} ({self.id})"
-
-    @classmethod
-    def filter_queryset_by_projects(cls, queryset, projects):
-        return queryset.filter(network__dataset__project__in=projects)
 
     @property
     def dataset(self):
@@ -152,12 +151,11 @@ class NetworkEdge(models.Model):
     from_node = models.ForeignKey(NetworkNode, related_name="+", on_delete=models.CASCADE)
     to_node = models.ForeignKey(NetworkNode, related_name="+", on_delete=models.CASCADE)
 
+    project_filter_path = "network__vector_data__dataset__project"
+    objects = ProjectQuerySet.as_manager()
+
     def __str__(self):
         return f"{self.name} ({self.id})"
-
-    @classmethod
-    def filter_queryset_by_projects(cls, queryset, projects):
-        return queryset.filter(network__dataset__project__in=projects)
 
     @property
     def dataset(self):
