@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import logging
 import secrets
 
 from django.contrib.gis.geos import GEOSGeometry
 import geopandas
 
 from geoinsight.core.models import Region, VectorFeature
+
+logger = logging.getLogger(__name__)
 
 
 def create_source_regions(vector_data, region_options):
@@ -64,7 +67,7 @@ def create_source_regions(vector_data, region_options):
     new_geodata.to_crs(4326)
     vector_data.write_geojson_data(new_geodata.to_json())
     vector_data.save()
-    print("\t\t", f"{region_count} regions created.")
+    logger.info("%d regions created.", region_count)
 
     all_features = VectorFeature.objects.filter(vector_data=vector_data)
-    print("\t\t", f"{all_features.count()} vector features created.")
+    logger.info("%d vector features created.", all_features.count())

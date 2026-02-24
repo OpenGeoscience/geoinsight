@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import json
+import logging
 
 from django.contrib.gis.geos import LineString, Point
 import geopandas
 import shapely
 
 from geoinsight.core.models import Network, NetworkEdge, NetworkNode, VectorFeature
+
+logger = logging.getLogger(__name__)
 
 
 def create_network(vector_data, network_options):
@@ -184,10 +187,10 @@ def create_network(vector_data, network_options):
 
     all_nodes = NetworkNode.objects.filter(network=network)
     all_edges = NetworkEdge.objects.filter(network=network)
-    print("\t\t", f"{all_nodes.count()} nodes and {all_edges.count()} edges created.")
+    logger.info("%d nodes and %d edges created.", all_nodes.count(), all_edges.count())
 
     all_features = VectorFeature.objects.filter(vector_data=vector_data)
-    print("\t\t", f"{all_features.count()} vector features created.")
+    logger.info("%d vector features created.", all_features.count())
 
     # rewrite vector_data geojson_data with updated features
     vector_data.write_geojson_data(geojson_from_network(vector_data.dataset))

@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
+import logging
 
 from celery import shared_task
 import pandas as pd
 from webcolors import name_to_hex
 
 from geoinsight.core.models import Chart, NetworkNode, Project
+
+logger = logging.getLogger(__name__)
 
 
 @shared_task
@@ -42,7 +45,7 @@ def convert_chart(chart_id, conversion_options):
 
     chart.chart_data = chart_data
     chart.save()
-    print(f"\t Saved converted data for chart {chart.name}.")
+    logger.info("Saved converted data for chart %s.", chart.name)
 
 
 def get_gcc_chart(dataset, project_id):
@@ -71,7 +74,7 @@ def get_gcc_chart(dataset, project_id):
                 ],
             },
         )
-        print("\t", f"Chart {chart.name} created.")
+        logger.info("Chart %s created.", chart.name)
         chart.save()
         return chart
 

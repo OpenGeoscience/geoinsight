@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import json
+import logging
 
 from django.contrib.gis.geos import GEOSGeometry
 
 from geoinsight.core.models import VectorData, VectorFeature
+
+logger = logging.getLogger(__name__)
 
 
 def create_vector_features(vector_data: VectorData):
@@ -19,6 +22,6 @@ def create_vector_features(vector_data: VectorData):
     ]
 
     created = VectorFeature.objects.bulk_create(vector_features)
-    print("\t\t", f"{len(created)} vector features created.")
+    logger.info("%d vector features created.", len(created))
 
     return created
