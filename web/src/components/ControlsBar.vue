@@ -9,10 +9,13 @@ import { Mode } from 'vanilla-jsoneditor'
 import { validateStyleMin } from '@maplibre/maplibre-gl-style-spec';
 
 import { useAppStore, useLayerStore, useMapStore } from "@/store";
+import { useMapCompareStore } from "@/store/compare";
 import { createBasemap } from "@/api/rest";
+import { storeToRefs } from "pinia";
 const appStore = useAppStore();
 const layerStore = useLayerStore();
 const mapStore = useMapStore();
+const { isComparing } = storeToRefs(useMapCompareStore());
 
 const copyMenuShown = ref(false);
 const screenOverlayShown = ref(false);
@@ -225,7 +228,7 @@ watch(newBasemapStyleJSON, createNewBasemapPreview)
       <v-progress-circular v-if="loadingBounds" indeterminate />
       <v-icon v-else icon="mdi-fit-to-page-outline" v-tooltip="'Fit Map to Visible Layers'"></v-icon>
     </v-btn>
-    <v-btn class="control-btn" variant="flat">
+    <v-btn v-if="!isComparing" class="control-btn" variant="flat">
       <v-icon icon="mdi-camera"></v-icon>
       <v-menu v-model="copyMenuShown" activator="parent" :open-on-hover="true" :close-on-content-click="false">
         <v-card class="control-menu">
