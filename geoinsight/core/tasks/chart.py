@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
+import logging
 
 from celery import shared_task
 import pandas as pd
 from webcolors import name_to_hex
 
 from geoinsight.core.models import Chart, NetworkNode, Project
+
+logger = logging.getLogger(__name__)
 
 
 @shared_task
@@ -24,7 +27,8 @@ def convert_chart(chart_id, conversion_options):
 
     chart_file = chart.fileitem_set.first()
     if chart_file.file_type == "csv":
-        raw_data = pd.read_csv(chart_file.file.open())
+        with chart_file.file.open() as f:
+            raw_data = pd.read_csv(f)
     else:
         raise NotImplementedError(
             f"Convert chart data for file type {chart_file.file_type}",
@@ -42,7 +46,7 @@ def convert_chart(chart_id, conversion_options):
 
     chart.chart_data = chart_data
     chart.save()
-    print(f"\t Saved converted data for chart {chart.name}.")
+    logger.info("Saved converted data for chart %s.", chart.name)
 
 
 def get_gcc_chart(dataset, project_id):
@@ -71,7 +75,7 @@ def get_gcc_chart(dataset, project_id):
                 ],
             },
         )
-        print("\t", f"Chart {chart.name} created.")
+        logger.info("Chart %s created.", chart.name)
         chart.save()
         return chart
 

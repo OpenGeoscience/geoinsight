@@ -4,6 +4,7 @@ from django.db import models
 
 from .data import RasterData, VectorData
 from .dataset import Dataset
+from .querysets import ProjectQuerySet
 
 
 def default_source_filters():
@@ -18,12 +19,11 @@ class Layer(models.Model):
         "LayerStyle", null=True, related_name="default_layer", on_delete=models.SET_NULL
     )
 
+    project_filter_path = "dataset__project"
+    objects = ProjectQuerySet.as_manager()
+
     def __str__(self):
         return f"{self.name} ({self.id})"
-
-    @classmethod
-    def filter_queryset_by_projects(cls, queryset, projects):
-        return queryset.filter(dataset__project__in=projects)
 
 
 class LayerFrame(models.Model):
@@ -34,6 +34,9 @@ class LayerFrame(models.Model):
     index = models.PositiveIntegerField(default=0)
     source_filters = models.JSONField(default=default_source_filters)
     metadata = models.JSONField(blank=True, null=True)
+
+    project_filter_path = "layer__dataset__project"
+    objects = ProjectQuerySet.as_manager()
 
     class Meta:
         constraints = [
@@ -46,10 +49,6 @@ class LayerFrame(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.id})"
-
-    @classmethod
-    def filter_queryset_by_projects(cls, queryset, projects):
-        return queryset.filter(layer__dataset__project__in=projects)
 
     def get_data(self):
         if self.raster is not None:

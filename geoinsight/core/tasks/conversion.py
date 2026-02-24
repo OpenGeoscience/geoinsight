@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from pathlib import Path
 import tempfile
 import zipfile
@@ -13,6 +14,8 @@ import rasterio
 import shapefile
 
 from geoinsight.core.models import RasterData, VectorData
+
+logger = logging.getLogger(__name__)
 
 RASTER_FILETYPES = ["tif", "tiff", "nc", "jp2"]
 IGNORE_FILETYPES = ["dbf", "sbn", "sbx", "cpg", "shp.xml", "shx", "vrt", "hdf", "lyr"]
@@ -91,7 +94,7 @@ def convert_files(*files, file_item=None, combine=False):
             if cog_path:
                 cog_set.append({"name": file.name, "path": cog_path})
         elif not any(file.name.endswith(suffix) for suffix in IGNORE_FILETYPES):
-            print("\t\tUnable to convert", file.name)
+            logger.info("Unable to convert %s", file.name)
 
     if combine:
         # combine only works for vector data currently, assumes consistent projection
@@ -115,7 +118,7 @@ def convert_files(*files, file_item=None, combine=False):
             metadata=metadata,
         )
         vector_data.write_geojson_data(data)
-        print("\t\t", str(vector_data), "created for " + geodata.get("name"))
+        logger.info("%s created for %s", vector_data, geodata.get("name"))
 
     for cog in cog_set:
         import large_image
@@ -131,7 +134,7 @@ def convert_files(*files, file_item=None, combine=False):
         )
         with cog_path.open("rb") as f:
             raster_data.cloud_optimized_geotiff.save(cog_path.name, ContentFile(f.read()))
-        print("\t\t", str(raster_data), "created for " + cog.get("name"))
+        logger.info("%s created for %s", raster_data, cog.get("name"))
 
 
 def convert_file_item(file_item):

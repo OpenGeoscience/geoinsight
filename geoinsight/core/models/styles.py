@@ -6,6 +6,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from geoinsight.core.models import Colormap, Layer, Project
+from geoinsight.core.models.querysets import ProjectQuerySet
 
 
 class LayerStyle(models.Model):
@@ -23,6 +24,9 @@ class LayerStyle(models.Model):
         ],
     )
 
+    project_filter_path = "layer__dataset__project"
+    objects = ProjectQuerySet.as_manager()
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -32,10 +36,6 @@ class LayerStyle(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.id})"
-
-    @classmethod
-    def filter_queryset_by_projects(cls, queryset, projects):
-        return queryset.filter(layer__dataset__project__in=projects)
 
     def save_style_configs(self, style_spec):
         if style_spec is None:

@@ -5,6 +5,7 @@ from django.db import models
 
 from .data import VectorFeature
 from .dataset import Dataset
+from .querysets import ProjectQuerySet
 
 
 class Region(models.Model):
@@ -16,6 +17,9 @@ class Region(models.Model):
     metadata = models.JSONField(blank=True, null=True)
     boundary = geo_models.MultiPolygonField()
 
+    project_filter_path = "dataset__project"
+    objects = ProjectQuerySet.as_manager()
+
     class Meta:
         constraints = [
             # We enforce name uniqueness across datasets
@@ -24,7 +28,3 @@ class Region(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.id})"
-
-    @classmethod
-    def filter_queryset_by_projects(cls, queryset, projects):
-        return queryset.filter(dataset__project__in=projects)

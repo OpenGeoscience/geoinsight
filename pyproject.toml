@@ -169,18 +169,14 @@ ignore = [
   "TRY003", # raise-vanilla-args
 
   # Project-specific
-  "A002", # builtin-argument-shadowing
-  "ARG003", # unused-class-method-argument
   "BLE001", # blind-except
   "C901", # complex-structure
-  "FBT002", # boolean-default-value-positional-argument
   "PLC0415", # import-outside-top-level
   "PLR0912", # too-many-branches
   "PLR0913", # too-many-arguments
   "PLR0915", # too-many-statements
   "PLW2901", # redefined-loop-name
   "SLF001", # private-member-access
-  "T201", # print
   "TRY301", # raise-within-try
 ]
 
@@ -203,6 +199,9 @@ ignore = [
   "PLR0913", # too-many-arguments
   "S", # flake8-bandit
   "SLF001", # private-member-access
+]
+"{jupyter,sample_data}/**" = [
+  "T201", # print
 ]
 
 [tool.ruff.lint.flake8-boolean-trap]

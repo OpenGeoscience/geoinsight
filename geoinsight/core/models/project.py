@@ -8,6 +8,7 @@ from guardian.models import UserObjectPermission
 from guardian.shortcuts import assign_perm, get_users_with_perms, remove_perm
 
 from .dataset import Dataset
+from .querysets import ProjectQuerySet
 
 if typing.TYPE_CHECKING:
     from django.contrib.auth.models import User
@@ -19,6 +20,9 @@ class Project(models.Model):
     default_map_zoom = models.FloatField(default=10)
     datasets = models.ManyToManyField(Dataset, blank=True)
 
+    project_filter_path = "pk"
+    objects = ProjectQuerySet.as_manager()
+
     class Meta:
         permissions = [
             ("owner", "Can read, write, and delete"),
@@ -28,10 +32,6 @@ class Project(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.id})"
-
-    @classmethod
-    def filter_queryset_by_projects(cls, queryset, projects):
-        return queryset.filter(id__in=projects.values_list("id", flat=True))
 
     def owner(self) -> User:
         users = typing.cast(

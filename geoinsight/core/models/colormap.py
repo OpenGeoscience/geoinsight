@@ -4,6 +4,7 @@ from django.db import models
 from jsonschema import validate
 
 from .project import Project
+from .querysets import ProjectQuerySet
 
 MARKER_SCHEMA = {
     "type": "array",
@@ -36,6 +37,10 @@ class Colormap(models.Model):
         null=True,
     )
 
+    project_filter_path = "project"
+    project_filter_allow_null = True
+    objects = ProjectQuerySet.as_manager()
+
     def __str__(self):
         return f"{self.name} ({self.id})"
 
@@ -46,7 +51,3 @@ class Colormap(models.Model):
     def clean(self):
         if len(self.markers):
             validate(instance=self.markers, schema=MARKER_SCHEMA)
-
-    @classmethod
-    def filter_queryset_by_projects(cls, queryset, projects):
-        return queryset.filter(models.Q(project__isnull=True) | models.Q(project__in=projects))
