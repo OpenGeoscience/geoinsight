@@ -84,6 +84,13 @@ class Dataset(models.Model):
         region_options=None,
         asynchronous=True,
     ):
+        convert_dataset_signature = convert_dataset.s(
+            dataset_id=self.id,
+            layer_options=layer_options,
+            network_options=network_options,
+            region_options=region_options,
+        )
+
         if asynchronous:
             from geoinsight.core.models.task_result import TaskResult
 
@@ -98,12 +105,10 @@ class Dataset(models.Model):
                 },
                 status="Initializing task...",
             )
-            convert_dataset.delay(
-                self.id, layer_options, network_options, region_options, result.id
-            )
+            convert_dataset_signature.delay(result_id=result.id)
             return result
         else:
-            convert_dataset(self.id, layer_options, network_options, region_options)
+            convert_dataset_signature.apply()
             return None
 
     def get_size(self):
