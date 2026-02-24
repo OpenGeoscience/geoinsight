@@ -1103,6 +1103,18 @@ wheels = [
 ]
 
 [[package]]
+name = "django-click"
+version = "2.5.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "click" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/fc/e9/80f860c3f2bb9bdcc58de6b9578bbc6b4a57bedefdc97211e736fb960380/django_click-2.5.0.tar.gz", hash = "sha256:60d346a04d0db991d0bb31754c0dcad282643aa26a4701ca5ff5df742a7473f8", size = 7251, upload-time = "2026-01-10T13:19:37.958Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/27/43/a8eedd594b0f1d5e736ad5afd48ff4431566d2760b79115af40d8b4e950a/django_click-2.5.0-py3-none-any.whl", hash = "sha256:6bcb71d0bac47f67b91d9ee1972d881d72b5bf20cd2a45a57265cdfac49b88aa", size = 7887, upload-time = "2026-01-10T13:19:37.13Z" },
+]
+
+[[package]]
 name = "django-cors-headers"
 version = "4.9.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1853,6 +1865,7 @@ dependencies = [
     { name = "django", extra = ["argon2"] },
     { name = "django-allauth" },
     { name = "django-auth-style" },
+    { name = "django-click" },
     { name = "django-cors-headers" },
     { name = "django-environ" },
     { name = "django-extensions" },
@@ -1945,6 +1958,7 @@ requires-dist = [
     { name = "django-allauth" },
     { name = "django-auth-style" },
     { name = "django-browser-reload", marker = "extra == 'development'" },
+    { name = "django-click" },
     { name = "django-cors-headers" },
     { name = "django-debug-toolbar", marker = "extra == 'development'" },
     { name = "django-environ" },
