@@ -71,9 +71,17 @@ export const useProjectStore = defineStore('project', () => {
     function getCurrentView(): View | undefined {
         if (!currentProject.value) return undefined;
         const mapPosition = mapStore.getCurrentMapPosition();
+        // use proportions instead of coordinates
+        // so that the view looks good with other window sizes
         const panelArrangement = panelStore.panelArrangement.map((panelConfig => {
             const copyConfig = { ...panelConfig }
             delete copyConfig.element
+            if (copyConfig.position) {
+              copyConfig.position = {
+                x: copyConfig.position.x / window.innerWidth,
+                y: copyConfig.position.y / window.innerHeight,
+              }
+            }
             return copyConfig
         }))
         const view: View = {
@@ -115,7 +123,15 @@ export const useProjectStore = defineStore('project', () => {
             if (view) {
                 currentView.value = view;
                 // Set some state attrs that don't require the project to be loaded first
-                panelStore.panelArrangement = view.panel_arrangement;
+                panelStore.panelArrangement = view.panel_arrangement.map((panelConfig) => {
+                  if (panelConfig.position) {
+                    panelConfig.position = {
+                      x: panelConfig.position.x * window.innerWidth,
+                      y: panelConfig.position.y * window.innerHeight,
+                    }
+                  }
+                  return panelConfig;
+                });
                 appStore.openSidebars = []
                 if (view.left_sidebar_open) appStore.openSidebars.push('left');
                 if (view.right_sidebar_open) appStore.openSidebars.push('right');
