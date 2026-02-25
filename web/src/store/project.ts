@@ -52,7 +52,7 @@ export const useProjectStore = defineStore('project', () => {
 
     watch(currentProject, () => {
         clearProjectState();
-        mapStore.setMapCenter(currentProject.value);
+        mapStore.resetMapPosition(currentProject.value);
         mapStore.clearMapLayers();
         styleStore.fetchColormaps();
 

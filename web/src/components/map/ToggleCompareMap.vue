@@ -10,7 +10,6 @@ import type { StyleSpecification, Map, ResourceType } from "maplibre-gl";
 import { useTheme } from 'vuetify';
 import { Protocol } from "pmtiles";
 import { storeToRefs } from "pinia";
-import { map } from "lodash";
 
 const ATTRIBUTION = [
   "<a target='_blank' href='https://maplibre.org/'>© MapLibre</a>",
@@ -71,45 +70,45 @@ const handleMapReady = async (newMap: Map, mapId: 'A' | 'B') => {
   if (mapStore.availableBasemaps.length === 0) {
     await mapStore.fetchAvailableBasemaps();
   }
-    newMap.addControl(attributionControl);
-    newMap.on('error', (response) => {
-        // AbortErrors are raised when updating style of raster layers; ignore these
-        if (response.error.message !== 'AbortError') console.error(response.error)
-    });
-    /**
-     * This is called on every click, and technically hides the tooltip on every click.
-     * However, if a feature layer is clicked, that event is fired after this one, and the
-     * tooltip is re-enabled and rendered with the desired contents. The net result is that
-     * this only has a real effect when the base map is clicked, as that means that no other
-     * feature layer can "catch" the event, and the tooltip stays hidden.
-     */
-    newMap.on("click", (e) => {
-      // check if click is in the compare map and it's enabled
-      if (e.point.x > compareStore.sliderEnd.position && isComparing.value) {
-        return; // let the compare map handle this click
-      } 
-      mapStore.clickedFeature = undefined;
-    });
-    if (mapId === 'A') {
-        newMap.setStyle(mapStore.currentBasemap?.style as StyleSpecification);
-        mapStore.map = newMap;
-        mapStore.setMapCenter(undefined, true);
-    } else if (mapId === 'B') {
-        mapStore.compareMap = newMap;
-        newMap.on("click", () => {mapStore.compareClickedFeature = undefined });
-        createMapControls(newMap, 'B');
-        // the B map style is compared implicitly we need to add click handlers for features here as well
-        if (mapBStyle.value && mapBStyle.value?.sources)
-        Object.entries(mapBStyle.value.sources).forEach(([key,source]) => {
-          if (source.type === 'vector') {
-            mapStore.setupVectorLayerClickHandlers(newMap, key, mapStore.handleCompareLayerClick);
-          }
-        });
+  newMap.addControl(attributionControl);
+  newMap.on('error', (response) => {
+    // AbortErrors are raised when updating style of raster layers; ignore these
+    if (response.error.message !== 'AbortError') console.error(response.error)
+  });
+  /**
+   * This is called on every click, and technically hides the tooltip on every click.
+   * However, if a feature layer is clicked, that event is fired after this one, and the
+   * tooltip is re-enabled and rendered with the desired contents. The net result is that
+   * this only has a real effect when the base map is clicked, as that means that no other
+   * feature layer can "catch" the event, and the tooltip stays hidden.
+   */
+  newMap.on("click", (e) => {
+    // check if click is in the compare map and it's enabled
+    if (e.point.x > compareStore.sliderEnd.position && isComparing.value) {
+      return; // let the compare map handle this click
     }
-    createMapControls(newMap);
-    newMap.once('idle', () => {
-      layerStore.updateLayersShown();
-    });
+    mapStore.clickedFeature = undefined;
+  });
+  if (mapId === 'A') {
+    newMap.setStyle(mapStore.currentBasemap?.style as StyleSpecification);
+    mapStore.map = newMap;
+    mapStore.resetMapPosition(undefined, true);
+  } else if (mapId === 'B') {
+    mapStore.compareMap = newMap;
+    newMap.on("click", () => { mapStore.compareClickedFeature = undefined });
+    createMapControls(newMap, 'B');
+    // the B map style is compared implicitly we need to add click handlers for features here as well
+    if (mapBStyle.value && mapBStyle.value?.sources)
+      Object.entries(mapBStyle.value.sources).forEach(([key, source]) => {
+        if (source.type === 'vector') {
+          mapStore.setupVectorLayerClickHandlers(newMap, key, mapStore.handleCompareLayerClick);
+        }
+      });
+  }
+  createMapControls(newMap);
+  newMap.once('idle', () => {
+    layerStore.updateLayersShown();
+  });
 }
 
 function createMapControls(map: Map, mapType: 'A' | 'B' = 'A') {
@@ -127,7 +126,7 @@ function createMapControls(map: Map, mapType: 'A' | 'B' = 'A') {
   });
 
   // Link overlay ref to dom, allowing for modification elsewhere
-    popup.setDOMContent(currentTooltip.value);
+  popup.setDOMContent(currentTooltip.value);
   if (mapType === 'A') {
     // Set store value
     mapStore.tooltipOverlay = popup;
@@ -151,43 +150,44 @@ watch(() => appStore.openSidebars, () => {
 });
 
 const transformRequest = (url: string, _resourceType?: ResourceType) => {
-    // Only add auth headers to our own tile requests
-    if (url.includes(import.meta.env.VITE_APP_API_ROOT)) {
-        return {
-            url,
-            headers: oauthClient?.authHeaders,
-        };
-    }
-    return { url };
+  // Only add auth headers to our own tile requests
+  if (url.includes(import.meta.env.VITE_APP_API_ROOT)) {
+    return {
+      url,
+      headers: oauthClient?.authHeaders,
+    };
+  }
+  return { url };
 }
 
+// @ts-ignore for "Type instantiation is excessively deep and possibly infinite"
 const mapStyleA: Ref<StyleSpecification | string> = ref(mapStore.currentBasemap?.style as StyleSpecification);
 watch(isComparing, (newVal) => {
-   if (!newVal && mapStore.map) {
-        mapStore.map.jumpTo({
-            center: mapStats.value?.center,
-            zoom: mapStats.value?.zoom,
-            bearing: mapStats.value?.bearing,
-            pitch: mapStats.value?.pitch,
-        });
-        mapStore.compareMap = undefined;
-    } else if (newVal && mapStore.map) {
-        mapStyleA.value = mapStore.map.getStyle();
-        compareStore.updateSlider({percentage: 50, position: window.innerWidth * 0.5});
-    }
+  if (!newVal && mapStore.map) {
+    mapStore.map.jumpTo({
+      center: mapStats.value?.center,
+      zoom: mapStats.value?.zoom,
+      bearing: mapStats.value?.bearing,
+      pitch: mapStats.value?.pitch,
+    });
+    mapStore.compareMap = undefined;
+  } else if (newVal && mapStore.map) {
+    mapStyleA.value = mapStore.map.getStyle();
+    compareStore.updateSlider({ percentage: 50, position: window.innerWidth * 0.5 });
+  }
 });
 
 watch(mapAStyle, (newStyle) => {
-    if (isComparing.value && mapStore.map) {
-        mapStyleA.value = newStyle as StyleSpecification;
-    }
-}, { deep: true});
+  if (isComparing.value && mapStore.map) {
+    mapStyleA.value = newStyle as StyleSpecification;
+  }
+}, { deep: true });
 
 // Updating the basemap for either map should update both maps
 // Maps need to load their style if is a direct url string before updating mapStyleA
 // Then if comparing we need to do another idle until mapB is updated and then set the order
 const updateBasemap = () => {
-  const map  = mapStore.map;
+  const map = mapStore.map;
   if (map && mapStore.currentBasemap) {
     const visible = mapStore.currentBasemap.id !== undefined
     mapStore.setBasemapVisibility(visible);
@@ -205,65 +205,50 @@ const updateBasemap = () => {
                 compareStore.mapLayersB = compareStore.updateCompareLayersList('B');
               });
             }
-          } 
-        });  
+          }
+        });
       }
     }
   }
 }
 
 watch(() => mapStore.currentBasemap, () => {
-    updateBasemap();
+  updateBasemap();
 });
 
 const swiperColor = computed(() => {
-    return {
-      swiper: theme.global.current.value.colors.primary,
-      arrow: theme.global.current.value.colors['button-text'],
-    };
+  return {
+    swiper: theme.global.current.value.colors.primary,
+    arrow: theme.global.current.value.colors['button-text'],
+  };
 });
 </script>
 
 <template>
-    <div>
-        <ToggleCompare
-            :map-style-a="mapStyleA"
-            :map-style-b="mapBStyle"
-            :map-layers-a="mapLayersA"
-            :map-layers-b="mapLayersB"
-            :compare-enabled="compareStore.isComparing"
-            :camera="{
-                center: mapStats.center,
-                zoom: mapStats.zoom,
-            }"
-            :transform-request="transformRequest"
-            :swiper-options="{
-                orientation: compareStore.orientation,
-                grabThickness: 20,
-                lineColor: swiperColor.swiper,
-                handleColor: swiperColor.swiper,
-                arrowColor: swiperColor.arrow,
-            }"
-            layer-order="bottommost"
-            :attribution-control="false"
-            :preserve-drawing-buffer="true"
-            @panend="compareStore.updateMapStats($event)"
-            @zoomend="compareStore.updateMapStats($event)"
-            @pitchend="compareStore.updateMapStats($event)"
-            @rotateend="compareStore.updateMapStats($event)"
-            @sliderend="compareStore.updateSlider($event)"
-            @map-ready-a="handleMapReady($event, 'A')"
-            @map-ready-b="handleMapReady($event, 'B')"
-            class="map"
-        />
+  <div>
+    <ToggleCompare :map-style-a="mapStyleA" :map-style-b="mapBStyle" :map-layers-a="mapLayersA"
+      :map-layers-b="mapLayersB" :compare-enabled="compareStore.isComparing" :camera="{
+        center: mapStats.center,
+        zoom: mapStats.zoom,
+      }" :transform-request="transformRequest" :swiper-options="{
+        orientation: compareStore.orientation,
+        grabThickness: 20,
+        lineColor: swiperColor.swiper,
+        handleColor: swiperColor.swiper,
+        arrowColor: swiperColor.arrow,
+      }" layer-order="bottommost" :attribution-control="false" :preserve-drawing-buffer="true"
+      @panend="compareStore.updateMapStats($event)" @zoomend="compareStore.updateMapStats($event)"
+      @pitchend="compareStore.updateMapStats($event)" @rotateend="compareStore.updateMapStats($event)"
+      @sliderend="compareStore.updateSlider($event)" @map-ready-a="handleMapReady($event, 'A')"
+      @map-ready-b="handleMapReady($event, 'B')" class="map" />
 
-        <div id="map-tooltip" ref="tooltip" class="tooltip pa-0">
-        <MapTooltip />
-        </div>
-        <div id="map-tooltip" ref="compareTooltip" class="tooltip pa-0">
-        <MapTooltip compare-map />
-        </div>
+    <div id="map-tooltip" ref="tooltip" class="tooltip pa-0">
+      <MapTooltip />
     </div>
+    <div id="map-tooltip" ref="compareTooltip" class="tooltip pa-0">
+      <MapTooltip compare-map />
+    </div>
+  </div>
 </template>
 
 <style scoped>

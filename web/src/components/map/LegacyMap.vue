@@ -122,7 +122,7 @@ function createMapControls() {
 onMounted(() => {
   mapStore.fetchAvailableBasemaps().then(() => {
     createMap();
-    mapStore.setMapCenter(undefined, true);
+    mapStore.resetMapPosition(undefined, true);
   })
 });
 
