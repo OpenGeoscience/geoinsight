@@ -51,6 +51,7 @@ attributionControl.onAdd = (map: Map): HTMLElement => {
 
 function setAttributionControlStyle() {
   const container = attributionControl._container;
+  if (!container) return;
   container.style.padding = "3px 8px";
   container.style.marginRight = "5px";
   container.style.borderRadius = "15px";
