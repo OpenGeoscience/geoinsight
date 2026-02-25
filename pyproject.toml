@@ -148,7 +148,6 @@ ignore = [
   "W191", # tab-indentation
 
   # Incompatible with Django
-  "A002", # builtin-argument-shadowing
   "A003", # builtin-attribute-shadowing
   "ARG001", # unused-function-argument
   "ARG002", # unused-method-argument
@@ -179,6 +178,7 @@ ignore = [
   "PLW2901", # redefined-loop-name
   "SLF001", # private-member-access
   "TRY301", # raise-within-try
+  "A002", # builtin-argument-shadowing
 ]
 
 [tool.ruff.lint.per-file-ignores]
