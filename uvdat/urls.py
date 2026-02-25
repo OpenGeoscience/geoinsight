@@ -62,7 +62,7 @@ urlpatterns = [
     path("api/docs/swagger/", schema_view.with_ui("swagger"), name="docs-swagger"),
     path("api/v1/token/", obtain_auth_token),
     # Redirect all other server requests to Vue client
-    path("", RedirectView.as_view(url=settings.WEB_URL)),
+    path("", RedirectView.as_view(url=settings.DJANGO_WEB_URL)),
 ]
 
 if settings.DEBUG:
