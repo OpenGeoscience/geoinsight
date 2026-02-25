@@ -179,7 +179,7 @@ def flood_simulation(result_id):
             )
             layer.default_style = style
             layer.save()
-            viridis = Colormap.objects.filter(name="viridis").first()
+            ocean = Colormap.objects.filter(name="ocean").first()
             style.save_style_configs(
                 {
                     "default_frame": 0,
@@ -189,7 +189,7 @@ def flood_simulation(result_id):
                             "name": "all",
                             "visible": True,
                             "colormap": {
-                                "id": viridis.id,
+                                "id": ocean.id,
                                 "discrete": False,
                                 "clamp": True,
                                 "color_by": "value",
