@@ -96,19 +96,17 @@ function run() {
   });
 }
 
-function fetchResults() {
+async function fetchResults() {
   if (!projectStore.currentProject || !analysisStore.currentAnalysisType) return;
-  getTaskResults(
+  await analysisStore.initResults(
     analysisStore.currentAnalysisType.db_value,
-    projectStore.currentProject.id
-  ).then((results) => {
-    analysisStore.availableResults = results;
-    if (analysisStore.currentResult) {
-      analysisStore.currentResult = analysisStore.availableResults.find(
-        (r) => r.id === analysisStore.currentResult?.id
-      );
-    }
-  });
+    projectStore.currentProject.id,
+  )
+  if (analysisStore.currentResult) {
+    analysisStore.currentResult = analysisStore.availableResults.find(
+      (r) => r.id === analysisStore.currentResult?.id
+    );
+  }
 }
 
 function inputIsNumeric(key: string) {
