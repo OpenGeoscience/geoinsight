@@ -168,8 +168,15 @@ export const useProjectStore = defineStore('project', () => {
                 const layerId = parseInt(layerIdStr);
                 const copyId = parseInt(copyIdStr);
                 const layer = await getLayer(layerId);
-                layerStore.addLayer(layer, copyId);
+                await layerStore.addLayer(layer, copyId);
             }))
+            // Ensure correct layer order
+            layerStore.selectedLayers = layerStore.selectedLayers.sort((layer1, layer2) => {
+              const key1 = `${layer1.id}.${layer1.copy_id}`;
+              const key2 = `${layer2.id}.${layer2.copy_id}`;
+              return view.selected_layer_order.indexOf(key1) - view.selected_layer_order.indexOf(key2)
+            })
+            layerStore.updateLayersShown()
             styleStore.selectedLayerStyles = view.selected_layer_styles;
             currentViewLoaded.value = true;
         }
