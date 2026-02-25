@@ -11,9 +11,7 @@ import django.db.models.deletion
 
 def forwards(apps, schema_editor):
     colormap_model = apps.get_model("core", "Colormap")
-    default_colormaps_file = Path(
-        settings.BASE_DIR, "uvdat", "core", "models", "colormaps.json"
-    )
+    default_colormaps_file = Path(settings.BASE_DIR, "uvdat", "core", "models", "colormaps.json")
     with default_colormaps_file.open() as f:
         default_colormaps = json.load(f)
         for default_colormap in default_colormaps:
