@@ -19,6 +19,7 @@ from .styles import (
     SizeRangeConfig,
 )
 from .task_result import TaskResult
+from .view import View
 
 __all__ = [
     "Basemap",
@@ -44,4 +45,5 @@ __all__ = [
     "TaskResult",
     "VectorData",
     "VectorFeature",
+    "View",
 ]

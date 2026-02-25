@@ -25,6 +25,7 @@ from uvdat.core.models import (
     TaskResult,
     VectorData,
     VectorFeature,
+    View,
 )
 
 
@@ -140,3 +141,8 @@ class NetworkNodeAdmin(admin.ModelAdmin):
 @admin.register(TaskResult)
 class TaskResultAdmin(admin.ModelAdmin):
     list_display = ["id", "task_type", "inputs"]
+
+
+@admin.register(View)
+class ViewAdmin(admin.ModelAdmin):
+    list_display = ["id", "name", "project"]
