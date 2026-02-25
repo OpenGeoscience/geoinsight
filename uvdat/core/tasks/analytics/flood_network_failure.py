@@ -33,7 +33,7 @@ class FloodNetworkFailure(AnalysisType):
 
     @classmethod
     def is_enabled(cls):
-        return settings.GEOINSIGHT_ENABLE_TASK_FLOOD_NETWORK_FAILURE
+        return settings.ENABLE_TASK_FLOOD_NETWORK_FAILURE
 
     def get_input_options(self):
         return {

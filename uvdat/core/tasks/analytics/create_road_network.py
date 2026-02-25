@@ -34,7 +34,7 @@ class CreateRoadNetwork(AnalysisType):
 
     @classmethod
     def is_enabled(cls):
-        return settings.GEOINSIGHT_ENABLE_TASK_CREATE_ROAD_NETWORK
+        return settings.ENABLE_TASK_CREATE_ROAD_NETWORK
 
     def get_input_options(self):
         return {"location": []}
