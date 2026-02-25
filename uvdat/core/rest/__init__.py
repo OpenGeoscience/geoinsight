@@ -12,6 +12,7 @@ from .networks import NetworkViewSet
 from .project import ProjectViewSet
 from .regions import RegionViewSet
 from .user import UserViewSet
+from .view import ViewViewSet
 
 __all__ = [
     "AnalyticsViewSet",
@@ -29,4 +30,5 @@ __all__ = [
     "RegionViewSet",
     "UserViewSet",
     "VectorDataViewSet",
+    "ViewViewSet",
 ]
