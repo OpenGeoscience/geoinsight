@@ -92,6 +92,12 @@ export const useProjectStore = defineStore('project', () => {
           current_basemap: mapStore.currentBasemap?.id,
           current_network: networkStore.currentNetwork?.id,
           selected_layers: layerStore.selectedLayers.map((layer) => layer.id),
+          selected_layer_current_frames: Object.fromEntries(
+            layerStore.selectedLayers.map((layer) => {
+              const styleKey = mapStore.uniqueLayerIdFromLayer(layer);
+              return [styleKey, layer.current_frame_index]
+            })
+          ),
           selected_layer_order: layerStore.selectedLayers.map((layer) => {
             // Includes layer ID and copy ID
             return mapStore.uniqueLayerIdFromLayer(layer);
@@ -172,11 +178,18 @@ export const useProjectStore = defineStore('project', () => {
             }))
             // Ensure correct layer order
             layerStore.selectedLayers = layerStore.selectedLayers.sort((layer1, layer2) => {
-              const key1 = `${layer1.id}.${layer1.copy_id}`;
-              const key2 = `${layer2.id}.${layer2.copy_id}`;
+              const key1 = mapStore.uniqueLayerIdFromLayer(layer1);
+              const key2 = mapStore.uniqueLayerIdFromLayer(layer2);
               return view.selected_layer_order.indexOf(key1) - view.selected_layer_order.indexOf(key2)
             })
-            layerStore.updateLayersShown()
+            // Ensure correct current frames
+            layerStore.selectedLayers = layerStore.selectedLayers.map((layer) => {
+              const styleKey = mapStore.uniqueLayerIdFromLayer(layer);
+              if (view.selected_layer_current_frames[styleKey]) {
+                layer.current_frame_index = view.selected_layer_current_frames[styleKey];
+              }
+              return layer;
+            })
             styleStore.selectedLayerStyles = view.selected_layer_styles;
             currentViewLoaded.value = true;
         }
