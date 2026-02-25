@@ -5,7 +5,7 @@ import io
 import pandas as pd
 import requests
 
-from geoinsight.core.models import NetworkNode, VectorData, VectorFeature
+from uvdat.core.models import NetworkNode, VectorData, VectorFeature
 
 LINE_COLORS = {
     "RED": "#D31414",

@@ -3,10 +3,7 @@ services:
     build:
       context: .
       dockerfile: ./dev/django.Dockerfile
-    command: [
-      "./manage.py",
-      "runserver", "0.0.0.0:8000"
-    ]
+    command: ["./manage.py", "runserver", "0.0.0.0:8000"]
     # Log printing is enhanced by a TTY
     tty: true
     environment:
@@ -32,15 +29,20 @@ services:
     build:
       context: .
       dockerfile: ./dev/django.Dockerfile
-    command: [
-      "uv", "run",
-      "--extra", "tasks",
-      "celery",
-      "--app", "geoinsight.celery",
-      "worker",
-      "--loglevel", "INFO",
-      "--without-heartbeat"
-    ]
+    command:
+      [
+        "uv",
+        "run",
+        "--extra",
+        "tasks",
+        "celery",
+        "--app",
+        "uvdat.celery",
+        "worker",
+        "--loglevel",
+        "INFO",
+        "--without-heartbeat",
+      ]
     # Docker Compose does not set the TTY width, which causes Celery errors
     tty: false
     environment:
@@ -65,15 +67,20 @@ services:
     build:
       context: .
       dockerfile: ./dev/django.Dockerfile
-    command: [
-      "uv", "run",
-      "--extra", "tasks",
-      "celery",
-      "--app", "geoinsight.celery",
-      "worker",
-      "--loglevel", "INFO",
-      "--without-heartbeat"
-    ]
+    command:
+      [
+        "uv",
+        "run",
+        "--extra",
+        "tasks",
+        "celery",
+        "--app",
+        "uvdat.celery",
+        "worker",
+        "--loglevel",
+        "INFO",
+        "--without-heartbeat",
+      ]
     # Docker Compose does not set the TTY width, which causes Celery errors
     tty: false
     environment:
@@ -83,7 +90,7 @@ services:
       - .:/opt/django-project
       - uv_cache:/var/cache/uv
     shm_size: 1gb
-    profiles: ["gpu"]  # Only runs with --profile gpu
+    profiles: ["gpu"] # Only runs with --profile gpu
     deploy:
       resources:
         reservations:
@@ -108,7 +115,7 @@ services:
     volumes:
       - ./web:/web
       - ./.git:/web/.git # allow fetching version tag
-      - web_node_modules:/web/node_modules  # Keep container's node_modules separate from host
+      - web_node_modules:/web/node_modules # Keep container's node_modules separate from host
     ports:
       - 8080:8080
 

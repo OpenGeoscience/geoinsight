@@ -8,8 +8,8 @@ import zipfile
 
 from django.contrib.gis.geos import LineString, Point
 
-from geoinsight.core.models import Network, NetworkEdge, NetworkNode, VectorData
-from geoinsight.core.tasks.networks import create_vector_features_from_network
+from uvdat.core.models import Network, NetworkEdge, NetworkNode, VectorData
+from uvdat.core.tasks.networks import create_vector_features_from_network
 
 TOLERANCE_METERS = 15
 
