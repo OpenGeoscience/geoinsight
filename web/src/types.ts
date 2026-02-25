@@ -461,6 +461,7 @@ export interface View {
   current_basemap: number | undefined,
   current_network: number | undefined,
   selected_layers: (number | undefined)[],
+  selected_layer_current_frames: Record<string, number>,
   selected_layer_order: string[],
   selected_layer_styles: Record<string, LayerStyle>,
   left_sidebar_open: boolean,
