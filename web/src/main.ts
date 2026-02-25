@@ -12,7 +12,8 @@ import { useAppStore } from "@/store";
 import "@mdi/font/css/materialdesignicons.css";
 import { THEMES } from "./themes";
 
-import JsonEditorVue from 'json-editor-vue'
+import JsonEditorVue from 'json-editor-vue';
+import { createRouter, createWebHistory } from 'vue-router';
 
 
 // Must first initialize pinia, so we can set the default theme
@@ -31,6 +32,17 @@ const vuetify = createVuetify({
 });
 app.use(vuetify)
 app.use(JsonEditorVue);
+
+// Initialize router
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [{
+    path: '/',
+    name: 'Home',
+    component: App
+  },],
+});
+app.use(router);
 
 // Finally, mount the app
 restoreLogin().then(() => {

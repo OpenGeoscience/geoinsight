@@ -31,6 +31,8 @@ declare module 'vue' {
     NodeAnimation: typeof import('./src/components/sidebars/NodeAnimation.vue')['default']
     ProjectConfig: typeof import('./src/components/projects/ProjectConfig.vue')['default']
     RecursiveTable: typeof import('./src/components/RecursiveTable.vue')['default']
+    RouterLink: typeof import('vue-router')['RouterLink']
+    RouterView: typeof import('vue-router')['RouterView']
     SideBars: typeof import('./src/components/sidebars/SideBars.vue')['default']
     SliderNumericInput: typeof import('./src/components/SliderNumericInput.vue')['default']
     ToggleCompareMap: typeof import('./src/components/map/ToggleCompareMap.vue')['default']
