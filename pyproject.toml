@@ -148,6 +148,7 @@ ignore = [
   "W191", # tab-indentation
 
   # Incompatible with Django
+  "A002", # builtin-argument-shadowing
   "A003", # builtin-attribute-shadowing
   "ARG001", # unused-function-argument
   "ARG002", # unused-method-argument
