@@ -56,6 +56,12 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     const appStore = useAppStore();
+
+    if (error.config?.errorMsg) {
+      appStore.currentError = error.config?.errorMsg
+      return { data: undefined };
+    }
+
     if (error.response?.status === 500) {
       appStore.currentError = "Server error; see server logs for details.";
     } else if (error.response?.status === 404) {

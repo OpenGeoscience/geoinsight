@@ -449,3 +449,24 @@ export interface FileItem {
   index: number;
   metadata: Record<string, any>;
 }
+
+export interface View {
+  id?: number;
+  name?: string;
+  project: number;
+  thumbnail?: string;
+  current_analysis_type: string | undefined,
+  current_result: number | undefined,
+  current_chart: number | undefined,
+  current_basemap: number | undefined,
+  current_network: number | undefined,
+  selected_layers: (number | undefined)[],
+  selected_layer_order: string[],
+  selected_layer_styles: Record<string, LayerStyle>,
+  left_sidebar_open: boolean,
+  right_sidebar_open: boolean,
+  panel_arrangement: FloatingPanelConfig[],
+  theme: "dark" | "light",
+  map_center: number[],
+  map_zoom: number,
+}
