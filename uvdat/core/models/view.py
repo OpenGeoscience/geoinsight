@@ -40,7 +40,7 @@ class View(models.Model):
     map_zoom = models.IntegerField(null=True)
     map_center = geo_models.PointField(null=True)
     panel_arrangement = models.JSONField(blank=True, null=True)
-    selected_layers = models.ManyToManyField(Layer, related_name="views")
+    selected_layers = models.ManyToManyField(Layer, related_name="views", blank=True)
     selected_layer_order = models.JSONField(blank=True, null=True)
     selected_layer_styles = models.JSONField(blank=True, null=True)
 
