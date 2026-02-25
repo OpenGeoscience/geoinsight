@@ -11,17 +11,17 @@ SSH_TARGET="ubuntu@$HOST"
 
 echo "==> Fetching secrets from Heroku..."
 ENV_FILE=$(mktemp)
-heroku config --app geoinsight --shell > "$ENV_FILE"
+heroku config --app geodatalytics --shell > "$ENV_FILE"
 
 echo "==> Uploading env file to remote machine..."
-scp "$ENV_FILE" "$SSH_TARGET:/home/ubuntu/geoinsight.prod.env"
+scp "$ENV_FILE" "$SSH_TARGET:/home/ubuntu/geodatalytics.prod.env"
 rm "$ENV_FILE"
 
 echo "==> Pulling changes..."
-ssh "$SSH_TARGET" 'cd /home/ubuntu/geoinsight && git pull'
+ssh "$SSH_TARGET" 'cd /home/ubuntu/geodatalytics && git pull'
 
 echo "==> Adding SOURCE_VERSION to env file..."
-ssh "$SSH_TARGET" 'echo "SOURCE_VERSION=$(git -C /home/ubuntu/geoinsight rev-parse HEAD)" >> /home/ubuntu/geoinsight.prod.env'
+ssh "$SSH_TARGET" 'echo "SOURCE_VERSION=$(git -C /home/ubuntu/geodatalytics rev-parse HEAD)" >> /home/ubuntu/geodatalytics.prod.env'
 
 echo "==> Restarting celery service..."
 ssh "$SSH_TARGET" 'sudo systemctl restart celery'

@@ -1,4 +1,4 @@
-# Created for the GeoInsight Data Explorer, which uses ipyleaflet
+# Created for the GeoDatalytics Data Explorer, which uses ipyleaflet
 # ipyleaflet does not support custom headers, so auth token must be sent as a URL param
 from __future__ import annotations
 

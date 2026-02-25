@@ -10,7 +10,7 @@ data "cloudflare_accounts" "this" {
 
 resource "cloudflare_pages_project" "www" {
   account_id        = data.cloudflare_accounts.this.accounts[0].id
-  name              = "geoinsight"
+  name              = "geodatalytics"
   production_branch = "master"
 
   source {
@@ -18,7 +18,7 @@ resource "cloudflare_pages_project" "www" {
     config {
       production_branch = "master"
       owner             = "OpenGeoscience"
-      repo_name         = "geoinsight"
+      repo_name         = "geodatalytics"
     }
   }
 

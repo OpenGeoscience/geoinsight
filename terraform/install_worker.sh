@@ -11,10 +11,10 @@ SSH_TARGET="ubuntu@$HOST"
 
 echo "==> Fetching secrets from Heroku..."
 ENV_FILE=$(mktemp)
-heroku config --app geoinsight --shell > "$ENV_FILE"
+heroku config --app geodatalytics --shell > "$ENV_FILE"
 
 echo "==> Uploading env file to remote machine..."
-scp "$ENV_FILE" "$SSH_TARGET:/home/ubuntu/geoinsight.prod.env"
+scp "$ENV_FILE" "$SSH_TARGET:/home/ubuntu/geodatalytics.prod.env"
 rm "$ENV_FILE"
 
 echo "==> Installing system packages..."
@@ -24,13 +24,13 @@ echo "==> Installing uv..."
 ssh "$SSH_TARGET" 'curl -LsSf https://astral.sh/uv/install.sh | sudo UV_INSTALL_DIR=/usr/local/bin sh'
 
 echo "==> Cloning repository..."
-ssh "$SSH_TARGET" 'git clone https://github.com/OpenGeoscience/geoinsight.git /home/ubuntu/geoinsight'
+ssh "$SSH_TARGET" 'git clone https://github.com/OpenGeoscience/geodatalytics.git /home/ubuntu/geodatalytics'
 
 echo "==> Adding SOURCE_VERSION to env file..."
-ssh "$SSH_TARGET" 'echo "SOURCE_VERSION=$(git -C /home/ubuntu/geoinsight rev-parse HEAD)" >> /home/ubuntu/geoinsight.prod.env'
+ssh "$SSH_TARGET" 'echo "SOURCE_VERSION=$(git -C /home/ubuntu/geodatalytics rev-parse HEAD)" >> /home/ubuntu/geodatalytics.prod.env'
 
 echo "==> Installing Python dependencies..."
-ssh "$SSH_TARGET" 'cd /home/ubuntu/geoinsight && uv sync --extra tasks'
+ssh "$SSH_TARGET" 'cd /home/ubuntu/geodatalytics && uv sync --extra tasks'
 
 echo "==> Creating systemd service..."
 ssh "$SSH_TARGET" 'sudo tee /etc/systemd/system/celery.service > /dev/null' << 'EOF'
@@ -42,17 +42,17 @@ After=network.target
 User=ubuntu
 Group=ubuntu
 
-WorkingDirectory=/home/ubuntu/geoinsight
+WorkingDirectory=/home/ubuntu/geodatalytics
 
 Environment=LC_ALL=C.UTF-8
 Environment=LANG=C.UTF-8
 
 # Application config environment
-EnvironmentFile=/home/ubuntu/geoinsight.prod.env
+EnvironmentFile=/home/ubuntu/geodatalytics.prod.env
 
 ExecStart=/usr/local/bin/uv run --extra tasks \
   celery \
-  --app geoinsight.celery \
+  --app geodatalytics.celery \
   worker \
   --loglevel INFO \
   --without-heartbeat

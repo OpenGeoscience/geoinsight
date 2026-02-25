@@ -131,10 +131,10 @@ class LayerRepresentation:
         return widgets.VBox(children)
 
 
-class GeoInsightExplorer:
+class GeoDatalyticsExplorer:
     def __init__(self, api_url=None, email=None, password=None, center=None, zoom=None):
         if api_url is None:
-            msg = "GeoInsightExplorer missing argument: %s must be specified."
+            msg = "GeoDatalyticsExplorer missing argument: %s must be specified."
             raise ValueError(msg % "`api_url`")
         if not api_url.endswith("/"):
             api_url += "/"

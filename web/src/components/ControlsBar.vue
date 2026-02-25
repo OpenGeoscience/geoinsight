@@ -165,7 +165,7 @@ function takeScreenshot(save: boolean) {
           if (save) {
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = "geoinsight_screenshot.png";
+            link.download = "geodatalytics_screenshot.png";
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);

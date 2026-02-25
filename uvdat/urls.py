@@ -30,7 +30,7 @@ from uvdat.core.rest import (
 router = routers.SimpleRouter()
 # OpenAPI generation
 schema_view = get_schema_view(
-    openapi.Info(title="GeoInsight", default_version="v1", description=""),
+    openapi.Info(title="GeoDatalytics", default_version="v1", description=""),
     public=True,
     permission_classes=(permissions.AllowAny,),
 )

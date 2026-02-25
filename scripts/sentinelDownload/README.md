@@ -1,7 +1,7 @@
 # Script Description
 
 This Python script downloads and clips Sentinel-2 imagery from the public AWS Earth Search using the STAC API.
-It fetches visual (RGB) Cloud-Optimized GeoTIFFs (COGs), extracts a user-defined square window around a given latitude and longitude, and saves the results locally with accompanying JSON ingest file for easy importing into GeoInsight.
+It fetches visual (RGB) Cloud-Optimized GeoTIFFs (COGs), extracts a user-defined square window around a given latitude and longitude, and saves the results locally with accompanying JSON ingest file for easy importing into GeoDatalytics.
 
 ```bash
 uv run --script sentinel2Download.py {arguments}
@@ -36,4 +36,4 @@ The script accepts command-line options via `click`:
 ## Outputs
 
 - **GeoTIFF files** - Clipped Sentinel-2 visual images (RGB).
-- **`sample.json`** - JSON metadata describing datasets, layers, and frames, useful for ingestion into GeoInsight.
+- **`sample.json`** - JSON metadata describing datasets, layers, and frames, useful for ingestion into GeoDatalytics.

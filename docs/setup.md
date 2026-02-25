@@ -1,6 +1,6 @@
 # Setup Guide
 
-This guide walks you through setting up GeoInsight for local development using Docker Compose.
+This guide walks you through setting up GeoDatalytics for local development using Docker Compose.
 
 ## Prerequisites
 

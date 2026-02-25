@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from django.db.backends.base.schema import BaseDatabaseSchemaEditor
     from django.db.migrations.state import StateApps
 
-APPLICATION_NAME = "geoinsight-web"
+APPLICATION_NAME = "geodatalytics-web"
 CLIENT_ID = "cBmD6D6F2YAmMWHNQZFPUr4OpaXVpW5w4Thod6Kj"
 
 

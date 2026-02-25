@@ -1,4 +1,4 @@
-site_name: GeoInsight Documentation
+site_name: GeoDatalytics Documentation
 theme: 'material'
 nav:
   - Home: README.md
