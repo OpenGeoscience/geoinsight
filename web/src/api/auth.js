@@ -85,5 +85,5 @@ export const logout = async () => {
   useProjectStore().currentProject = undefined;
   useProjectStore().clearState();
 
-  useMapStore().setMapCenter();
+  useMapStore().resetMapPosition();
 };
