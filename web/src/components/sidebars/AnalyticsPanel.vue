@@ -32,7 +32,6 @@ const filteredAnalysisTypes = computed(() => {
       analysis_type.name.toLowerCase().includes(searchText.value.toLowerCase())
   })
 })
-const tab = ref();
 const newestFirstResults = computed(() => {
   return analysisStore.availableResults.toSorted((a, b) => {
     const aCreated = new Date(a.created);
@@ -88,7 +87,7 @@ function run() {
         projectStore.currentProject.id,
         selectedInputs.value,
       ).then((result) => {
-        tab.value = 'old';
+        analysisStore.currentAnalysisTab = 'old';
         analysisStore.currentResult = result;
         fetchResults();
       })
@@ -202,8 +201,8 @@ watch(() => analysisStore.currentAnalysisType, () => {
   }
 })
 
-watch(tab, () => {
-  if (tab.value === "old") {
+watch(() => analysisStore.currentAnalysisTab, () => {
+  if (analysisStore.currentAnalysisTab === "old") {
     fetchResults();
   }
 });
@@ -235,12 +234,12 @@ watch(
           </v-tooltip>
         </v-card-title>
 
-        <v-tabs v-model="tab" align-tabs="center" fixed-tabs>
+        <v-tabs v-model="analysisStore.currentAnalysisTab" align-tabs="center" fixed-tabs>
           <v-tab value="new">Run New</v-tab>
           <v-tab value="old">View Existing</v-tab>
         </v-tabs>
 
-        <v-window v-model="tab">
+        <v-window v-model="analysisStore.currentAnalysisTab">
           <v-window-item value="new">
             <v-form class="pa-3" @submit.prevent ref="inputForm">
               <v-card-subtitle class="px-1">Select inputs</v-card-subtitle>

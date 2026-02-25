@@ -11,6 +11,7 @@ export const useAnalysisStore = defineStore('analysis', () => {
     const loadingCharts = ref<boolean>(false);
     const availableCharts = ref<Chart[]>();
     const currentChart = ref<Chart>();
+    const currentAnalysisTab = ref<'old' | 'new'>('new')
     const loadingAnalysisTypes = ref<boolean>(false);
     const availableAnalysisTypes = ref<AnalysisType[]>();
     const currentAnalysisType = ref<AnalysisType>();
@@ -77,6 +78,7 @@ export const useAnalysisStore = defineStore('analysis', () => {
         loadingCharts,
         availableCharts,
         currentChart,
+        currentAnalysisTab,
         loadingAnalysisTypes,
         availableAnalysisTypes,
         currentAnalysisType,
