@@ -291,6 +291,7 @@ class ViewSerializer(serializers.ModelSerializer):
         # Web client expects Lon, Lat
         if obj.map_center:
             return [obj.map_center.y, obj.map_center.x]
+        return None
 
     def to_internal_value(self, data):
         center = data.get("map_center")
