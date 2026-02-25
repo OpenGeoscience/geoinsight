@@ -158,7 +158,15 @@ export const useProjectStore = defineStore('project', () => {
         if (view && !currentViewLoaded.value && mapStore.map) {
             appStore.theme = view.theme;
             analysisStore.currentAnalysisType = analysisStore.availableAnalysisTypes?.find((a) => a.db_value === view.current_analysis_type);
-            analysisStore.currentResult = analysisStore.availableResults?.find((c) => c.id === view.current_result);
+            if (analysisStore.currentAnalysisType && currentProject.value) {
+              await analysisStore.initResults(
+                analysisStore.currentAnalysisType.db_value, currentProject.value.id,
+              )
+              analysisStore.currentResult = analysisStore.availableResults?.find((c) => c.id === view.current_result);
+              if (analysisStore.currentResult) {
+                analysisStore.currentAnalysisTab = 'old'
+              }
+            }
             analysisStore.currentChart = analysisStore.availableCharts?.find((c) => c.id === view.current_chart);
             networkStore.currentNetwork = networkStore.availableNetworks.find((n) => n.id === view.current_network);
 
