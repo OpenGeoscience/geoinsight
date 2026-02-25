@@ -52,7 +52,7 @@ EnvironmentFile=/home/ubuntu/geodatalytics.prod.env
 
 ExecStart=/usr/local/bin/uv run --extra tasks \
   celery \
-  --app geodatalytics.celery \
+  --app uvdat.celery \
   worker \
   --loglevel INFO \
   --without-heartbeat
