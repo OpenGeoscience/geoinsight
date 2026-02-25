@@ -1,4 +1,4 @@
-import { getProjectAnalysisTypes, getProjectCharts } from '@/api/rest';
+import { getProjectAnalysisTypes, getProjectCharts, getTaskResults } from '@/api/rest';
 import { Chart, AnalysisType, TaskResult } from '@/types';
 import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
@@ -19,22 +19,24 @@ export const useAnalysisStore = defineStore('analysis', () => {
     const ws = ref();
 
 
-    function initCharts(projectId: number) {
+    async function initCharts(projectId: number) {
         loadingCharts.value = true;
-        getProjectCharts(projectId).then((charts) => {
-            availableCharts.value = charts;
-            currentChart.value = undefined;
-            loadingCharts.value = false;
-        });
+        const charts = await getProjectCharts(projectId)
+        availableCharts.value = charts;
+        currentChart.value = undefined;
+        loadingCharts.value = false;
     }
 
-    function initAnalysisTypes(projectId: number) {
+    async function initAnalysisTypes(projectId: number) {
         loadingAnalysisTypes.value = true;
-        getProjectAnalysisTypes(projectId).then((types) => {
-            availableAnalysisTypes.value = types;
-            currentAnalysisType.value = undefined;
-            loadingAnalysisTypes.value = false;
-        })
+        const types = await getProjectAnalysisTypes(projectId)
+        availableAnalysisTypes.value = types;
+        currentAnalysisType.value = undefined;
+        loadingAnalysisTypes.value = false;
+    }
+
+    async function initResults(analysisType: string, projectId: number) {
+      availableResults.value = await getTaskResults(analysisType, projectId)
     }
 
     function createWebSocket() {
@@ -82,5 +84,6 @@ export const useAnalysisStore = defineStore('analysis', () => {
         currentResult,
         initCharts,
         initAnalysisTypes,
+        initResults,
     }
 });
