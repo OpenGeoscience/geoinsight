@@ -154,7 +154,7 @@ CHANNEL_LAYERS: dict[str, dict[str, Any]] = {
     }
 }
 
-WEB_URL: str = env.url("DJANGO_WEB_URL").geturl()
+DJANGO_WEB_URL: str = env.url("DJANGO_WEB_URL").geturl()
 ENABLE_TASK_FLOOD_SIMULATION: bool = env.bool("DJANGO_ENABLE_TASK_FLOOD_SIMULATION", default=True)
 ENABLE_TASK_FLOOD_NETWORK_FAILURE: bool = env.bool(
     "DJANGO_ENABLE_TASK_FLOOD_NETWORK_FAILURE", default=True
