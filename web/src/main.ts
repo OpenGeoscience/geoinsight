@@ -37,7 +37,7 @@ app.use(JsonEditorVue);
 const router = createRouter({
   history: createWebHistory(),
   routes: [{
-    path: '/',
+    path: '/:pathMatch(.*)*',
     name: 'Home',
     component: App
   },],
@@ -45,6 +45,8 @@ const router = createRouter({
 app.use(router);
 
 // Finally, mount the app
-restoreLogin().then(() => {
-  app.mount("#app");
-});
+router.isReady().then(() => {
+  restoreLogin().then(() => {
+    app.mount("#app");
+  });
+})
