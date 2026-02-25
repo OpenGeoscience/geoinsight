@@ -21,7 +21,7 @@ import {
 import { getBasemaps, getRasterDataValues } from '@/api/rest';
 import { baseURL } from '@/api/auth';
 import proj4 from 'proj4';
-import { useStyleStore, useLayerStore, useAppStore } from '.';
+import { useStyleStore, useLayerStore, useAppStore, useProjectStore } from '.';
 
 function getLayerIsVisible(layer: MapLibreLayerWithMetadata) {
   // Since visibility must be 'visible' for a feature click to even be registered,
@@ -139,6 +139,7 @@ export const useMapStore = defineStore('map', () => {
   const styleStore = useStyleStore();
   const layerStore = useLayerStore();
   const appStore = useAppStore();
+  const projectStore = useProjectStore();
 
   async function fetchAvailableBasemaps() {
     availableBasemaps.value = [
@@ -549,6 +550,13 @@ export const useMapStore = defineStore('map', () => {
       throw new Error('Layer Frame is neither raster nor vector!');
     }
   }
+
+  watch(map, () => {
+    // Once map is initialized, attempt to load URL view
+    if (map.value) {
+      projectStore.loadViewFromURL()
+    }
+  })
 
   return {
     // Data

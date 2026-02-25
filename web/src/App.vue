@@ -17,7 +17,6 @@ function onReady() {
   if (appStore.currentUser) {
     projectStore.clearState();
     projectStore.loadProjects();
-    projectStore.loadViewFromURL();
     conversionStore.createWebSocket();
   }
 }
