@@ -3,13 +3,13 @@
 [![License][apache-license-image]][license-link]
 
 <p float="left">
-<img style="display: inline-block;" src="kitware.svg" alt="Kitware Logo" width="125">
-<img style="display: inline-block;" src="sds_lab.png" alt="NEU SDS Lab Logo" width="100">
+<img style="display: inline-block;" src="docs/kitware.svg" alt="Kitware Logo" width="125">
+<img style="display: inline-block;" src="docs/sds_lab.png" alt="NEU SDS Lab Logo" width="100">
 </p>
 
 > Developed by [Kitware Inc.][kitware-link] in collaboration with the [Sustainability and Data Sciences Lab at Northeastern University][sds-lab-link]
 
-![](readme_screenshot.png)
+![](docs/assets/readme_screenshot.png)
 
 > Sample use case examines the effect of coastal flooding on the availability of the Boston Transit system (MBTA). Sample data obtained from [MassMapper][mass-mapper-link], a public tool for open infrastructure data hosted by the state of Massachusetts.
 
@@ -35,7 +35,7 @@ GeoDatalytics is built with Kitware's [Resonant][girder-4-cookiecutter-link] tec
 
 ## Getting Started with GeoDatalytics
 
-To run GeoDatalytics locally with `docker-compose`, follow the instructions in the [Setup Guide](setup.md).
+To run GeoDatalytics locally with `docker-compose`, follow the instructions in the [Setup Guide](docs/setup.md).
 
 [apache-license-image]: https://img.shields.io/badge/license-Apache%202-blue.svg
 [license-link]: https://raw.githubusercontent.com/OpenGeoscience/geodatalytics/master/LICENSE
