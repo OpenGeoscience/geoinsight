@@ -154,7 +154,7 @@ CHANNEL_LAYERS: dict[str, dict[str, Any]] = {
     }
 }
 
-DJANGO_WEB_URL: str = env.url("DJANGO_WEB_URL").geturl()
+UVDAT_WEB_URL: str = env.url("DJANGO_UVDAT_WEB_URL").geturl()
 UVDAT_ENABLE_FLOOD_SIMULATION: bool = env.bool("DJANGO_UVDAT_ENABLE_FLOOD_SIMULATION", default=True)
 UVDAT_ENABLE_FLOOD_NETWORK_FAILURE: bool = env.bool(
     "DJANGO_UVDAT_ENABLE_FLOOD_NETWORK_FAILURE", default=True
