@@ -46,7 +46,7 @@ class NetworkRecovery(AnalysisType):
 
     @classmethod
     def is_enabled(cls):
-        return settings.ENABLE_TASK_NETWORK_RECOVERY
+        return settings.UVDAT_ENABLE_NETWORK_RECOVERY
 
     def get_input_options(self):
         from uvdat.core.tasks.analytics import analysis_types
