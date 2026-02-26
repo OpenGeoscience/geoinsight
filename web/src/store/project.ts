@@ -84,6 +84,10 @@ export const useProjectStore = defineStore('project', () => {
             }
             return copyConfig
         }))
+        const includeLayers = layerStore.selectedLayers.filter((layer) => layer.visible)
+        const styleKeysToCurrentFrames = Object.fromEntries(
+          includeLayers.map((layer) => [mapStore.uniqueLayerIdFromLayer(layer), layer.current_frame_index])
+        )
         const view: View = {
           project: currentProject.value.id,
           current_analysis_type: analysisStore.currentAnalysisType?.db_value,
@@ -91,18 +95,14 @@ export const useProjectStore = defineStore('project', () => {
           current_chart: analysisStore.currentChart?.id,
           current_basemap: mapStore.currentBasemap?.id,
           current_network: networkStore.currentNetwork?.id,
-          selected_layers: layerStore.selectedLayers.map((layer) => layer.id),
-          selected_layer_current_frames: Object.fromEntries(
-            layerStore.selectedLayers.map((layer) => {
-              const styleKey = mapStore.uniqueLayerIdFromLayer(layer);
-              return [styleKey, layer.current_frame_index]
+          selected_layers: includeLayers.map((layer) => layer.id),
+          selected_layer_current_frames: styleKeysToCurrentFrames,
+          selected_layer_order: Object.keys(styleKeysToCurrentFrames),
+          selected_layer_styles: Object.fromEntries(
+            Object.entries(styleStore.selectedLayerStyles).filter(([styleKey, _]) => {
+              return Object.keys(styleKeysToCurrentFrames).includes(styleKey)
             })
           ),
-          selected_layer_order: layerStore.selectedLayers.map((layer) => {
-            // Includes layer ID and copy ID
-            return mapStore.uniqueLayerIdFromLayer(layer);
-          }),
-          selected_layer_styles: styleStore.selectedLayerStyles,
           left_sidebar_open: appStore.openSidebars.includes('left'),
           right_sidebar_open: appStore.openSidebars.includes('right'),
           panel_arrangement: panelArrangement,
