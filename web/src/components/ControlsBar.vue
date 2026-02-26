@@ -334,9 +334,14 @@ watch(newBasemapStyleJSON, createNewBasemapPreview)
             </v-btn>
             <v-list v-if="projectStore.availableViews.length" density="compact" bg-color="transparent">
               <v-list-item v-for="view in projectStore.availableViews" :key="view.id" class="control-menu-row pa-1"
-                :title="view.name" @click="projectStore.navigateToView(view)">
+                @click="projectStore.navigateToView(view)">
                 <template v-slot:prepend>
                   <img :src="view.thumbnail" height="70px"></img>
+                </template>
+                <template v-slot:title>
+                  <div style="width: 150px; text-wrap: wrap;">
+                    {{ view.name }}
+                  </div>
                 </template>
                 <template v-slot:append>
                   <v-btn v-if="userHasEditPermission" icon="mdi-delete" v-tooltip="'Delete this view'" flat
