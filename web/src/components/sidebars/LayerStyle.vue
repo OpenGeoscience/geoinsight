@@ -128,6 +128,10 @@ async function init() {
 }
 
 function resetCurrentStyle() {
+    if (projectStore.currentView && !projectStore.currentViewLoaded) {
+      // If styles are being applied from a view, don't overwrite them
+      return
+    }
     // When copying styles, use deep copies via cloneDeep
     // so that changes to the current style do not affect the original copy
     if (currentLayerStyle.value?.id) {

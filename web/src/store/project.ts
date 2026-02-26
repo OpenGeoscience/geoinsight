@@ -281,6 +281,8 @@ export const useProjectStore = defineStore('project', () => {
         availableDatasets,
         availableDatasetTags,
         availableViews,
+        currentView,
+        currentViewLoaded,
         fetchProjectDatasets,
         fetchAvailableDatasetTags,
         fetchProjectViews,
