@@ -1855,184 +1855,6 @@ wheels = [
 ]
 
 [[package]]
-name = "geoinsight"
-version = "1.30.0"
-source = { editable = "." }
-dependencies = [
-    { name = "celery" },
-    { name = "channels", extra = ["daphne"] },
-    { name = "channels-redis" },
-    { name = "django", extra = ["argon2"] },
-    { name = "django-allauth" },
-    { name = "django-auth-style" },
-    { name = "django-click" },
-    { name = "django-cors-headers" },
-    { name = "django-environ" },
-    { name = "django-extensions" },
-    { name = "django-filter" },
-    { name = "django-guardian" },
-    { name = "django-large-image" },
-    { name = "django-oauth-toolkit" },
-    { name = "django-resonant-settings", extra = ["allauth", "celery"] },
-    { name = "django-resonant-utils", extra = ["allauth", "s3-storage"] },
-    { name = "django-s3-file-field", extra = ["s3"] },
-    { name = "django-storages", extra = ["s3"] },
-    { name = "django-stubs-ext" },
-    { name = "djangorestframework" },
-    { name = "drf-yasg" },
-    { name = "gdal" },
-    { name = "geopandas" },
-    { name = "large-image", extra = ["gdal"] },
-    { name = "large-image-converter" },
-    { name = "matplotlib" },
-    { name = "networkx" },
-    { name = "numpy" },
-    { name = "pooch", extra = ["progress"] },
-    { name = "psycopg", extra = ["binary", "pool"] },
-    { name = "pylibtiff" },
-    { name = "pyshp" },
-    { name = "rasterio" },
-    { name = "rich" },
-    { name = "sentry-sdk", extra = ["celery", "django", "pure-eval"] },
-    { name = "uvicorn" },
-    { name = "webcolors" },
-    { name = "websockets" },
-    { name = "whitenoise", extra = ["brotli"] },
-]
-
-[package.optional-dependencies]
-development = [
-    { name = "daphne" },
-    { name = "django-browser-reload" },
-    { name = "django-debug-toolbar" },
-    { name = "django-minio-storage" },
-    { name = "django-resonant-utils", extra = ["minio-storage"] },
-    { name = "django-s3-file-field", extra = ["minio"] },
-    { name = "ipython" },
-    { name = "watchdog" },
-    { name = "werkzeug" },
-]
-tasks = [
-    { name = "geoai-py" },
-    { name = "osmnx" },
-    { name = "pyvips" },
-    { name = "uvdat-flood-sim", extra = ["large-image-writer"] },
-    { name = "xdg-base-dirs" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "geoinsight", extra = ["development"] },
-    { name = "pre-commit" },
-    { name = "tox" },
-    { name = "tox-uv" },
-]
-lint = [
-    { name = "ruff" },
-]
-test = [
-    { name = "django-s3-file-field-client" },
-    { name = "factory-boy" },
-    { name = "pytest" },
-    { name = "pytest-django" },
-    { name = "pytest-mock" },
-    { name = "pytest-random-order" },
-    { name = "pytest-repeat" },
-]
-type = [
-    { name = "celery-types" },
-    { name = "django-stubs", extra = ["compatible-mypy"] },
-    { name = "djangorestframework-stubs" },
-    { name = "mypy" },
-    { name = "pandas-stubs" },
-    { name = "types-channels" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "celery" },
-    { name = "channels", extras = ["daphne"] },
-    { name = "channels-redis" },
-    { name = "daphne", marker = "extra == 'development'" },
-    { name = "django", extras = ["argon2"] },
-    { name = "django-allauth" },
-    { name = "django-auth-style" },
-    { name = "django-browser-reload", marker = "extra == 'development'" },
-    { name = "django-click" },
-    { name = "django-cors-headers" },
-    { name = "django-debug-toolbar", marker = "extra == 'development'" },
-    { name = "django-environ" },
-    { name = "django-extensions" },
-    { name = "django-filter" },
-    { name = "django-guardian" },
-    { name = "django-large-image" },
-    { name = "django-minio-storage", marker = "extra == 'development'" },
-    { name = "django-oauth-toolkit" },
-    { name = "django-resonant-settings", extras = ["allauth", "celery"] },
-    { name = "django-resonant-utils", extras = ["allauth", "s3-storage"] },
-    { name = "django-resonant-utils", extras = ["minio-storage"], marker = "extra == 'development'" },
-    { name = "django-s3-file-field", extras = ["minio"], marker = "extra == 'development'" },
-    { name = "django-s3-file-field", extras = ["s3"] },
-    { name = "django-storages", extras = ["s3"] },
-    { name = "django-stubs-ext" },
-    { name = "djangorestframework" },
-    { name = "drf-yasg" },
-    { name = "gdal", specifier = "==3.10.*", index = "https://girder.github.io/large_image_wheels/" },
-    { name = "geoai-py", marker = "extra == 'tasks'" },
-    { name = "geopandas" },
-    { name = "ipython", marker = "extra == 'development'" },
-    { name = "large-image", extras = ["gdal"] },
-    { name = "large-image-converter" },
-    { name = "matplotlib" },
-    { name = "networkx" },
-    { name = "numpy" },
-    { name = "osmnx", marker = "extra == 'tasks'" },
-    { name = "pooch", extras = ["progress"] },
-    { name = "psycopg", extras = ["binary", "pool"] },
-    { name = "pylibtiff", index = "https://girder.github.io/large_image_wheels/" },
-    { name = "pyshp" },
-    { name = "pyvips", marker = "extra == 'tasks'", index = "https://girder.github.io/large_image_wheels/" },
-    { name = "rasterio" },
-    { name = "rich" },
-    { name = "sentry-sdk", extras = ["celery", "django", "pure-eval"] },
-    { name = "uvdat-flood-sim", extras = ["large-image-writer"], marker = "extra == 'tasks'" },
-    { name = "uvicorn" },
-    { name = "watchdog", marker = "extra == 'development'" },
-    { name = "webcolors" },
-    { name = "websockets" },
-    { name = "werkzeug", marker = "extra == 'development'" },
-    { name = "whitenoise", extras = ["brotli"] },
-    { name = "xdg-base-dirs", marker = "extra == 'tasks'" },
-]
-provides-extras = ["development", "tasks"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "geoinsight", extras = ["development"] },
-    { name = "pre-commit" },
-    { name = "tox" },
-    { name = "tox-uv" },
-]
-lint = [{ name = "ruff" }]
-test = [
-    { name = "django-s3-file-field-client" },
-    { name = "factory-boy" },
-    { name = "pytest" },
-    { name = "pytest-django" },
-    { name = "pytest-mock" },
-    { name = "pytest-random-order" },
-    { name = "pytest-repeat" },
-]
-type = [
-    { name = "celery-types" },
-    { name = "django-stubs", extras = ["compatible-mypy"] },
-    { name = "djangorestframework-stubs" },
-    { name = "mypy" },
-    { name = "pandas-stubs" },
-    { name = "types-channels" },
-]
-
-[[package]]
 name = "geojson"
 version = "3.2.0"
 source = { registry = "https://pypi.org/simple" }
@@ -6561,6 +6383,184 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/18/b8/99c4731d001f512e844dfdc740db2bf2fea56d538749b639d21f5117a74a/uv-0.9.21-py3-none-win32.whl", hash = "sha256:e716e23bc0ec8cbb0811f99e653745e0cf15223e7ba5d8857d46be5b40b3045b", size = 20032654, upload-time = "2025-12-30T16:12:36.007Z" },
     { url = "https://files.pythonhosted.org/packages/29/6b/da441bf335f5e1c0c100b7dfb9702b6fed367ba703e543037bf1e70bf8c3/uv-0.9.21-py3-none-win_amd64.whl", hash = "sha256:64a7bb0e4e6a4c2d98c2d55f42aead7c2df0ceb17d5911d1a42b76228cab4525", size = 22206744, upload-time = "2025-12-30T16:12:38.953Z" },
     { url = "https://files.pythonhosted.org/packages/98/02/afbed8309fe07aaa9fa58a98941cebffbcd300fe70499a02a6806d93517b/uv-0.9.21-py3-none-win_arm64.whl", hash = "sha256:6c13c40966812f6bd6ecb6546e5d3e27e7fe9cefa07018f074f51d703cb29e1c", size = 20591604, upload-time = "2025-12-30T16:12:44.634Z" },
+]
+
+[[package]]
+name = "uvdat"
+version = "1.30.0"
+source = { editable = "." }
+dependencies = [
+    { name = "celery" },
+    { name = "channels", extra = ["daphne"] },
+    { name = "channels-redis" },
+    { name = "django", extra = ["argon2"] },
+    { name = "django-allauth" },
+    { name = "django-auth-style" },
+    { name = "django-click" },
+    { name = "django-cors-headers" },
+    { name = "django-environ" },
+    { name = "django-extensions" },
+    { name = "django-filter" },
+    { name = "django-guardian" },
+    { name = "django-large-image" },
+    { name = "django-oauth-toolkit" },
+    { name = "django-resonant-settings", extra = ["allauth", "celery"] },
+    { name = "django-resonant-utils", extra = ["allauth", "s3-storage"] },
+    { name = "django-s3-file-field", extra = ["s3"] },
+    { name = "django-storages", extra = ["s3"] },
+    { name = "django-stubs-ext" },
+    { name = "djangorestframework" },
+    { name = "drf-yasg" },
+    { name = "gdal" },
+    { name = "geopandas" },
+    { name = "large-image", extra = ["gdal"] },
+    { name = "large-image-converter" },
+    { name = "matplotlib" },
+    { name = "networkx" },
+    { name = "numpy" },
+    { name = "pooch", extra = ["progress"] },
+    { name = "psycopg", extra = ["binary", "pool"] },
+    { name = "pylibtiff" },
+    { name = "pyshp" },
+    { name = "rasterio" },
+    { name = "rich" },
+    { name = "sentry-sdk", extra = ["celery", "django", "pure-eval"] },
+    { name = "uvicorn" },
+    { name = "webcolors" },
+    { name = "websockets" },
+    { name = "whitenoise", extra = ["brotli"] },
+]
+
+[package.optional-dependencies]
+development = [
+    { name = "daphne" },
+    { name = "django-browser-reload" },
+    { name = "django-debug-toolbar" },
+    { name = "django-minio-storage" },
+    { name = "django-resonant-utils", extra = ["minio-storage"] },
+    { name = "django-s3-file-field", extra = ["minio"] },
+    { name = "ipython" },
+    { name = "watchdog" },
+    { name = "werkzeug" },
+]
+tasks = [
+    { name = "geoai-py" },
+    { name = "osmnx" },
+    { name = "pyvips" },
+    { name = "uvdat-flood-sim", extra = ["large-image-writer"] },
+    { name = "xdg-base-dirs" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pre-commit" },
+    { name = "tox" },
+    { name = "tox-uv" },
+    { name = "uvdat", extra = ["development"] },
+]
+lint = [
+    { name = "ruff" },
+]
+test = [
+    { name = "django-s3-file-field-client" },
+    { name = "factory-boy" },
+    { name = "pytest" },
+    { name = "pytest-django" },
+    { name = "pytest-mock" },
+    { name = "pytest-random-order" },
+    { name = "pytest-repeat" },
+]
+type = [
+    { name = "celery-types" },
+    { name = "django-stubs", extra = ["compatible-mypy"] },
+    { name = "djangorestframework-stubs" },
+    { name = "mypy" },
+    { name = "pandas-stubs" },
+    { name = "types-channels" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "celery" },
+    { name = "channels", extras = ["daphne"] },
+    { name = "channels-redis" },
+    { name = "daphne", marker = "extra == 'development'" },
+    { name = "django", extras = ["argon2"] },
+    { name = "django-allauth" },
+    { name = "django-auth-style" },
+    { name = "django-browser-reload", marker = "extra == 'development'" },
+    { name = "django-click" },
+    { name = "django-cors-headers" },
+    { name = "django-debug-toolbar", marker = "extra == 'development'" },
+    { name = "django-environ" },
+    { name = "django-extensions" },
+    { name = "django-filter" },
+    { name = "django-guardian" },
+    { name = "django-large-image" },
+    { name = "django-minio-storage", marker = "extra == 'development'" },
+    { name = "django-oauth-toolkit" },
+    { name = "django-resonant-settings", extras = ["allauth", "celery"] },
+    { name = "django-resonant-utils", extras = ["allauth", "s3-storage"] },
+    { name = "django-resonant-utils", extras = ["minio-storage"], marker = "extra == 'development'" },
+    { name = "django-s3-file-field", extras = ["minio"], marker = "extra == 'development'" },
+    { name = "django-s3-file-field", extras = ["s3"] },
+    { name = "django-storages", extras = ["s3"] },
+    { name = "django-stubs-ext" },
+    { name = "djangorestframework" },
+    { name = "drf-yasg" },
+    { name = "gdal", specifier = "==3.10.*", index = "https://girder.github.io/large_image_wheels/" },
+    { name = "geoai-py", marker = "extra == 'tasks'" },
+    { name = "geopandas" },
+    { name = "ipython", marker = "extra == 'development'" },
+    { name = "large-image", extras = ["gdal"] },
+    { name = "large-image-converter" },
+    { name = "matplotlib" },
+    { name = "networkx" },
+    { name = "numpy" },
+    { name = "osmnx", marker = "extra == 'tasks'" },
+    { name = "pooch", extras = ["progress"] },
+    { name = "psycopg", extras = ["binary", "pool"] },
+    { name = "pylibtiff", index = "https://girder.github.io/large_image_wheels/" },
+    { name = "pyshp" },
+    { name = "pyvips", marker = "extra == 'tasks'", index = "https://girder.github.io/large_image_wheels/" },
+    { name = "rasterio" },
+    { name = "rich" },
+    { name = "sentry-sdk", extras = ["celery", "django", "pure-eval"] },
+    { name = "uvdat-flood-sim", extras = ["large-image-writer"], marker = "extra == 'tasks'" },
+    { name = "uvicorn" },
+    { name = "watchdog", marker = "extra == 'development'" },
+    { name = "webcolors" },
+    { name = "websockets" },
+    { name = "werkzeug", marker = "extra == 'development'" },
+    { name = "whitenoise", extras = ["brotli"] },
+    { name = "xdg-base-dirs", marker = "extra == 'tasks'" },
+]
+provides-extras = ["development", "tasks"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "pre-commit" },
+    { name = "tox" },
+    { name = "tox-uv" },
+    { name = "uvdat", extras = ["development"] },
+]
+lint = [{ name = "ruff" }]
+test = [
+    { name = "django-s3-file-field-client" },
+    { name = "factory-boy" },
+    { name = "pytest" },
+    { name = "pytest-django" },
+    { name = "pytest-mock" },
+    { name = "pytest-random-order" },
+    { name = "pytest-repeat" },
+]
+type = [
+    { name = "celery-types" },
+    { name = "django-stubs", extras = ["compatible-mypy"] },
+    { name = "djangorestframework-stubs" },
+    { name = "mypy" },
+    { name = "pandas-stubs" },
+    { name = "types-channels" },
 ]
 
 [[package]]

@@ -5,7 +5,7 @@ terraform {
     organization = "kitware"
 
     workspaces {
-      name = "geoinsight"
+      name = "geodatalytics"
     }
   }
 

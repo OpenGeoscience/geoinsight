@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "geoinsight"
+name = "uvdat"
 version = "1.30.0"
 requires-python = ">=3.12"
 license = "Apache-2.0"
@@ -83,7 +83,7 @@ dev = [
   # Additional developer tools
   # The "dev" dependency group is installed by default,
   # so use this to install "development" extras by default too
-  "geoinsight[development]",
+  "uvdat[development]",
   "pre-commit",
   "tox",
   "tox-uv",
@@ -124,7 +124,7 @@ pyvips = { index = "large_image_wheels" }
 
 [tool.hatch.build]
 only-include = [
-  "geoinsight",
+  "uvdat",
 ]
 
 [tool.ruff]
@@ -178,6 +178,7 @@ ignore = [
   "PLW2901", # redefined-loop-name
   "SLF001", # private-member-access
   "TRY301", # raise-within-try
+  "A002", # builtin-argument-shadowing
 ]
 
 [tool.ruff.lint.per-file-ignores]
@@ -226,7 +227,7 @@ convention = "pep257"
 
 [tool.mypy]
 files = [
-  "geoinsight",
+  "uvdat",
 ]
 check_untyped_defs = true
 ignore_missing_imports = true
@@ -239,7 +240,7 @@ plugins = [
 ]
 
 [tool.django-stubs]
-django_settings_module = "geoinsight.settings.testing"
+django_settings_module = "uvdat.settings.testing"
 
 [tool.pytest.ini_options]
 addopts = [
@@ -251,7 +252,7 @@ addopts = [
   "--showlocals",
   "--verbose",
   # Specifying as "--ds" will override any value in the environment
-  "--ds=geoinsight.settings.testing",
+  "--ds=uvdat.settings.testing",
 ]
 markers = [
     "slow: mark test as slow",

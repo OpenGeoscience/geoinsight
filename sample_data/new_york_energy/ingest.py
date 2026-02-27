@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from geoinsight.core.tasks.dataset import create_layers_and_frames
+from uvdat.core.tasks.dataset import create_layers_and_frames
 
 from .export_networks import perform_export
 from .import_networks import perform_import

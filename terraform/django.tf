@@ -1,5 +1,5 @@
 resource "aws_route53_zone" "this" {
-  name = "geoinsight.kitware.com"
+  name = "geodatalytics.kitware.com"
 }
 
 data "heroku_team" "this" {
@@ -10,27 +10,27 @@ module "django" {
   source  = "kitware-resonant/resonant/heroku"
   version = "3.1.1"
 
-  project_slug           = "geoinsight"
+  project_slug           = "geodatalytics"
   route53_zone_id        = aws_route53_zone.this.zone_id
   heroku_team_name       = data.heroku_team.this.name
   subdomain_name         = "api"
-  django_settings_module = "geoinsight.settings.heroku_production"
+  django_settings_module = "geodatalytics.settings.heroku_production"
 
   ec2_worker_instance_quantity = 1
   ec2_worker_ssh_public_key    = file("${path.module}/ssh-key.pub")
 
   additional_django_vars = {
-    DJANGO_GEOINSIGHT_WEB_URL     = "https://www.geoinsight.kitware.com/"
+    DJANGO_UVDAT_WEB_URL     = "https://www.geodatalytics.kitware.com/"
     DJANGO_DATABASE_POOL_MAX_SIZE = "12"
     DJANGO_SENTRY_DSN             = "https://5302701c88f1fa6ec056e0c269071191@o267860.ingest.us.sentry.io/4510620385804288"
   }
   django_cors_allowed_origins = [
     # Can't make this use "aws_route53_record.www.fqdn" because of a circular dependency
-    "https://www.geoinsight.kitware.com",
+    "https://www.geodatalytics.kitware.com",
   ]
   django_cors_allowed_origin_regexes = [
     # Can't base this on "cloudflare_pages_project.www.subdomain" because of a circular dependency
-    "https://[\\w-]+\\.geoinsight\\.pages\\.dev",
+    "https://[\\w-]+\\.geodatalytics\\.pages\\.dev",
   ]
 
   # Disable workers; they require "tasks" dependencies, which are too large for Heroku to install

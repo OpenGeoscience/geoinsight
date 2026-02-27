@@ -60,12 +60,12 @@ watch(darkMode, () => {
       <v-toolbar class="toolbar px-5" color="background">
         <v-toolbar-title>
           <img width="15px" class="mr-1" :src="KitwareLogo" />
-          <span class="secondary-text">GeoInsight</span>
+          <span class="secondary-text">GeoDatalytics</span>
           <v-menu activator="parent" :open-on-hover="true" :close-on-content-click="false"
             @update:model-value="copied = undefined">
             <v-card class="pa-3" style="width: fit-content">
               <v-card-subtitle>
-                <a href="https://github.com/OpenGeoscience/geoinsight" target="_blank" style="text-decoration: none">
+                <a href="https://github.com/OpenGeoscience/geodatalytics" target="_blank" style="text-decoration: none">
                   <v-icon icon="mdi-github" />
                   Source
                 </a>

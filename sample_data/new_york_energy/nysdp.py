@@ -9,7 +9,7 @@ from django.contrib.gis.geos import GEOSGeometry, LineString, Point
 import geopandas
 import requests
 
-from geoinsight.core.models import (
+from uvdat.core.models import (
     Network,
     NetworkEdge,
     NetworkNode,
@@ -17,7 +17,7 @@ from geoinsight.core.models import (
     VectorData,
     VectorFeature,
 )
-from geoinsight.core.tasks.networks import create_vector_features_from_network
+from uvdat.core.tasks.networks import create_vector_features_from_network
 
 from .interpret_network import interpret_group
 

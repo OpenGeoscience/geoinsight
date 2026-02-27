@@ -6,7 +6,7 @@ from pathlib import Path
 
 import shapely
 
-from geoinsight.core.models import Network, Region
+from uvdat.core.models import Network, Region
 
 OUTPUT_FOLDER = Path("sample_data/use_cases/new_york_energy/networks")
 
