@@ -131,9 +131,11 @@ export const useLayerStore = defineStore('layer', () => {
   }
 
   // Add this layer to selectedLayers, which will then trigger updateLayersShown to add it to the map
-  async function addLayer(layer: Layer) {
+  async function addLayer(layer: Layer, copy_id: number | undefined = undefined) {
     const existing = mapStore.getLatestLayerInstance(layer);
-    const copy_id = existing === undefined ? 0 : existing.layerCopyId + 1;
+    if (copy_id === undefined) {
+      copy_id = existing === undefined ? 0 : existing.layerCopyId + 1;
+    }
     const name = copy_id > 0 ? `${layer.name} (${copy_id})` : layer.name;
     const newLayer = { ...layer, name, copy_id, visible: true, current_frame_index: 0 };
 

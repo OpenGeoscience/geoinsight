@@ -21,7 +21,7 @@ import {
 import { getBasemaps, getRasterDataValues } from '@/api/rest';
 import { baseURL } from '@/api/auth';
 import proj4 from 'proj4';
-import { useStyleStore, useLayerStore, useAppStore } from '.';
+import { useStyleStore, useLayerStore, useAppStore, useProjectStore } from '.';
 
 function getLayerIsVisible(layer: MapLibreLayerWithMetadata) {
   // Since visibility must be 'visible' for a feature click to even be registered,
@@ -139,6 +139,7 @@ export const useMapStore = defineStore('map', () => {
   const styleStore = useStyleStore();
   const layerStore = useLayerStore();
   const appStore = useAppStore();
+  const projectStore = useProjectStore();
 
   async function fetchAvailableBasemaps() {
     availableBasemaps.value = [
@@ -150,6 +151,7 @@ export const useMapStore = defineStore('map', () => {
 
   function setBasemapToDefault() {
     if (!currentBasemap.value || currentBasemap.value.name.toLowerCase().includes('basic')) {
+      // @ts-ignore for "Type instantiation is excessively deep and possibly infinite"
       currentBasemap.value = availableBasemaps.value.find((basemap) => {
         return basemap.name.toLowerCase() === 'basic ' + appStore.theme
       })
@@ -273,7 +275,20 @@ export const useMapStore = defineStore('map', () => {
     return tooltipOverlay.value;
   }
 
-  function setMapCenter(
+  function setMapPosition(
+    center: [number, number],
+    zoom: number,
+    jump = false
+  ) {
+    const map = getMap();
+    if (jump) {
+      map.jumpTo({ center, zoom });
+    } else {
+      map.flyTo({ center, zoom, duration: 2000 });
+    }
+  }
+
+  function resetMapPosition(
     project: Project | undefined = undefined,
     jump = false
   ) {
@@ -283,13 +298,7 @@ export const useMapStore = defineStore('map', () => {
       center = project.default_map_center;
       zoom = project.default_map_zoom;
     }
-
-    const map = getMap();
-    if (jump) {
-      map.jumpTo({ center, zoom });
-    } else {
-      map.flyTo({ center, zoom, duration: 2000 });
-    }
+    setMapPosition(center, zoom, jump)
   }
 
   function clearMapLayers() {
@@ -542,6 +551,13 @@ export const useMapStore = defineStore('map', () => {
     }
   }
 
+  watch(map, () => {
+    // Once map is initialized, attempt to load URL view
+    if (map.value) {
+      projectStore.loadViewFromURL()
+    }
+  })
+
   return {
     // Data
     map,
@@ -567,7 +583,8 @@ export const useMapStore = defineStore('map', () => {
     getMapSources,
     getCurrentMapPosition,
     getTooltip,
-    setMapCenter,
+    setMapPosition,
+    resetMapPosition,
     clearMapLayers,
     removeLayers,
     createVectorFeatureMapLayers,

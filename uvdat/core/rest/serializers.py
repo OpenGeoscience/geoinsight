@@ -23,6 +23,7 @@ from uvdat.core.models import (
     Region,
     TaskResult,
     VectorData,
+    View,
 )
 
 
@@ -280,4 +281,25 @@ class TaskResultSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TaskResult
+        fields = "__all__"
+
+
+class ViewSerializer(serializers.ModelSerializer):
+    map_center = serializers.SerializerMethodField("get_center")
+
+    def get_center(self, obj):
+        # Web client expects Lon, Lat
+        if obj.map_center:
+            return [obj.map_center.y, obj.map_center.x]
+        return None
+
+    def to_internal_value(self, data):
+        center = data.get("map_center")
+        data = super().to_internal_value(data)
+        if isinstance(center, list):
+            data["map_center"] = Point(center[1], center[0])
+        return data
+
+    class Meta:
+        model = View
         fields = "__all__"

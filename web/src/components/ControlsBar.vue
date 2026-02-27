@@ -8,13 +8,16 @@ import 'vanilla-jsoneditor/themes/jse-theme-dark.css'
 import { Mode } from 'vanilla-jsoneditor'
 import { validateStyleMin } from '@maplibre/maplibre-gl-style-spec';
 
-import { useAppStore, useLayerStore, useMapStore } from "@/store";
+import { useAppStore, useLayerStore, useMapStore, useProjectStore } from "@/store";
 import { useMapCompareStore } from "@/store/compare";
-import { createBasemap } from "@/api/rest";
+import { createBasemap, createView, deleteView, uploadFile } from "@/api/rest";
 import { storeToRefs } from "pinia";
+import { View } from "@/types";
+
 const appStore = useAppStore();
 const layerStore = useLayerStore();
 const mapStore = useMapStore();
+const projectStore = useProjectStore();
 const { isComparing } = storeToRefs(useMapCompareStore());
 
 const copyMenuShown = ref(false);
@@ -35,6 +38,27 @@ const newBasemapValid = computed(() => (
   newBasemapStyleJSON.value &&
   !jsonErrors.value.length
 ))
+
+const showViewCreation = ref(false);
+const viewToDelete = ref();
+const newViewName = ref('');
+const newViewThumbnail = ref();
+const newViewThumbnailURL = computed(() => {
+  if (!newViewThumbnail.value) return null;
+  return URL.createObjectURL(newViewThumbnail.value);
+})
+const newViewValid = computed(() => {
+  return newViewName.value.length && !projectStore.availableViews.map((v) => v.name).includes(newViewName.value)
+})
+const userHasEditPermission = computed(() => {
+  const user = appStore.currentUser;
+  const project = projectStore.currentProject;
+  return user?.is_superuser || (
+    project && user && (
+      project.owner.id === user.id || project.collaborators.map((u) => u.id).includes(user.id)
+    )
+  )
+})
 
 function createBasemapPreviews() {
   if (basemapList.value) {
@@ -147,46 +171,97 @@ async function fitMap() {
   loadingBounds.value = false;
 }
 
-function takeScreenshot(save: boolean) {
+async function takeScreenshot() {
   copyMenuShown.value = false;
   const screenshotTarget = document.getElementById("app");
   if (screenshotTarget) {
-    html2canvas(screenshotTarget, {
-      ignoreElements: (element) => {
+    const canvas = await html2canvas(screenshotTarget, {
+      ignoreElements: (element: Element) => {
         return (
           element.id === "controls-bar" ||
           element.classList.contains("control-menu") ||
           (mapOnly.value && element.classList.contains('v-navigation-drawer'))
         );
-      },
-    }).then((canvas) => {
-      canvas.toBlob((blob) => {
-        if (blob) {
-          if (save) {
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = "geodatalytics_screenshot.png";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          } else {
-            const clipboardItem = new ClipboardItem({
-              "image/png": blob,
-            });
-            navigator.clipboard.write([clipboardItem]);
-          }
-
-          // animate camera flash with overlay
-          setTimeout(() => {
-            screenOverlayShown.value = true;
-            setTimeout(() => {
-              screenOverlayShown.value = false;
-            }, 200);
-          }, 200);
-        }
-      });
-    });
+      }
+    })
+    const blob: Blob | null = await new Promise(resolve => canvas.toBlob(resolve));
+    return blob;
   }
+}
+
+async function copyScreenshot() {
+  const blob = await takeScreenshot();
+  if (blob) {
+    const clipboardItem = new ClipboardItem({ "image/png": blob })
+    navigator.clipboard.write([clipboardItem]);
+    animateCameraFlash();
+  }
+}
+
+async function saveScreenshot() {
+  const blob = await takeScreenshot();
+  if (blob) {
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "geodatalytics_screenshot.png";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    animateCameraFlash();
+  }
+}
+
+function animateCameraFlash() {
+  // animate camera flash with overlay
+  setTimeout(() => {
+    screenOverlayShown.value = true;
+    setTimeout(() => {
+      screenOverlayShown.value = false;
+    }, 200);
+  }, 200);
+}
+
+function showViewDialog() {
+  takeScreenshot().then((blob) => {
+    newViewThumbnail.value = blob
+  })
+  showViewCreation.value = true;
+}
+
+function cancelCreateView() {
+  newViewName.value = '';
+  newViewThumbnail.value = undefined;
+  showViewCreation.value = false;
+}
+
+function submitNewView() {
+  if (newViewValid.value && newViewThumbnail.value) {
+    const thumbnailFile = new File([newViewThumbnail.value], 'thumbnail.png', { type: 'image/png' })
+    uploadFile(thumbnailFile).then((thumbnailURL) => {
+      const view = projectStore.getCurrentView()
+      if (view) {
+        view.name = newViewName.value;
+        view.thumbnail = thumbnailURL;
+        createView(view).then((createdView) => {
+          cancelCreateView();
+          projectStore.fetchProjectViews();
+          projectStore.navigateToView(createdView);
+        })
+      }
+    })
+  }
+}
+
+function submitDeleteView() {
+  deleteView(viewToDelete.value).then(() => {
+    viewToDelete.value = undefined
+    projectStore.fetchProjectViews();
+  })
+}
+
+function copyViewLink(view: View) {
+  const url = `${window.location.origin}/view/${view.id}`
+  navigator.clipboard.writeText(url);
 }
 
 watch(basemapList, createBasemapPreviews)
@@ -237,12 +312,46 @@ watch(newBasemapStyleJSON, createNewBasemapPreview)
             <div class="control-menu-row">
               <v-checkbox v-model="mapOnly" label="Map Only" density="compact" hide-details />
             </div>
-            <div class="control-menu-row" @click="() => takeScreenshot(false)">
+            <div class="control-menu-row" @click="copyScreenshot">
               <div>Copy image to clipboard</div>
             </div>
-            <div class="control-menu-row" @click="() => takeScreenshot(true)">
+            <div class="control-menu-row" @click="saveScreenshot">
               <div>Save image</div>
             </div>
+          </v-card-text>
+        </v-card>
+      </v-menu>
+    </v-btn>
+    <v-btn class="control-btn" v-if="projectStore.currentProject" variant="flat">
+      <v-icon icon="mdi-view-array" class="pb-1 pr-2"></v-icon>
+      <v-icon icon="mdi-share" style="position: absolute; left: 15px; top: 8px; max-width: 10px"></v-icon>
+      <v-menu activator="parent" :open-on-hover="true" :close-on-content-click="false" width="450">
+        <v-card class="control-menu">
+          <div class="control-menu-title">Saved Views</div>
+          <v-card-text class="pa-3">
+            <v-btn class="control-menu-row" @click="showViewDialog">
+              <div>Save current view</div>
+            </v-btn>
+            <v-list v-if="projectStore.availableViews.length" density="compact" bg-color="transparent">
+              <v-list-item v-for="view in projectStore.availableViews" :key="view.id" class="control-menu-row pa-1"
+                @click="projectStore.navigateToView(view)">
+                <template v-slot:prepend>
+                  <img :src="view.thumbnail" height="70px"></img>
+                </template>
+                <template v-slot:title>
+                  <div style="width: 150px; text-wrap: wrap;">
+                    {{ view.name }}
+                  </div>
+                </template>
+                <template v-slot:append>
+                  <v-btn v-if="userHasEditPermission" icon="mdi-delete" v-tooltip="'Delete this view'" flat
+                    variant="text" @click.stop.prevent="viewToDelete = view"></v-btn>
+                  <v-btn icon="mdi-share" v-tooltip="'Copy shareable link'" flat variant="text"
+                    @click.stop.prevent="copyViewLink(view)"></v-btn>
+                </template>
+              </v-list-item>
+            </v-list>
+            <div v-else>No saved views exist for this project.</div>
           </v-card-text>
         </v-card>
       </v-menu>
@@ -316,6 +425,58 @@ watch(newBasemapStyleJSON, createNewBasemapPreview)
           </v-btn>
           <v-btn color="primary" :disabled="!newBasemapValid" @click="submitBasemapCreate">
             Create
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog :model-value="showViewCreation" width="500">
+      <v-card>
+        <v-card-title class="pa-3">
+          New View
+          <v-btn class="close-button transparent" variant="flat" icon @click="cancelCreateView">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <span v-if="newViewName.length && !newViewValid">
+            Name must not match an existing view in this project.
+          </span>
+          <v-text-field v-model="newViewName" label="Name" autofocus hide-details class="mb-4"
+            @keydown.enter="submitNewView"></v-text-field>
+          <div v-if="newViewThumbnailURL">
+            This thumbnail will be saved as a visual reference, but loading the view
+            later may result in slight differences (e.g. newly created objects appearing in lists)</div>
+          <v-img v-if="newViewThumbnailURL" :src="newViewThumbnailURL"></v-img>
+          <div v-else>Loading thumbnail...</div>
+        </v-card-text>
+        <v-card-actions style="text-align: right;">
+          <v-btn @click="cancelCreateView" variant="tonal">
+            Cancel
+          </v-btn>
+          <v-btn color="primary" :disabled="!newViewValid || !newViewThumbnail" @click="submitNewView">
+            Create
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog :model-value="viewToDelete !== undefined" width="500">
+      <v-card>
+        <v-card-title>
+          Delete View
+          <v-btn class="close-button transparent" variant="flat" icon @click="viewToDelete = undefined">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text v-if="viewToDelete">
+          Are you sure you want to delete view "{{ viewToDelete.name }}"?
+        </v-card-text>
+        <v-card-actions style="text-align: right;">
+          <v-btn @click="viewToDelete = undefined" variant="tonal">
+            Cancel
+          </v-btn>
+          <v-btn color="error" variant="tonal" @click="submitDeleteView()">
+            <v-icon color="error" class="mr-1">mdi-delete</v-icon>
+            Delete
           </v-btn>
         </v-card-actions>
       </v-card>

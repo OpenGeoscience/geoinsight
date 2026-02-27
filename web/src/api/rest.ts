@@ -21,6 +21,7 @@ import {
   TaskResult,
   Colormap,
   Basemap,
+  View,
 } from "@/types";
 
 export async function getUsers(): Promise<User[]> {
@@ -259,4 +260,23 @@ export async function updateColormap(colormap: Colormap): Promise<Colormap> {
 
 export async function deleteColormap(colormapId: number): Promise<Colormap> {
   return (await apiClient.delete(`colormaps/${colormapId}/`)).data;
+}
+
+export async function getView(viewId: number): Promise<View> {
+  return (await apiClient.get(
+    `views/${viewId}`,
+    {errorMsg: 'Could not load view. Ensure that view ID in URL is correct.'},
+  )).data;
+}
+
+export async function getProjectViews(projectId: number): Promise<View[]> {
+  return (await apiClient.get(`views/?project=${projectId}`)).data.results;
+}
+
+export async function createView(view: View): Promise<any> {
+  return (await apiClient.post('views/', view)).data;
+}
+
+export async function deleteView(view: View): Promise<any> {
+  return (await apiClient.delete(`views/${view.id}/`,)).data;
 }
