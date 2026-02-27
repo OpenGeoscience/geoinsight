@@ -14,7 +14,7 @@ module "django" {
   route53_zone_id        = aws_route53_zone.this.zone_id
   heroku_team_name       = data.heroku_team.this.name
   subdomain_name         = "api"
-  django_settings_module = "geodatalytics.settings.heroku_production"
+  django_settings_module = "uvdat.settings.heroku_production"
 
   ec2_worker_instance_quantity = 1
   ec2_worker_ssh_public_key    = file("${path.module}/ssh-key.pub")
