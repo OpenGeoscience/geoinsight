@@ -6,15 +6,12 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from uvdat.core.models import Chart
-from uvdat.core.rest.access_control import GuardianFilter, GuardianPermission
 from uvdat.core.rest.serializers import ChartSerializer, FileItemSerializer
 
 
 class ChartViewSet(ModelViewSet):
     queryset = Chart.objects.all()
     serializer_class = ChartSerializer
-    permission_classes = [GuardianPermission]
-    filter_backends = [GuardianFilter]
 
     def get_queryset(self):
         qs = super().get_queryset()
