@@ -6,7 +6,6 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from uvdat.core.models import Dataset, FileItem, RasterData, VectorData
-from uvdat.core.rest.access_control import GuardianFilter, GuardianPermission
 from uvdat.core.rest.serializers import (
     FileItemSerializer,
     RasterDataSerializer,
@@ -17,8 +16,6 @@ from uvdat.core.rest.serializers import (
 class FileItemViewSet(ModelViewSet):
     queryset = FileItem.objects.all()
     serializer_class = FileItemSerializer
-    permission_classes = [GuardianPermission]
-    filter_backends = [GuardianFilter]
 
     def get_queryset(self):
         qs = super().get_queryset()

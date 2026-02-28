@@ -7,7 +7,6 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from uvdat.core.models import Network
-from uvdat.core.rest.access_control import GuardianFilter, GuardianPermission
 from uvdat.core.rest.serializers import (
     NetworkEdgeSerializer,
     NetworkNodeSerializer,
@@ -26,8 +25,6 @@ class GCCResultSerializer(serializers.Serializer):
 class NetworkViewSet(ModelViewSet):
     queryset = Network.objects.all()
     serializer_class = NetworkSerializer
-    permission_classes = [GuardianPermission]
-    filter_backends = [GuardianFilter]
 
     @action(detail=True, methods=["get"])
     def nodes(self, request, **kwargs):

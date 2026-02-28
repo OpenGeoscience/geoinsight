@@ -10,7 +10,6 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from uvdat.core.models import Project
-from uvdat.core.rest.access_control import GuardianFilter, GuardianPermission
 from uvdat.core.rest.serializers import ProjectPermissionsSerializer, ProjectSerializer
 
 if typing.TYPE_CHECKING:
@@ -20,8 +19,6 @@ if typing.TYPE_CHECKING:
 class ProjectViewSet(ModelViewSet):
     queryset = Project.objects.all().order_by("name")
     serializer_class = ProjectSerializer
-    permission_classes = [GuardianPermission]
-    filter_backends = [GuardianFilter]
 
     def perform_create(self, serializer):
         project: Project = serializer.save()

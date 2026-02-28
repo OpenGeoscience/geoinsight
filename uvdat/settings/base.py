@@ -130,7 +130,12 @@ REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] += [
     "rest_framework.authentication.TokenAuthentication",
 ]
 # Overwrite this
-REST_FRAMEWORK["DEFAULT_PERMISSION_CLASSES"] = ["rest_framework.permissions.IsAuthenticated"]
+REST_FRAMEWORK["DEFAULT_PERMISSION_CLASSES"] = [
+    "uvdat.core.rest.access_control.GuardianPermission"
+]
+REST_FRAMEWORK["DEFAULT_FILTER_BACKENDS"] = [
+    "uvdat.core.rest.access_control.GuardianFilter"
+]
 
 CORS_ALLOWED_ORIGINS: list[str] = env.list("DJANGO_CORS_ALLOWED_ORIGINS", cast=str, default=[])
 CORS_ALLOWED_ORIGIN_REGEXES: list[str] = env.list(

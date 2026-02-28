@@ -12,7 +12,6 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from uvdat.core.models import RasterData, VectorData, VectorFeature
-from uvdat.core.rest.access_control import GuardianFilter, GuardianPermission
 from uvdat.core.rest.explorer import IPyLeafletTokenAuth
 from uvdat.core.rest.serializers import RasterDataSerializer, VectorDataSerializer
 
@@ -84,8 +83,6 @@ def get_filter_string(filters: dict | None = None):
 
 
 class GenericDataViewSet(GenericViewSet, mixins.RetrieveModelMixin):
-    permission_classes = [GuardianPermission]
-    filter_backends = [GuardianFilter]
 
     @property
     def authentication_classes(self):
