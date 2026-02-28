@@ -7,7 +7,6 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from uvdat.core.models import Layer, LayerFrame, LayerStyle
-from uvdat.core.rest.access_control import GuardianFilter, GuardianPermission
 from uvdat.core.rest.serializers import (
     LayerFrameSerializer,
     LayerSerializer,
@@ -18,8 +17,6 @@ from uvdat.core.rest.serializers import (
 class LayerViewSet(ReadOnlyModelViewSet):
     queryset = Layer.objects.select_related("dataset").all()
     serializer_class = LayerSerializer
-    permission_classes = [GuardianPermission]
-    filter_backends = [GuardianFilter]
 
     @action(detail=True, methods=["get"])
     def frames(self, request, **kwargs):
@@ -32,15 +29,11 @@ class LayerViewSet(ReadOnlyModelViewSet):
 class LayerFrameViewSet(ReadOnlyModelViewSet):
     queryset = LayerFrame.objects.all()
     serializer_class = LayerFrameSerializer
-    permission_classes = [GuardianPermission]
-    filter_backends = [GuardianFilter]
 
 
 class LayerStyleViewSet(ModelViewSet):
     queryset = LayerStyle.objects.all()
     serializer_class = LayerStyleSerializer
-    permission_classes = [GuardianPermission]
-    filter_backends = [GuardianFilter]
 
     def get_queryset(self):
         qs = super().get_queryset()

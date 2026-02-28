@@ -6,10 +6,6 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from uvdat.core.models import Project, TaskResult
-from uvdat.core.rest.access_control import (
-    GuardianFilter,
-    GuardianPermission,
-)
 import uvdat.core.rest.serializers as uvdat_serializers
 from uvdat.core.tasks.analytics import analysis_types
 
@@ -17,8 +13,6 @@ from uvdat.core.tasks.analytics import analysis_types
 class AnalyticsViewSet(ReadOnlyModelViewSet):
     queryset = TaskResult.objects.all()
     serializer_class = uvdat_serializers.TaskResultSerializer
-    permission_classes = [GuardianPermission]
-    filter_backends = [GuardianFilter]
 
     @action(
         detail=False,
