@@ -128,128 +128,134 @@ def sort_graph_centrality(g, measure):
 
 @shared_task
 def network_recovery(result_id):
+    import logging
+
+    logger = logging.getLogger(__name__)
     result = TaskResult.objects.get(id=result_id)
 
-    try:
-        # Verify inputs
-        failure = None
-        failure_id = result.inputs.get("network_failure")
-        if failure_id is None:
-            result.write_error("Network failure result not provided")
+    # Input validation
+    failure = None
+    failure_id = result.inputs.get("network_failure")
+    if failure_id is None:
+        result.write_error("Network failure result not provided")
+    else:
+        try:
+            failure = TaskResult.objects.get(id=failure_id)
+        except TaskResult.DoesNotExist:
+            result.write_error("Network failure result not found")
+
+    mode = result.inputs.get("recovery_mode")
+    if mode is None:
+        result.write_error("Recovery mode not provided")
+    elif mode not in RECOVERY_MODES:
+        result.write_error("Recovery mode not a valid option")
+
+    if failure is not None:
+        network_id = failure.inputs.get("network")
+        if network_id is None:
+            result.write_error("Network not provided")
         else:
             try:
-                failure = TaskResult.objects.get(id=failure_id)
-            except TaskResult.DoesNotExist:
-                result.write_error("Network failure result not found")
+                network = Network.objects.get(id=network_id)
+            except Network.DoesNotExist:
+                result.write_error("Network not found")
 
-        mode = result.inputs.get("recovery_mode")
-        if mode is None:
-            result.write_error("Recovery mode not provided")
-        elif mode not in RECOVERY_MODES:
-            result.write_error("Recovery mode not a valid option")
+    if result.error:
+        result.complete()
+        return
 
-        if failure is not None:
-            network_id = failure.inputs.get("network")
-            if network_id is None:
-                result.write_error("Network not provided")
-            else:
-                try:
-                    network = Network.objects.get(id=network_id)
-                except Network.DoesNotExist:
-                    result.write_error("Network not found")
+    try:
+        # Update name
+        result.name = f"{mode.title()} Recovery from Failure Result {failure.id}"
+        result.save()
 
-        # Run task
-        if not result.error:
-            # Update name
-            result.name = f"{mode.title()} Recovery from Failure Result {failure.id}"
-            result.save()
+        result.write_status("Reading network failure state...")
+        node_failures = failure.outputs.get("failures")
+        frames = sorted(int(key) for key in node_failures)
+        last_frame_failures = node_failures[str(frames[-1])]
+        node_recoveries = last_frame_failures.copy()
+        graph = get_network_graph(network)
 
-            result.write_status("Reading network failure state...")
-            node_failures = failure.outputs.get("failures")
-            frames = sorted(int(key) for key in node_failures)
-            last_frame_failures = node_failures[str(frames[-1])]
-            node_recoveries = last_frame_failures.copy()
-            graph = get_network_graph(network)
+        result.write_status("Sorting failed nodes according to recovery mode...")
+        if mode == "random":
+            random.shuffle(node_recoveries)
+        else:
+            nodes_sorted, _edge_list = sort_graph_centrality(graph, mode)
+            node_recoveries.sort(key=nodes_sorted.index)
 
-            result.write_status("Sorting failed nodes according to recovery mode...")
-            if mode == "random":
-                random.shuffle(node_recoveries)
-            else:
-                nodes_sorted, _edge_list = sort_graph_centrality(graph, mode)
-                node_recoveries.sort(key=nodes_sorted.index)
+        recovery_timesteps = {
+            i: [n for n in last_frame_failures if n not in node_recoveries[:i]]
+            for i in range(len(node_recoveries) + 1)
+        }
 
-            recovery_timesteps = {
-                i: [n for n in last_frame_failures if n not in node_recoveries[:i]]
-                for i in range(len(node_recoveries) + 1)
-            }
+        result.write_status("Creating GCC chart...")
+        timesteps = []
+        n_deactivated_values = []
+        gcc_values = []
 
-            result.write_status("Creating GCC chart...")
-            timesteps = []
-            n_deactivated_values = []
-            gcc_values = []
+        def get_gcc(deactivated):
+            remaining_graph = graph.copy()
+            remaining_graph.remove_nodes_from(deactivated)
+            components = list(nx.connected_components(remaining_graph))
+            return max(components, key=len)
 
-            def get_gcc(deactivated):
-                remaining_graph = graph.copy()
-                remaining_graph.remove_nodes_from(deactivated)
-                components = list(nx.connected_components(remaining_graph))
-                return max(components, key=len)
+        for i, nodes in enumerate(node_failures.values()):
+            timesteps.append(i)
+            n_deactivated_values.append(len(nodes))
+            gcc_values.append(len(get_gcc(nodes)))
+        for i, nodes in enumerate(recovery_timesteps.values()):
+            timesteps.append(len(node_failures) + i)
+            n_deactivated_values.append(len(nodes))
+            gcc_values.append(len(get_gcc(nodes)))
 
-            for i, nodes in enumerate(node_failures.values()):
-                timesteps.append(i)
-                n_deactivated_values.append(len(nodes))
-                gcc_values.append(len(get_gcc(nodes)))
-            for i, nodes in enumerate(recovery_timesteps.values()):
-                timesteps.append(len(node_failures) + i)
-                n_deactivated_values.append(len(nodes))
-                gcc_values.append(len(get_gcc(nodes)))
+        chart, _ = Chart.objects.get_or_create(
+            name=f"Network GCC Changes for {mode.title()} Recovery After {failure.name}",
+            description=(
+                "Number of nodes in the network's greatest connected component "
+                "over time during network outages and recoveries"
+            ),
+            project=result.project,
+        )
+        chart.metadata = {
+            "source": "Generated by Network Recovery Analysis Task",
+            "created": timezone.now().strftime("%d/%m/%Y %H:%M"),
+            "node_failures": node_failures,
+            "node_recoveries": recovery_timesteps,
+        }
+        chart.chart_data = {
+            "labels": timesteps,
+            "datasets": [
+                {
+                    "data": n_deactivated_values,
+                    "label": "Deactivated Nodes",
+                    "borderColor": "#ff0000",
+                    "backgroundColor": "#ff0000",
+                },
+                {
+                    "data": gcc_values,
+                    "label": "Greatest Connected Component",
+                    "borderColor": "#0000ff",
+                    "backgroundColor": "#0000ff",
+                },
+            ],
+        }
+        chart.chart_options = {
+            "chart_title": "Greatest Connected Component versus Deactivated Nodes Over Time",
+            "x_title": "Timestep in Network Event",
+            "y_title": "Number of nodes",
+        }
+        chart.save()
 
-            chart, _ = Chart.objects.get_or_create(
-                name=f"Network GCC Changes for {mode.title()} Recovery After {failure.name}",
-                description=(
-                    "Number of nodes in the network's greatest connected component "
-                    "over time during network outages and recoveries"
-                ),
-                project=result.project,
-            )
-            chart.metadata = {
-                "source": "Generated by Network Recovery Analysis Task",
-                "created": timezone.now().strftime("%d/%m/%Y %H:%M"),
-                "node_failures": node_failures,
-                "node_recoveries": recovery_timesteps,
-            }
-            chart.chart_data = {
-                "labels": timesteps,
-                "datasets": [
-                    {
-                        "data": n_deactivated_values,
-                        "label": "Deactivated Nodes",
-                        "borderColor": "#ff0000",
-                        "backgroundColor": "#ff0000",
-                    },
-                    {
-                        "data": gcc_values,
-                        "label": "Greatest Connected Component",
-                        "borderColor": "#0000ff",
-                        "backgroundColor": "#0000ff",
-                    },
-                ],
-            }
-            chart.chart_options = {
-                "chart_title": "Greatest Connected Component versus Deactivated Nodes Over Time",
-                "x_title": "Timestep in Network Event",
-                "y_title": "Number of nodes",
-            }
-            chart.save()
+        # resiliency score equals area under gcc curve with outages
+        # over area under gcc curve without outages
+        resiliency = sum(gcc_values) / (network.nodes.count() * len(gcc_values))
 
-            # resiliency score equals area under gcc curve with outages
-            # over area under gcc curve without outages
-            resiliency = sum(gcc_values) / (network.nodes.count() * len(gcc_values))
-
-            result.outputs = {
-                "recoveries": recovery_timesteps,
-                "gcc_chart": chart.id,
-                "resiliency_score": resiliency,
-            }
-    except Exception as e:
-        result.error = str(e)
+        result.outputs = {
+            "recoveries": recovery_timesteps,
+            "gcc_chart": chart.id,
+            "resiliency_score": resiliency,
+        }
+    except Exception:
+        logger.exception()
+        result.error = "An error occurred during this task. See logs for details."
     result.complete()

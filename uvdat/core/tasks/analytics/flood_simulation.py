@@ -60,25 +60,30 @@ class FloodSimulation(AnalysisType):
 
 @shared_task
 def flood_simulation(result_id):
+    import logging
     from uvdat_flood_sim import run_sim, write_multiframe_geotiff
 
+    logger = logging.getLogger(__name__)
     result = TaskResult.objects.get(id=result_id)
 
-    try:
-        for input_key in [
-            "initial_conditions_id",
-            "time_period",
-            "hydrograph",
-            "potential_evapotranspiration_percentile",
-            "soil_moisture_percentile",
-            "ground_water_percentile",
-            "annual_probability",
-        ]:
-            if result.inputs.get(input_key) is None:
-                result.write_error(f"{input_key} not provided")
-                result.complete()
-                return
+    # Input validation
+    for input_key in [
+        "initial_conditions_id",
+        "time_period",
+        "hydrograph",
+        "potential_evapotranspiration_percentile",
+        "soil_moisture_percentile",
+        "ground_water_percentile",
+        "annual_probability",
+    ]:
+        if result.inputs.get(input_key) is None:
+            result.write_error(f"{input_key} not provided")
 
+    if result.error:
+        result.complete()
+        return
+
+    try:
         result.write_status("Interpreting input values")
         initial_conditions_id = result.inputs.get("initial_conditions_id")
         time_period = result.inputs.get("time_period")
@@ -209,6 +214,8 @@ def flood_simulation(result_id):
             )
 
             result.outputs = {"flood": dataset.id}
-    except Exception as e:
-        result.error = str(e)
+
+    except Exception:
+        logger.exception()
+        result.error = "An error occurred during this task. See logs for details."
     result.complete()
