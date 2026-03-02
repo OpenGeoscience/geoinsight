@@ -81,7 +81,7 @@ def geoai_segmentation(result_id):
                 result.write_error("Aerial imagery raster data not found")
 
         # Run task
-        if result.error is None:
+        if not result.error:
             import geoai
 
             # Update name

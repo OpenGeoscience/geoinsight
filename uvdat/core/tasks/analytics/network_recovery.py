@@ -159,7 +159,7 @@ def network_recovery(result_id):
                     result.write_error("Network not found")
 
         # Run task
-        if result.error is None:
+        if not result.error:
             # Update name
             result.name = f"{mode.title()} Recovery from Failure Result {failure.id}"
             result.save()

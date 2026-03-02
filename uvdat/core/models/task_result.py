@@ -34,9 +34,7 @@ class TaskResult(models.Model):
         return f"{self.name} ({self.id})"
 
     def write_error(self, err):
-        if self.error is None:
-            self.error = ""
-        else:
+        if self.error:
             self.error += ", "
         self.error += err
         self.save()

@@ -105,7 +105,7 @@ def flood_network_failure(result_id):
                 result.write_error("Station radius must be greater than 10")
 
         # Run task
-        if result.error is None:
+        if not result.error:
             # Update name
             result.name = (
                 f"Failures for Network {network.id} with Flood Result {flood_sim.id}, "
