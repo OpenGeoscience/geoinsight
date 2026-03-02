@@ -312,12 +312,12 @@ watch(newBasemapStyleJSON, createNewBasemapPreview)
             <div class="control-menu-row">
               <v-checkbox v-model="mapOnly" label="Map Only" density="compact" hide-details />
             </div>
-            <div class="control-menu-row" @click="copyScreenshot">
-              <div>Copy image to clipboard</div>
-            </div>
-            <div class="control-menu-row" @click="saveScreenshot">
-              <div>Save image</div>
-            </div>
+            <v-btn class="control-menu-row" @click="copyScreenshot">
+              Copy image to clipboard
+            </v-btn>
+            <v-btn class="control-menu-row" @click="saveScreenshot">
+              Save image
+            </v-btn>
           </v-card-text>
         </v-card>
       </v-menu>
