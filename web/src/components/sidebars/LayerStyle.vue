@@ -160,7 +160,7 @@ function selectStyle(style: LayerStyle) {
 function fetchRasterBands() {
     if (!currentStyleSpec.value) return
     if (showRasterOptions.value) {
-        setGroupColorMode('all', 'colormap')
+        setGroupColorMode('all', 'none')
         if (frames.value.length) {
             if (currentFrame.value?.raster) {
                 rasterBands.value = currentFrame.value.raster.metadata.bands;
@@ -209,7 +209,7 @@ function setCurrentColorGroups(different: boolean | null) {
             currentStyleSpec.value.colors = availableGroups.value.map((name) => {
                 return { ...all, visible: true, use_feature_props: true, name }
             })
-            availableGroups.value.forEach((name) => setGroupColorMode(name, 'colormap'))
+            availableGroups.value.forEach((name) => setGroupColorMode(name, 'none'))
         } else if (showVectorOptions.value) {
             currentStyleSpec.value.colors = availableGroups.value.map((name) => {
                 return { ...JSON.parse(JSON.stringify(all)), visible: true, name }
@@ -228,7 +228,7 @@ function setCurrentColorGroups(different: boolean | null) {
         } else {
             currentStyleSpec.value.colors = [...defaultStyle.colors]
         }
-        if (showRasterOptions.value) setGroupColorMode('all', 'colormap')
+        if (showRasterOptions.value) setGroupColorMode('all', 'none')
         currentGroups.value['color'] = 'all'
     }
 }
@@ -250,8 +250,10 @@ function setGroupColorMode(groupName: string, colorMode: string) {
                         },
                         single_color: undefined,
                     }
-                } else if (!c.single_color) {
+                } else if (colorMode === 'single_color' && !c.single_color) {
                     return {...c, colormap: undefined, single_color: styleStore.getDefaultColor(props.layer.id)}
+                } else if (colorMode === 'none') {
+                  return {...c, colormap: undefined, single_color: undefined}
                 }
             }
             return c
@@ -523,7 +525,7 @@ onMounted(resetCurrentStyle)
             />
         </template>
         <v-card v-if="currentStyleSpec" class="layer-style-card mt-5" color="background" width="510">
-            <div class="px-4 py-2" style="background-color: rgb(var(--v-theme-surface)); height: 40px">
+            <div class="px-4 py-2" style="background-color: rgb(var(--v-theme-surface)); min-height: 40px">
                 Edit Style
                 <span class="secondary-text">(Layer: {{ layer.name }})</span>
 
@@ -659,6 +661,47 @@ onMounted(resetCurrentStyle)
                                             </td>
                                         </tr>
                                         <tr>
+                                            <td><v-label :class="group.visible ? '' : 'helper-text'">Color scheme</v-label></td>
+                                            <td>
+                                                <div class="d-flex" style="align-items: center;">
+                                                    <v-btn-toggle
+                                                        :model-value="group.single_color ? 'single_color' : group.colormap ? 'colormap' : 'none'"
+                                                        density="compact"
+                                                        variant="outlined"
+                                                        divided
+                                                        mandatory
+                                                        :disabled="!group.visible"
+                                                        @update:model-value="(value: string) => setGroupColorMode(group.name, value)"
+                                                    >
+                                                        <v-btn :value="'none'">None</v-btn>
+                                                        <v-btn :value="'single_color'">1 Color</v-btn>
+                                                        <v-btn :value="'colormap'">Colormap</v-btn>
+                                                    </v-btn-toggle>
+                                                    <v-menu
+                                                        v-if="group.single_color"
+                                                        :disabled="!group.visible"
+                                                        :close-on-content-click="false"
+                                                        open-on-hover
+                                                        location="end"
+                                                    >
+                                                        <template v-slot:activator="{ props }">
+                                                            <div
+                                                                v-bind="props"
+                                                                class="color-square"
+                                                                :style="{backgroundColor: group.single_color, opacity: group.visible ? 1 : 0.5}"
+                                                            ></div>
+                                                        </template>
+                                                        <v-card>
+                                                            <v-color-picker
+                                                                v-model:model-value="group.single_color"
+                                                                mode="rgb"
+                                                            />
+                                                        </v-card>
+                                                    </v-menu>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr v-if="group.colormap">
                                             <td><v-label :class="group.visible ? '' : 'helper-text'">Colormap</v-label></td>
                                             <td>
                                                 <v-select
@@ -722,7 +765,7 @@ onMounted(resetCurrentStyle)
                                                 </v-select>
                                             </td>
                                         </tr>
-                                        <tr>
+                                        <tr v-if="group.colormap">
                                             <td><v-label :class="group.visible && getColormap(group.colormap)?.markers ? '' : 'helper-text'">Colormap class</v-label></td>
                                             <td>
                                                 <v-btn-toggle
@@ -739,7 +782,7 @@ onMounted(resetCurrentStyle)
                                                 </v-btn-toggle>
                                             </td>
                                         </tr>
-                                        <tr>
+                                        <tr v-if="group.colormap">
                                             <td><v-label :class="group.visible && getColormap(group.colormap)?.markers && group.colormap?.discrete ? '' : 'helper-text'">No. of colors</v-label></td>
                                             <td>
                                                 <SliderNumericInput
@@ -751,7 +794,7 @@ onMounted(resetCurrentStyle)
                                                 />
                                             </td>
                                         </tr>
-                                        <tr>
+                                        <tr v-if="group.colormap">
                                             <td><v-label :class="group.visible && getColormap(group.colormap)?.markers ? '' : 'helper-text'">Range</v-label></td>
                                             <td>
                                                 <SliderNumericInput
@@ -764,7 +807,7 @@ onMounted(resetCurrentStyle)
                                                 />
                                             </td>
                                         </tr>
-                                        <tr>
+                                        <tr v-if="group.colormap">
                                             <td>
                                                 <v-label :class="group.visible && getColormap(group.colormap)?.markers ? '' : 'helper-text'">Clamping</v-label>
                                                 <v-icon
