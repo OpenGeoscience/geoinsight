@@ -62,17 +62,25 @@ def metadata_for_row(row):
 
 @shared_task
 def create_road_network(result_id):
+    import logging
+
     import osmnx
     from xdg_base_dirs import xdg_cache_home
 
+    logger = logging.getLogger(__name__)
     osmnx.settings.cache_folder = xdg_cache_home() / "osmnx"
-
     result = TaskResult.objects.get(id=result_id)
-    try:
-        location = result.inputs.get("location")
-        if location is None:
-            raise ValueError("location not provided")
 
+    # Input validation
+    location = result.inputs.get("location")
+    if location is None:
+        result.write_error("Location not provided")
+
+    if result.error:
+        result.complete()
+        return
+
+    try:
         result.write_status("Fetching road data via OSMnx...")
         roads = osmnx.graph_from_place(location, network_type="drive")
         road_nodes, road_edges = osmnx.graph_to_gdfs(roads)
@@ -149,6 +157,8 @@ def create_road_network(result_id):
         vector_data.get_summary()
 
         result.outputs = {"roads": dataset.id}
-    except Exception as e:
-        result.error = str(e)
+
+    except Exception:
+        logger.exception()
+        result.error = "An error occurred during this task. See logs for details."
     result.complete()
