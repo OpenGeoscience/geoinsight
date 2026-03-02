@@ -102,7 +102,7 @@ def create_network(vector_data, network_options):
                 from_node_obj.vector_feature = VectorFeature.objects.create(
                     vector_data=vector_data,
                     geometry=from_node_obj.location,
-                    properties=from_node_obj.metadata | dict(node_id=from_node_obj.id),
+                    properties=from_node_obj.metadata | {"node_id": from_node_obj.id},
                 )
                 from_node_obj.save()
 
@@ -138,7 +138,7 @@ def create_network(vector_data, network_options):
                     to_node_obj.vector_feature = VectorFeature.objects.create(
                         vector_data=vector_data,
                         geometry=to_node_obj.location,
-                        properties=to_node_obj.metadata | dict(node_id=to_node_obj.id),
+                        properties=to_node_obj.metadata | {"node_id": to_node_obj.id},
                     )
                     to_node_obj.save()
 
@@ -182,11 +182,11 @@ def create_network(vector_data, network_options):
                     vector_data=vector_data,
                     geometry=edge.line_geometry,
                     properties=edge.metadata
-                    | dict(
-                        from_node_id=from_node_obj.id,
-                        to_node_id=to_node_obj.id,
-                        edge=edge.id,
-                    ),
+                    | {
+                        "from_node_id": from_node_obj.id,
+                        "to_node_id": to_node_obj.id,
+                        "edge_id": edge.id,
+                    },
                 )
                 edge.save()
 
