@@ -12,4 +12,3 @@ class ViewStateViewSet(ModelViewSet):
     serializer_class = ViewStateSerializer
     permission_classes = [GuardianPermission]
     filter_backends = [GuardianFilter]
-    lookup_field = "id"
