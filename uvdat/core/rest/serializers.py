@@ -67,7 +67,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     def get_center(self, obj):
         # Web client expects Lon, Lat
         if obj.default_map_center:
-            return [obj.default_map_center.y, obj.default_map_center.x]
+            return [obj.default_map_center.x, obj.default_map_center.y]
         return None
 
     def get_owner(self, obj: Project):
@@ -90,7 +90,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         center = data.get("default_map_center")
         data = super().to_internal_value(data)
         if isinstance(center, list):
-            data["default_map_center"] = Point(center[1], center[0])
+            data["default_map_center"] = Point(center[0], center[1])
         return data
 
     class Meta:
@@ -290,14 +290,14 @@ class ViewStateSerializer(serializers.ModelSerializer):
     def get_center(self, obj):
         # Web client expects Lon, Lat
         if obj.map_center:
-            return [obj.map_center.y, obj.map_center.x]
+            return [obj.map_center.x, obj.map_center.y]
         return None
 
     def to_internal_value(self, data):
         center = data.get("map_center")
         data = super().to_internal_value(data)
         if isinstance(center, list):
-            data["map_center"] = Point(center[1], center[0])
+            data["map_center"] = Point(center[0], center[1])
         return data
 
     class Meta:
