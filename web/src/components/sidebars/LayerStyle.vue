@@ -128,7 +128,7 @@ async function init() {
 }
 
 function resetCurrentStyle() {
-    if (projectStore.currentView && !projectStore.currentViewLoaded) {
+    if (projectStore.currentViewState && !projectStore.currentViewStateLoaded) {
       // If styles are being applied from a view, don't overwrite them
       return
     }
