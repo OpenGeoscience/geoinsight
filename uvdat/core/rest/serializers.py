@@ -23,7 +23,7 @@ from uvdat.core.models import (
     Region,
     TaskResult,
     VectorData,
-    View,
+    ViewState,
 )
 
 
@@ -284,7 +284,7 @@ class TaskResultSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ViewSerializer(serializers.ModelSerializer):
+class ViewStateSerializer(serializers.ModelSerializer):
     map_center = serializers.SerializerMethodField("get_center")
 
     def get_center(self, obj):
@@ -301,5 +301,5 @@ class ViewSerializer(serializers.ModelSerializer):
         return data
 
     class Meta:
-        model = View
+        model = ViewState
         fields = "__all__"

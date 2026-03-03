@@ -450,7 +450,7 @@ export interface FileItem {
   metadata: Record<string, any>;
 }
 
-export interface View {
+export interface ViewState {
   id?: number;
   name?: string;
   project: number;

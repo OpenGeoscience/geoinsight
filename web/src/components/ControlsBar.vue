@@ -10,9 +10,9 @@ import { validateStyleMin } from '@maplibre/maplibre-gl-style-spec';
 
 import { useAppStore, useLayerStore, useMapStore, useProjectStore } from "@/store";
 import { useMapCompareStore } from "@/store/compare";
-import { createBasemap, createView, deleteView, uploadFile } from "@/api/rest";
+import { createBasemap, createViewState, deleteViewState, uploadFile } from "@/api/rest";
 import { storeToRefs } from "pinia";
-import { View } from "@/types";
+import { ViewState } from "@/types";
 
 const appStore = useAppStore();
 const layerStore = useLayerStore();
@@ -39,16 +39,16 @@ const newBasemapValid = computed(() => (
   !jsonErrors.value.length
 ))
 
-const showViewCreation = ref(false);
-const viewToDelete = ref();
-const newViewName = ref('');
-const newViewThumbnail = ref();
-const newViewThumbnailURL = computed(() => {
-  if (!newViewThumbnail.value) return null;
-  return URL.createObjectURL(newViewThumbnail.value);
+const showViewStateCreation = ref(false);
+const viewStateToDelete = ref();
+const newViewStateName = ref('');
+const newViewStateThumbnail = ref();
+const newViewStateThumbnailURL = computed(() => {
+  if (!newViewStateThumbnail.value) return null;
+  return URL.createObjectURL(newViewStateThumbnail.value);
 })
-const newViewValid = computed(() => {
-  return newViewName.value.length && !projectStore.availableViews.map((v) => v.name).includes(newViewName.value)
+const newViewStateValid = computed(() => {
+  return newViewStateName.value.length && !projectStore.availableViewStates.map((v) => v.name).includes(newViewStateName.value)
 })
 const userHasEditPermission = computed(() => {
   const user = appStore.currentUser;
@@ -221,46 +221,46 @@ function animateCameraFlash() {
   }, 200);
 }
 
-function showViewDialog() {
+function showViewStateDialog() {
   takeScreenshot().then((blob) => {
-    newViewThumbnail.value = blob
+    newViewStateThumbnail.value = blob
   })
-  showViewCreation.value = true;
+  showViewStateCreation.value = true;
 }
 
-function cancelCreateView() {
-  newViewName.value = '';
-  newViewThumbnail.value = undefined;
-  showViewCreation.value = false;
+function cancelCreateViewState() {
+  newViewStateName.value = '';
+  newViewStateThumbnail.value = undefined;
+  showViewStateCreation.value = false;
 }
 
-function submitNewView() {
-  if (newViewValid.value && newViewThumbnail.value) {
-    const thumbnailFile = new File([newViewThumbnail.value], 'thumbnail.png', { type: 'image/png' })
+function submitNewViewState() {
+  if (newViewStateValid.value && newViewStateThumbnail.value) {
+    const thumbnailFile = new File([newViewStateThumbnail.value], 'thumbnail.png', { type: 'image/png' })
     uploadFile(thumbnailFile).then((thumbnailURL) => {
-      const view = projectStore.getCurrentView()
-      if (view) {
-        view.name = newViewName.value;
-        view.thumbnail = thumbnailURL;
-        createView(view).then((createdView) => {
-          cancelCreateView();
-          projectStore.fetchProjectViews();
-          projectStore.navigateToView(createdView);
+      const viewState = projectStore.getCurrentViewState()
+      if (viewState) {
+        viewState.name = newViewStateName.value;
+        viewState.thumbnail = thumbnailURL;
+        createViewState(viewState).then((createdViewState) => {
+          cancelCreateViewState();
+          projectStore.fetchProjectViewStates();
+          projectStore.navigateToViewState(createdViewState);
         })
       }
     })
   }
 }
 
-function submitDeleteView() {
-  deleteView(viewToDelete.value).then(() => {
-    viewToDelete.value = undefined
-    projectStore.fetchProjectViews();
+function submitDeleteViewState() {
+  deleteViewState(viewStateToDelete.value).then(() => {
+    viewStateToDelete.value = undefined
+    projectStore.fetchProjectViewStates();
   })
 }
 
-function copyViewLink(view: View) {
-  const url = `${window.location.origin}/view/${view.id}`
+function copyViewStateLink(viewState: ViewState) {
+  const url = `${window.location.origin}/view/${viewState.id}`
   navigator.clipboard.writeText(url);
 }
 
@@ -327,31 +327,31 @@ watch(newBasemapStyleJSON, createNewBasemapPreview)
       <v-icon icon="mdi-share" style="position: absolute; left: 15px; top: 8px; max-width: 10px"></v-icon>
       <v-menu activator="parent" :open-on-hover="true" :close-on-content-click="false" width="450">
         <v-card class="control-menu">
-          <div class="control-menu-title">Saved Views</div>
+          <div class="control-menu-title">Saved View States</div>
           <v-card-text class="pa-3">
-            <v-btn class="control-menu-row" @click="showViewDialog">
-              <div>Save current view</div>
+            <v-btn class="control-menu-row" @click="showViewStateDialog">
+              <div>Save current view state</div>
             </v-btn>
-            <v-list v-if="projectStore.availableViews.length" density="compact" bg-color="transparent">
-              <v-list-item v-for="view in projectStore.availableViews" :key="view.id" class="control-menu-row pa-1"
-                @click="projectStore.navigateToView(view)">
+            <v-list v-if="projectStore.availableViewStates.length" density="compact" bg-color="transparent">
+              <v-list-item v-for="viewState in projectStore.availableViewStates" :key="viewState.id" class="control-menu-row pa-1"
+                @click="projectStore.navigateToViewState(viewState)">
                 <template v-slot:prepend>
-                  <img :src="view.thumbnail" height="70px"></img>
+                  <img :src="viewState.thumbnail" height="70px"></img>
                 </template>
                 <template v-slot:title>
                   <div style="width: 150px; text-wrap: wrap;">
-                    {{ view.name }}
+                    {{ viewState.name }}
                   </div>
                 </template>
                 <template v-slot:append>
-                  <v-btn v-if="userHasEditPermission" icon="mdi-delete" v-tooltip="'Delete this view'" flat
-                    variant="text" @click.stop.prevent="viewToDelete = view"></v-btn>
+                  <v-btn v-if="userHasEditPermission" icon="mdi-delete" v-tooltip="'Delete this view state'" flat
+                    variant="text" @click.stop.prevent="viewStateToDelete = viewState"></v-btn>
                   <v-btn icon="mdi-share" v-tooltip="'Copy shareable link'" flat variant="text"
-                    @click.stop.prevent="copyViewLink(view)"></v-btn>
+                    @click.stop.prevent="copyViewStateLink(viewState)"></v-btn>
                 </template>
               </v-list-item>
             </v-list>
-            <div v-else>No saved views exist for this project.</div>
+            <div v-else>No saved view states exist for this project.</div>
           </v-card-text>
         </v-card>
       </v-menu>
@@ -429,52 +429,52 @@ watch(newBasemapStyleJSON, createNewBasemapPreview)
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog :model-value="showViewCreation" width="500">
+    <v-dialog :model-value="showViewStateCreation" width="500">
       <v-card>
         <v-card-title class="pa-3">
-          New View
-          <v-btn class="close-button transparent" variant="flat" icon @click="cancelCreateView">
+          New View State
+          <v-btn class="close-button transparent" variant="flat" icon @click="cancelCreateViewState">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
         <v-card-text>
-          <span v-if="newViewName.length && !newViewValid">
+          <span v-if="newViewStateName.length && !newViewStateValid">
             Name must not match an existing view in this project.
           </span>
-          <v-text-field v-model="newViewName" label="Name" autofocus hide-details class="mb-4"
-            @keydown.enter="submitNewView"></v-text-field>
-          <div v-if="newViewThumbnailURL">
-            This thumbnail will be saved as a visual reference, but loading the view
+          <v-text-field v-model="newViewStateName" label="Name" autofocus hide-details class="mb-4"
+            @keydown.enter="submitNewViewState"></v-text-field>
+          <div v-if="newViewStateThumbnailURL">
+            This thumbnail will be saved as a visual reference, but loading the view state
             later may result in slight differences (e.g. newly created objects appearing in lists)</div>
-          <v-img v-if="newViewThumbnailURL" :src="newViewThumbnailURL"></v-img>
+          <v-img v-if="newViewStateThumbnailURL" :src="newViewStateThumbnailURL"></v-img>
           <div v-else>Loading thumbnail...</div>
         </v-card-text>
         <v-card-actions style="text-align: right;">
-          <v-btn @click="cancelCreateView" variant="tonal">
+          <v-btn @click="cancelCreateViewState" variant="tonal">
             Cancel
           </v-btn>
-          <v-btn color="primary" :disabled="!newViewValid || !newViewThumbnail" @click="submitNewView">
+          <v-btn color="primary" :disabled="!newViewStateValid || !newViewStateThumbnail" @click="submitNewViewState">
             Create
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog :model-value="viewToDelete !== undefined" width="500">
+    <v-dialog :model-value="viewStateToDelete !== undefined" width="500">
       <v-card>
         <v-card-title>
-          Delete View
-          <v-btn class="close-button transparent" variant="flat" icon @click="viewToDelete = undefined">
+          Delete View State
+          <v-btn class="close-button transparent" variant="flat" icon @click="viewStateToDelete = undefined">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
-        <v-card-text v-if="viewToDelete">
-          Are you sure you want to delete view "{{ viewToDelete.name }}"?
+        <v-card-text v-if="viewStateToDelete">
+          Are you sure you want to delete view state "{{ viewStateToDelete.name }}"?
         </v-card-text>
         <v-card-actions style="text-align: right;">
-          <v-btn @click="viewToDelete = undefined" variant="tonal">
+          <v-btn @click="viewStateToDelete = undefined" variant="tonal">
             Cancel
           </v-btn>
-          <v-btn color="error" variant="tonal" @click="submitDeleteView()">
+          <v-btn color="error" variant="tonal" @click="submitDeleteViewState()">
             <v-icon color="error" class="mr-1">mdi-delete</v-icon>
             Delete
           </v-btn>

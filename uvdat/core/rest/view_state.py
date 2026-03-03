@@ -2,14 +2,14 @@ from __future__ import annotations
 
 from rest_framework.viewsets import ModelViewSet
 
-from uvdat.core.models import View
+from uvdat.core.models import ViewState
 from uvdat.core.rest.access_control import GuardianFilter, GuardianPermission
-from uvdat.core.rest.serializers import ViewSerializer
+from uvdat.core.rest.serializers import ViewStateSerializer
 
 
-class ViewViewSet(ModelViewSet):
-    queryset = View.objects.all()
-    serializer_class = ViewSerializer
+class ViewStateViewSet(ModelViewSet):
+    queryset = ViewState.objects.all()
+    serializer_class = ViewStateSerializer
     permission_classes = [GuardianPermission]
     filter_backends = [GuardianFilter]
     lookup_field = "id"

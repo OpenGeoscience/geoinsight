@@ -25,7 +25,7 @@ from uvdat.core.models import (
     TaskResult,
     VectorData,
     VectorFeature,
-    View,
+    ViewState,
 )
 
 
@@ -143,6 +143,6 @@ class TaskResultAdmin(admin.ModelAdmin):
     list_display = ["id", "task_type", "inputs"]
 
 
-@admin.register(View)
-class ViewAdmin(admin.ModelAdmin):
+@admin.register(ViewState)
+class ViewStateAdmin(admin.ModelAdmin):
     list_display = ["id", "name", "project"]

@@ -21,7 +21,7 @@ import {
   TaskResult,
   Colormap,
   Basemap,
-  View,
+  ViewState,
 } from "@/types";
 
 export async function getUsers(): Promise<User[]> {
@@ -262,21 +262,21 @@ export async function deleteColormap(colormapId: number): Promise<Colormap> {
   return (await apiClient.delete(`colormaps/${colormapId}/`)).data;
 }
 
-export async function getView(viewId: number): Promise<View> {
+export async function getViewState(viewStateId: number): Promise<ViewState> {
   return (await apiClient.get(
-    `views/${viewId}`,
-    {errorMsg: 'Could not load view. Ensure that view ID in URL is correct.'},
+    `view-states/${viewStateId}`,
+    {errorMsg: 'Could not load view state. Ensure that ID in URL is correct.'},
   )).data;
 }
 
-export async function getProjectViews(projectId: number): Promise<View[]> {
-  return (await apiClient.get(`views/?project=${projectId}`)).data.results;
+export async function getProjectViewStates(projectId: number): Promise<ViewState[]> {
+  return (await apiClient.get(`view-states/?project=${projectId}`)).data.results;
 }
 
-export async function createView(view: View): Promise<any> {
-  return (await apiClient.post('views/', view)).data;
+export async function createViewState(viewState: ViewState): Promise<any> {
+  return (await apiClient.post('view-states/', viewState)).data;
 }
 
-export async function deleteView(view: View): Promise<any> {
-  return (await apiClient.delete(`views/${view.id}/`,)).data;
+export async function deleteViewState(viewState: ViewState): Promise<any> {
+  return (await apiClient.delete(`view-states/${viewState.id}/`,)).data;
 }

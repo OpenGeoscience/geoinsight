@@ -3,11 +3,11 @@ import {
     getProjectDatasets,
     getDatasetTags,
     getDatasets,
-    getView,
-    getProjectViews,
+    getViewState,
+    getProjectViewStates,
     getLayer,
 } from '@/api/rest';
-import { Dataset, Project, View } from '@/types';
+import { Dataset, Project, ViewState } from '@/types';
 import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -42,9 +42,9 @@ export const useProjectStore = defineStore('project', () => {
     const allDatasets = ref<Dataset[]>();
     const availableDatasets = ref<Dataset[]>();
     const availableDatasetTags = ref<string[]>([]);
-    const availableViews = ref<View[]>([]);
-    const currentView = ref<View>();
-    const currentViewLoaded = ref<boolean>(false);
+    const availableViewStates = ref<ViewState[]>([]);
+    const currentViewState = ref<ViewState>();
+    const currentViewStateLoaded = ref<boolean>(false);
 
     async function fetchProjectDatasets() {
         if (!currentProject.value) { return; }
@@ -58,16 +58,16 @@ export const useProjectStore = defineStore('project', () => {
         availableDatasetTags.value = await getDatasetTags()
     }
 
-    async function fetchProjectViews() {
+    async function fetchProjectViewStates() {
         if (!currentProject.value) { return; }
-        availableViews.value = await getProjectViews(currentProject.value.id)
+        availableViewStates.value = await getProjectViewStates(currentProject.value.id)
     }
 
-    function getCurrentView(): View | undefined {
+    function getCurrentViewState(): ViewState | undefined {
         if (!currentProject.value) return undefined;
         const mapPosition = mapStore.getCurrentMapPosition();
         // use proportions instead of coordinates
-        // so that the view looks good with other window sizes
+        // so that the view state looks good with other window sizes
         const panelArrangement = panelStore.panelArrangement.map((panelConfig => {
             const copyConfig = { ...panelConfig }
             delete copyConfig.element
@@ -83,7 +83,7 @@ export const useProjectStore = defineStore('project', () => {
         const styleKeysToCurrentFrames = Object.fromEntries(
           includeLayers.map((layer) => [mapStore.uniqueLayerIdFromLayer(layer), layer.current_frame_index])
         )
-        const view: View = {
+        const viewState: ViewState = {
           project: currentProject.value.id,
           current_analysis_type: analysisStore.currentAnalysisType?.db_value,
           current_result: analysisStore.currentResult?.id,
@@ -105,26 +105,26 @@ export const useProjectStore = defineStore('project', () => {
           map_center: mapPosition.center,
           map_zoom: Math.round(mapPosition.zoom),
         }
-        return view;
+        return viewState;
     }
 
-    function navigateToView(view: View) {
-        currentViewLoaded.value = false;
-        router.push(`/view/${view.id}`);
+    function navigateToViewState(viewState: ViewState) {
+        currentViewStateLoaded.value = false;
+        router.push(`/view/${viewState.id}`);
     }
 
-    watch(() => route?.fullPath, loadViewFromURL);
-    async function loadViewFromURL() {
+    watch(() => route?.fullPath, loadViewStateFromURL);
+    async function loadViewStateFromURL() {
         if (!route.path.includes('/view/')) {
-            currentView.value = undefined;
+            currentViewState.value = undefined;
             return;
         };
-        const viewId = parseInt(route.path.split('/view/')[1]);
-        const view = await getView(viewId)
-        if (view) {
-            currentView.value = view;
+        const viewStateId = parseInt(route.path.split('/view/')[1]);
+        const viewState = await getViewState(viewStateId)
+        if (viewState) {
+            currentViewState.value = viewState;
             // Set some state attrs that don't require the project to be loaded first
-            panelStore.panelArrangement = view.panel_arrangement.map((panelConfig) => {
+            panelStore.panelArrangement = viewState.panel_arrangement.map((panelConfig) => {
               if (panelConfig.position) {
                 panelConfig.position = {
                   x: panelConfig.position.x * window.innerWidth,
@@ -134,43 +134,43 @@ export const useProjectStore = defineStore('project', () => {
               return panelConfig;
             });
             appStore.openSidebars = []
-            if (view.left_sidebar_open) appStore.openSidebars.push('left');
-            if (view.right_sidebar_open) appStore.openSidebars.push('right');
+            if (viewState.left_sidebar_open) appStore.openSidebars.push('left');
+            if (viewState.right_sidebar_open) appStore.openSidebars.push('right');
 
-            const selectedProject = availableProjects.value.find((p) => p.id === view.project);
+            const selectedProject = availableProjects.value.find((p) => p.id === viewState.project);
             if (currentProject.value?.id !== selectedProject?.id) {
                 currentProject.value = selectedProject;
                 // Remaining state attrs that depend on project loading will be set by the currentProject watcher
             } else {
                 if (mapStore.map) mapStore.clearMapLayers();
-                finishLoadingView();
+                finishLoadingViewState();
             }
         }
     }
-    async function finishLoadingView() {
-        const view = currentView.value;
-        if (view && !currentViewLoaded.value && mapStore.map) {
-            appStore.theme = view.theme;
-            analysisStore.currentAnalysisType = analysisStore.availableAnalysisTypes?.find((a) => a.db_value === view.current_analysis_type);
+    async function finishLoadingViewState() {
+        const viewState = currentViewState.value;
+        if (viewState && !currentViewStateLoaded.value && mapStore.map) {
+            appStore.theme = viewState.theme;
+            analysisStore.currentAnalysisType = analysisStore.availableAnalysisTypes?.find((a) => a.db_value === viewState.current_analysis_type);
             if (analysisStore.currentAnalysisType && currentProject.value) {
               await analysisStore.initResults(
                 analysisStore.currentAnalysisType.db_value, currentProject.value.id,
               )
-              analysisStore.currentResult = analysisStore.availableResults?.find((c) => c.id === view.current_result);
+              analysisStore.currentResult = analysisStore.availableResults?.find((c) => c.id === viewState.current_result);
               if (analysisStore.currentResult) {
                 analysisStore.currentAnalysisTab = 'old'
               }
             }
-            analysisStore.currentChart = analysisStore.availableCharts?.find((c) => c.id === view.current_chart);
-            networkStore.currentNetwork = networkStore.availableNetworks.find((n) => n.id === view.current_network);
+            analysisStore.currentChart = analysisStore.availableCharts?.find((c) => c.id === viewState.current_chart);
+            networkStore.currentNetwork = networkStore.availableNetworks.find((n) => n.id === viewState.current_network);
 
             // @ts-ignore for "Type instantiation is excessively deep and possibly infinite"
-            mapStore.currentBasemap = mapStore.availableBasemaps?.find((b) => b.id === view.current_basemap);
-            mapStore.setMapPosition(view.map_center as [number, number], view.map_zoom)
+            mapStore.currentBasemap = mapStore.availableBasemaps?.find((b) => b.id === viewState.current_basemap);
+            mapStore.setMapPosition(viewState.map_center as [number, number], viewState.map_zoom)
 
             // Add layers with copy ids from selected_layer_styles
             layerStore.selectedLayers = []
-            await Promise.all(Object.keys(view.selected_layer_styles).map(async (styleKey) => {
+            await Promise.all(Object.keys(viewState.selected_layer_styles).map(async (styleKey) => {
                 // Parse the style key to get layer id and copy_id
                 const [layerIdStr, copyIdStr] = styleKey.split('.');
                 const layerId = parseInt(layerIdStr);
@@ -182,28 +182,28 @@ export const useProjectStore = defineStore('project', () => {
             layerStore.selectedLayers = layerStore.selectedLayers.sort((layer1, layer2) => {
               const key1 = mapStore.uniqueLayerIdFromLayer(layer1);
               const key2 = mapStore.uniqueLayerIdFromLayer(layer2);
-              return view.selected_layer_order.indexOf(key1) - view.selected_layer_order.indexOf(key2)
+              return viewState.selected_layer_order.indexOf(key1) - viewState.selected_layer_order.indexOf(key2)
             })
             // Ensure correct current frames
             layerStore.selectedLayers = layerStore.selectedLayers.map((layer) => {
               const styleKey = mapStore.uniqueLayerIdFromLayer(layer);
-              if (view.selected_layer_current_frames[styleKey]) {
-                layer.current_frame_index = view.selected_layer_current_frames[styleKey];
+              if (viewState.selected_layer_current_frames[styleKey]) {
+                layer.current_frame_index = viewState.selected_layer_current_frames[styleKey];
               }
               return layer;
             })
-            styleStore.selectedLayerStyles = view.selected_layer_styles;
-            currentViewLoaded.value = true;
+            styleStore.selectedLayerStyles = viewState.selected_layer_styles;
+            currentViewStateLoaded.value = true;
         }
     }
 
     watch(currentProject, async () => {
         clearProjectState();
 
-        if (currentView.value) {
+        if (currentViewState.value) {
           mapStore.setMapPosition(
-            currentView.value.map_center as [number, number],
-            currentView.value.map_zoom,
+            currentViewState.value.map_center as [number, number],
+            currentViewState.value.map_zoom,
             true,
           )
         } else {
@@ -215,11 +215,11 @@ export const useProjectStore = defineStore('project', () => {
 
         if (currentProject.value) {
             await fetchProjectDatasets();
-            await fetchProjectViews();
+            await fetchProjectViewStates();
             await analysisStore.initCharts(currentProject.value.id);
             await analysisStore.initAnalysisTypes(currentProject.value.id);
             await networkStore.initNetworks(currentProject.value.id);
-            finishLoadingView();
+            finishLoadingViewState();
         }
     });
 
@@ -270,15 +270,15 @@ export const useProjectStore = defineStore('project', () => {
         allDatasets,
         availableDatasets,
         availableDatasetTags,
-        availableViews,
-        currentView,
-        currentViewLoaded,
+        availableViewStates,
+        currentViewState,
+        currentViewStateLoaded,
         fetchProjectDatasets,
         fetchAvailableDatasetTags,
-        fetchProjectViews,
-        getCurrentView,
-        navigateToView,
-        loadViewFromURL,
+        fetchProjectViewStates,
+        getCurrentViewState,
+        navigateToViewState,
+        loadViewStateFromURL,
         clearState,
         clearProjectState,
         refreshAllDatasets,

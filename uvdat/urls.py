@@ -25,7 +25,7 @@ from uvdat.core.rest import (
     RegionViewSet,
     UserViewSet,
     VectorDataViewSet,
-    ViewViewSet,
+    ViewStateViewSet,
 )
 
 router = routers.SimpleRouter()
@@ -51,7 +51,7 @@ router.register(r"source-regions", RegionViewSet, basename="source-regions")
 router.register(r"networks", NetworkViewSet, basename="networks")
 router.register(r"basemaps", BasemapViewSet, basename="basemaps")
 router.register(r"analytics", AnalyticsViewSet, basename="analytics")
-router.register(r"views", ViewViewSet, basename="views")
+router.register(r"view-states", ViewStateViewSet, basename="view-states")
 
 
 urlpatterns = [
