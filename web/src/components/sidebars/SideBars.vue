@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { ref, Ref, watch } from "vue";
-import { useTheme } from "vuetify/lib/framework.mjs";
-
 import { logout } from "@/api/auth";
 
 import ProjectConfig from "@/components/projects/ProjectConfig.vue";
@@ -23,9 +21,6 @@ const projectStore = useProjectStore();
 const version = import.meta.env.VITE_APP_VERSION;
 const copied: Ref<string | undefined> = ref();
 
-const themeManager = useTheme();
-const darkMode = ref<boolean>(appStore.theme === "dark");
-
 function copyToClipboard(content: string) {
   navigator.clipboard.writeText(content).then(() => {
     copied.value = content;
@@ -46,11 +41,6 @@ function togglePanelVisibility(id: string) {
     return p;
   });
 }
-
-watch(darkMode, () => {
-  appStore.theme = darkMode.value ? "dark" : "light";
-  themeManager.change(appStore.theme);
-});
 </script>
 
 <template>
@@ -119,7 +109,13 @@ watch(darkMode, () => {
               <v-list-item density="compact">
                 Dark Mode
                 <template v-slot:append>
-                  <v-switch v-model="darkMode" color="primary" class="ml-5" hide-details></v-switch>
+                  <v-switch
+                    :model-value="appStore.theme === 'dark'"
+                    color="primary"
+                    class="ml-5"
+                    hide-details
+                    @update:model-value="(v) => appStore.theme = v ? 'dark' : 'light'"
+                  ></v-switch>
                 </template>
               </v-list-item>
             </v-list>
