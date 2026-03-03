@@ -46,26 +46,21 @@ export const useProjectStore = defineStore('project', () => {
     const currentView = ref<View>();
     const currentViewLoaded = ref<boolean>(false);
 
-    function fetchProjectDatasets() {
+    async function fetchProjectDatasets() {
         if (!currentProject.value) { return; }
 
         loadingDatasets.value = true;
-        getProjectDatasets(currentProject.value.id).then(async (datasets) => {
-            availableDatasets.value = datasets;
-            loadingDatasets.value = false;
-        });
+        availableDatasets.value = await getProjectDatasets(currentProject.value.id)
+        loadingDatasets.value = false;
     }
 
-    function fetchAvailableDatasetTags() {
-        getDatasetTags().then((tags) => availableDatasetTags.value = tags)
+    async function fetchAvailableDatasetTags() {
+        availableDatasetTags.value = await getDatasetTags()
     }
 
-        function fetchProjectViews() {
+    async function fetchProjectViews() {
         if (!currentProject.value) { return; }
-
-        getProjectViews(currentProject.value.id).then((views) => {
-            availableViews.value = views;
-        });
+        availableViews.value = await getProjectViews(currentProject.value.id)
     }
 
     function getCurrentView(): View | undefined {
@@ -119,39 +114,38 @@ export const useProjectStore = defineStore('project', () => {
     }
 
     watch(() => route?.fullPath, loadViewFromURL);
-    function loadViewFromURL() {
+    async function loadViewFromURL() {
         if (!route.path.includes('/view/')) {
             currentView.value = undefined;
             return;
         };
         const viewId = parseInt(route.path.split('/view/')[1]);
-        getView(viewId).then((view) => {
-            if (view) {
-                currentView.value = view;
-                // Set some state attrs that don't require the project to be loaded first
-                panelStore.panelArrangement = view.panel_arrangement.map((panelConfig) => {
-                  if (panelConfig.position) {
-                    panelConfig.position = {
-                      x: panelConfig.position.x * window.innerWidth,
-                      y: panelConfig.position.y * window.innerHeight,
-                    }
-                  }
-                  return panelConfig;
-                });
-                appStore.openSidebars = []
-                if (view.left_sidebar_open) appStore.openSidebars.push('left');
-                if (view.right_sidebar_open) appStore.openSidebars.push('right');
-
-                const selectedProject = availableProjects.value.find((p) => p.id === view.project);
-                if (currentProject.value?.id !== selectedProject?.id) {
-                    currentProject.value = selectedProject;
-                    // Remaining state attrs that depend on project loading will be set by the currentProject watcher
-                } else {
-                    if (mapStore.map) mapStore.clearMapLayers();
-                    finishLoadingView();
+        const view = await getView(viewId)
+        if (view) {
+            currentView.value = view;
+            // Set some state attrs that don't require the project to be loaded first
+            panelStore.panelArrangement = view.panel_arrangement.map((panelConfig) => {
+              if (panelConfig.position) {
+                panelConfig.position = {
+                  x: panelConfig.position.x * window.innerWidth,
+                  y: panelConfig.position.y * window.innerHeight,
                 }
+              }
+              return panelConfig;
+            });
+            appStore.openSidebars = []
+            if (view.left_sidebar_open) appStore.openSidebars.push('left');
+            if (view.right_sidebar_open) appStore.openSidebars.push('right');
+
+            const selectedProject = availableProjects.value.find((p) => p.id === view.project);
+            if (currentProject.value?.id !== selectedProject?.id) {
+                currentProject.value = selectedProject;
+                // Remaining state attrs that depend on project loading will be set by the currentProject watcher
+            } else {
+                if (mapStore.map) mapStore.clearMapLayers();
+                finishLoadingView();
             }
-        })
+        }
     }
     async function finishLoadingView() {
         const view = currentView.value;
@@ -220,8 +214,8 @@ export const useProjectStore = defineStore('project', () => {
         styleStore.fetchColormaps();
 
         if (currentProject.value) {
-            fetchProjectDatasets();
-            fetchProjectViews();
+            await fetchProjectDatasets();
+            await fetchProjectViews();
             await analysisStore.initCharts(currentProject.value.id);
             await analysisStore.initAnalysisTypes(currentProject.value.id);
             await networkStore.initNetworks(currentProject.value.id);
@@ -256,19 +250,15 @@ export const useProjectStore = defineStore('project', () => {
         analysisStore.currentAnalysisType = undefined;
     }
 
-    function refreshAllDatasets() {
-        getDatasets().then(async (datasets) => {
-            allDatasets.value = datasets
-        })
+    async function refreshAllDatasets() {
+        allDatasets.value = await getDatasets()
     }
 
     watch(projectConfigMode, loadProjects);
-    function loadProjects() {
+    async function loadProjects() {
         clearState();
-        getProjects().then((data) => {
-            availableProjects.value = data;
-            loadingProjects.value = false;
-        });
+        availableProjects.value = await getProjects()
+        loadingProjects.value = false;
     }
 
     return {

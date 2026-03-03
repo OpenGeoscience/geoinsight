@@ -43,10 +43,10 @@ const router = createRouter({
   },],
 });
 app.use(router);
+await router.isReady()
+
+// Attempt login restoration
+await restoreLogin()
 
 // Finally, mount the app
-router.isReady().then(() => {
-  restoreLogin().then(() => {
-    app.mount("#app");
-  });
-})
+app.mount("#app");
