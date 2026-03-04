@@ -112,9 +112,9 @@ def flood_simulation(result_id):
             gw_percentile=gw_percentile,
             return_dict=True,
         )
-        flood_results = outputs.get('flood')
-        precip = outputs.get('precipitation_level_mm')
-        discharge = outputs.get('discharge_ft3_per_second')
+        flood_results = outputs.get("flood")
+        precip = outputs.get("precipitation_level_mm")
+        discharge = outputs.get("discharge_ft3_per_second")
 
         result.write_status("Saving result to database")
 
