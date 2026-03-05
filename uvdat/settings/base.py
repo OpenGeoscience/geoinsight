@@ -129,8 +129,8 @@ ANONYMOUS_USER_NAME = None
 REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] += [
     "rest_framework.authentication.TokenAuthentication",
 ]
-REST_FRAMEWORK["DEFAULT_PERMISSION_CLASSES"] = ["uvdat.core.rest.access_control.GuardianPermission"]
-REST_FRAMEWORK["DEFAULT_FILTER_BACKENDS"] = ["uvdat.core.rest.access_control.GuardianFilter"]
+REST_FRAMEWORK["DEFAULT_PERMISSION_CLASSES"] = ["uvdat.core.access_control.GuardianPermission"]
+REST_FRAMEWORK["DEFAULT_FILTER_BACKENDS"] = ["uvdat.core.access_control.GuardianFilter"]
 
 CORS_ALLOWED_ORIGINS: list[str] = env.list("DJANGO_CORS_ALLOWED_ORIGINS", cast=str, default=[])
 CORS_ALLOWED_ORIGIN_REGEXES: list[str] = env.list(

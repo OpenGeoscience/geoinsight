@@ -4,8 +4,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
+from uvdat.core.access_control import DatasetGuardianPermission
 from uvdat.core.models import Dataset, DatasetTag
-from uvdat.core.rest.access_control import DatasetGuardianPermission
 from uvdat.core.rest.serializers import (
     DatasetSerializer,
     FileItemSerializer,
