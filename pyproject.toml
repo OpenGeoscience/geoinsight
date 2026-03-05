@@ -171,8 +171,6 @@ ignore = [
   # Project-specific
   "BLE001", # blind-except
   "PLC0415", # import-outside-top-level
-  "PLW2901", # redefined-loop-name
-  "SLF001", # private-member-access
   "TRY301", # raise-within-try
 ]
 
