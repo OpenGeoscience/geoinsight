@@ -146,7 +146,7 @@ def read_cog_window_rgb(cog_url, lon, lat, size_km=10):
     show_default=True,
     help="Size of square window to clip around the point in kilometers.",
 )
-def download_stac_sentinel(
+def download_stac_sentinel(  # noqa: PLR0913, PLR0915
     lat, lon, start_date, end_date, max_results, output_dir, cloud_cover, size_km
 ):
     """Download clipped Sentinel-2 L1C visual images from AWS via STAC API."""

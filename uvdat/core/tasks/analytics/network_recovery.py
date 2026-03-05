@@ -126,8 +126,16 @@ def sort_graph_centrality(g, measure):
     return nodes_sorted, edge_list
 
 
+def _get_gcc(graph: nx.Graph, deactivated: list[int]) -> set[int]:
+    """Get the greatest connected component after removing deactivated nodes."""
+    remaining_graph = graph.copy()
+    remaining_graph.remove_nodes_from(deactivated)
+    components = list(nx.connected_components(remaining_graph))
+    return max(components, key=len)
+
+
 @shared_task
-def network_recovery(result_id):
+def network_recovery(result_id):  # noqa: C901, PLR0912, PLR0915
     result = TaskResult.objects.get(id=result_id)
 
     try:
@@ -188,20 +196,14 @@ def network_recovery(result_id):
             n_deactivated_values = []
             gcc_values = []
 
-            def get_gcc(deactivated):
-                remaining_graph = graph.copy()
-                remaining_graph.remove_nodes_from(deactivated)
-                components = list(nx.connected_components(remaining_graph))
-                return max(components, key=len)
-
             for i, nodes in enumerate(node_failures.values()):
                 timesteps.append(i)
                 n_deactivated_values.append(len(nodes))
-                gcc_values.append(len(get_gcc(nodes)))
+                gcc_values.append(len(_get_gcc(graph, nodes)))
             for i, nodes in enumerate(recovery_timesteps.values()):
                 timesteps.append(len(node_failures) + i)
                 n_deactivated_values.append(len(nodes))
-                gcc_values.append(len(get_gcc(nodes)))
+                gcc_values.append(len(_get_gcc(graph, nodes)))
 
             chart, _ = Chart.objects.get_or_create(
                 name=f"Network GCC Changes for {mode.title()} Recovery After {failure.name}",

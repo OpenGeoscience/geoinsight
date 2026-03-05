@@ -72,7 +72,7 @@ class VectorData(models.Model):
         with self.geojson_data.open() as f:
             return json.load(f)
 
-    def get_summary(self, *, cache=True):
+    def get_summary(self, *, cache=True):  # noqa: C901
         if cache and self.summary:
             return self.summary
         # Limit number of unique values to return for non-numeric fields

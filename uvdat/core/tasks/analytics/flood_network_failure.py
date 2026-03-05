@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 import math
+from typing import TYPE_CHECKING, Any
 
 from celery import shared_task
 from django.conf import settings
 from django_large_image import tilesource, utilities
 import numpy as np
+
+if TYPE_CHECKING:
+    from django.contrib.gis.geos import Point
 
 from uvdat.core.models import Layer, Network, TaskResult
 
@@ -55,8 +59,24 @@ class FloodNetworkFailure(AnalysisType):
         return result
 
 
+def _get_station_region(point: Point, radius_meters: float) -> dict[str, Any]:
+    """Get a rectangular region around a point, sized by radius_meters."""
+    earth_radius_meters = 6378000
+    lat_delta = (radius_meters / earth_radius_meters) * (180 / math.pi)
+    lon_delta = (
+        (radius_meters / earth_radius_meters) * (180 / math.pi) / math.cos(point.y * math.pi / 180)
+    )
+    return {
+        "top": point.y + lat_delta,
+        "bottom": point.y - lat_delta,
+        "left": point.x - lon_delta,
+        "right": point.x + lon_delta,
+        "units": "EPSG:4326",
+    }
+
+
 @shared_task
-def flood_network_failure(result_id):
+def flood_network_failure(result_id):  # noqa: C901, PLR0912, PLR0915
     result = TaskResult.objects.get(id=result_id)
 
     try:
@@ -117,26 +137,10 @@ def flood_network_failure(result_id):
             flood_dataset_id = flood_sim.outputs.get("flood")
             flood_layer = Layer.objects.get(dataset__id=flood_dataset_id)
 
-            # this uses radius_meters to get a rectangular region, not a circular one
-            def get_station_region(point):
-                earth_radius_meters = 6378000
-                lat_delta = (radius_meters / earth_radius_meters) * (180 / math.pi)
-                lon_delta = (
-                    (radius_meters / earth_radius_meters)
-                    * (180 / math.pi)
-                    / math.cos(point.y * math.pi / 180)
-                )
-                return {
-                    "top": point.y + lat_delta,
-                    "bottom": point.y - lat_delta,
-                    "left": point.x - lon_delta,
-                    "right": point.x + lon_delta,
-                    "units": "EPSG:4326",
-                }
-
             # Precompute node regions
             node_regions = {
-                node.id: get_station_region(node.location) for node in network.nodes.all()
+                node.id: _get_station_region(node.location, radius_meters)
+                for node in network.nodes.all()
             }
 
             # Assume that all frames in flood_layer refer to frames of the same RasterData

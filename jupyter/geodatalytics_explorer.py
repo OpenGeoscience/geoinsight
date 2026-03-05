@@ -13,7 +13,7 @@ DEFAULT_ZOOM = 14
 
 
 class LayerRepresentation:
-    def __init__(self, layer, api_url, session, token, center, zoom):
+    def __init__(self, layer, api_url, session, token, center, zoom):  # noqa: PLR0913
         self.layer = layer
         self.session = session
         self.api_url = api_url
