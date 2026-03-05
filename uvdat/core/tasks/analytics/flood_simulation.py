@@ -28,7 +28,11 @@ class FloodSimulation(AnalysisType):
             "ground_water_percentile": "number",
             "annual_probability": "number",
         }
-        self.output_types = {"flood": "Dataset"}
+        self.output_types = {
+            "flood": "Dataset",
+            "precipitation_level_mm": "number",
+            "discharge_ft3_per_second": "number",
+        }
         self.attribution = "Northeastern University"
 
     @classmethod
@@ -98,7 +102,7 @@ def flood_simulation(result_id):
         result.name = name
         result.write_status("Running flood simulation module with specified inputs")
 
-        flood_results = run_sim(
+        outputs = run_sim(
             initial_conditions_id=initial_conditions_id,
             time_period=time_period,
             annual_probability=annual_probability,
@@ -106,7 +110,11 @@ def flood_simulation(result_id):
             pet_percentile=pet_percentile,
             sm_percentile=sm_percentile,
             gw_percentile=gw_percentile,
+            return_dict=True,
         )
+        flood_results = outputs.get("flood")
+        precip = outputs.get("precipitation_level_mm")
+        discharge = outputs.get("discharge_ft3_per_second")
 
         result.write_status("Saving result to database")
 
@@ -173,13 +181,17 @@ def flood_simulation(result_id):
             # Create a default style for new layer
             layer = dataset.layers.first()
             style = LayerStyle.objects.create(
-                name="Flood Depth Viridis",
+                name="Flood Depth",
                 layer=layer,
                 project=result.project,
             )
             layer.default_style = style
             layer.save()
-            ocean = Colormap.objects.filter(name="ocean").first()
+            cmap, _ = Colormap.objects.get_or_create(
+                name="flood",
+                project=result.project,
+                markers=[{"color": "#002081", "value": 0}, {"color": "#2AD3FF", "value": 1}],
+            )
             style.save_style_configs(
                 {
                     "default_frame": 0,
@@ -189,7 +201,7 @@ def flood_simulation(result_id):
                             "name": "all",
                             "visible": True,
                             "colormap": {
-                                "id": ocean.id,
+                                "id": cmap.id,
                                 "discrete": False,
                                 "clamp": True,
                                 "color_by": "value",
@@ -208,7 +220,11 @@ def flood_simulation(result_id):
                 }
             )
 
-            result.outputs = {"flood": dataset.id}
+            result.outputs = {
+                "flood": dataset.id,
+                "precipitation_level_mm": precip,
+                "discharge_ft3_per_second": discharge,
+            }
     except Exception as e:
         result.error = str(e)
     result.complete()
