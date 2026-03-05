@@ -127,7 +127,7 @@ def sort_graph_centrality(g, measure):
 
 
 @shared_task
-def network_recovery(result_id):
+def network_recovery(result_id):  # noqa: C901, PLR0912, PLR0915
     result = TaskResult.objects.get(id=result_id)
 
     try:

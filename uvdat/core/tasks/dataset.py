@@ -5,7 +5,7 @@ import contextlib
 from celery import shared_task
 
 
-def create_layers_and_frames(dataset, layer_options=None):
+def create_layers_and_frames(dataset, layer_options=None):  # noqa: C901, PLR0912, PLR0915
     from uvdat.core.models import Layer, LayerFrame, RasterData, VectorData
 
     Layer.objects.filter(dataset=dataset).delete()

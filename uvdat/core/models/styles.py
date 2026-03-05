@@ -37,7 +37,7 @@ class LayerStyle(models.Model):
     def __str__(self):
         return f"{self.name} ({self.id})"
 
-    def save_style_configs(self, style_spec):
+    def save_style_configs(self, style_spec):  # noqa: C901, PLR0912, PLR0915
         if style_spec is None:
             raise ValueError("style_spec must not be None.")
         self.default_frame = style_spec.get("default_frame", 0)
@@ -150,7 +150,7 @@ class LayerStyle(models.Model):
             filter_config_ids.append(filter_config.id)
         FilterConfig.objects.filter(style=self).exclude(id__in=filter_config_ids).delete()
 
-    def repr_style_configs(self):
+    def repr_style_configs(self):  # noqa: C901
         def serialize_fields(obj, fields):
             serialized = {}
             for field in fields:

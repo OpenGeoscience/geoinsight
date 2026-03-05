@@ -61,7 +61,7 @@ class GeoAISegmentation(AnalysisType):
 
 
 @shared_task
-def geoai_segmentation(result_id):
+def geoai_segmentation(result_id):  # noqa: PLR0915
     result = TaskResult.objects.get(id=result_id)
     try:
         # Verify inputs

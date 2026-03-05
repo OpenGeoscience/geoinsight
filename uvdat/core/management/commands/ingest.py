@@ -98,7 +98,7 @@ class ChartItem(TypedDict, total=False):
     conversion_options: ConversionOptions
 
 
-def ingest_file(file_info, *, index=0, dataset=None, chart=None, replace=False, skip_cache=False):
+def ingest_file(file_info, *, index=0, dataset=None, chart=None, replace=False, skip_cache=False):  # noqa: PLR0913
     file_path = file_info.get("path")
     file_name = file_info.get("name", file_path.split("/")[-1])
     file_url = file_info.get("url")

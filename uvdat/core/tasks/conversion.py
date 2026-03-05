@@ -65,7 +65,7 @@ def get_cog_path(file):
     return cog_path
 
 
-def convert_files(*files, file_item=None, combine=False):
+def convert_files(*files, file_item=None, combine=False):  # noqa: C901, PLR0912
     source_projection = "epsg:4326"
     geodata_set = []
     cog_set = []

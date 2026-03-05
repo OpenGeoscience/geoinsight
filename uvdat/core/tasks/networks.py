@@ -12,7 +12,7 @@ from uvdat.core.models import Network, NetworkEdge, NetworkNode, VectorFeature
 logger = logging.getLogger(__name__)
 
 
-def create_network(vector_data, network_options):
+def create_network(vector_data, network_options):  # noqa: C901, PLR0915
     # Overwrite previous results
     dataset = vector_data.dataset
     Network.objects.filter(vector_data=vector_data).delete()

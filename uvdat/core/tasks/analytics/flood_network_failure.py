@@ -56,7 +56,7 @@ class FloodNetworkFailure(AnalysisType):
 
 
 @shared_task
-def flood_network_failure(result_id):
+def flood_network_failure(result_id):  # noqa: C901, PLR0912, PLR0915
     result = TaskResult.objects.get(id=result_id)
 
     try:

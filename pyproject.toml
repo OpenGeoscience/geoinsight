@@ -170,11 +170,7 @@ ignore = [
 
   # Project-specific
   "BLE001", # blind-except
-  "C901", # complex-structure
   "PLC0415", # import-outside-top-level
-  "PLR0912", # too-many-branches
-  "PLR0913", # too-many-arguments
-  "PLR0915", # too-many-statements
   "PLW2901", # redefined-loop-name
   "SLF001", # private-member-access
   "TRY301", # raise-within-try
