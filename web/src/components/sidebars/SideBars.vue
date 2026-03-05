@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, Ref, watch } from "vue";
+import { ref, Ref } from "vue";
 import { logout } from "@/api/auth";
 
 import ProjectConfig from "@/components/projects/ProjectConfig.vue";
@@ -45,8 +45,7 @@ function togglePanelVisibility(id: string) {
 
 <template>
   <div>
-    <v-navigation-drawer floating width="300" location="left" color="background" :class="appStore.openSidebars.includes('left') ? 'sidebar left' : 'sidebar left closed'
-      ">
+    <v-navigation-drawer floating width="300" location="left" color="background" :class="appStore.openSidebars.includes('left') ? 'sidebar left' : 'sidebar left closed'">
       <v-toolbar class="toolbar px-5" color="background">
         <v-toolbar-title>
           <img width="15px" class="mr-1" :src="KitwareLogo" />
@@ -88,8 +87,7 @@ function togglePanelVisibility(id: string) {
       ? 'sidebar right'
       : 'sidebar right closed'
       ">
-      <v-toolbar :class="appStore.openSidebars.includes('right') ? 'toolbar px-5' : 'toolbar px-5 right'
-        " color="background">
+      <v-toolbar :class="appStore.openSidebars.includes('right') ? 'toolbar px-5' : 'toolbar px-5 right'" color="background">
         <v-icon icon="mdi-dock-right" class="mr-5" v-tooltip="'Toggle Sidebar'"
           @click="toggleSidebar('right')"></v-icon>
         <div v-if="appStore.currentUser">
@@ -168,12 +166,10 @@ function togglePanelVisibility(id: string) {
 }
 
 .sidebar.closed {
-  visibility: hidden;
-  transition: max-height 0.15s ease-out;
+  max-height: 0;
 }
 
 .toolbar {
-  visibility: visible;
   border-radius: 10px 10px 0px 0px !important;
   border-bottom: 1px solid rgb(var(--v-theme-border)) !important;
 }
@@ -187,6 +183,7 @@ function togglePanelVisibility(id: string) {
 .sidebar.closed .toolbar {
   border-radius: 10px !important;
   width: fit-content !important;
+  position: absolute !important;
 }
 
 .sidebar.closed>.v-navigation-drawer__content>.toolbar>.v-toolbar__content {

@@ -489,7 +489,7 @@ watch(newBasemapStyleJSON, createNewBasemapPreview)
   padding: 3px 8px;
   position: absolute;
   top: 10px;
-  left: 225px;
+  left: 250px;
   opacity: 80%;
   background-color: rgb(var(--v-theme-surface));
   display: flex;
