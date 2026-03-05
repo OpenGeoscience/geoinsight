@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+from typing import Any
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -36,6 +37,14 @@ class LayerStyle(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.id})"
+
+    @staticmethod
+    def _serialize_fields(obj: models.Model, fields: list[str]) -> dict[str, Any]:
+        return {
+            field: value
+            for field in fields
+            if (value := getattr(obj, field)) is not None and value != ""
+        }
 
     def save_style_configs(self, style_spec):  # noqa: C901, PLR0912, PLR0915
         if style_spec is None:
@@ -150,23 +159,14 @@ class LayerStyle(models.Model):
             filter_config_ids.append(filter_config.id)
         FilterConfig.objects.filter(style=self).exclude(id__in=filter_config_ids).delete()
 
-    def repr_style_configs(self):  # noqa: C901
-        def serialize_fields(obj, fields):
-            serialized = {}
-            for field in fields:
-                value = getattr(obj, field)
-                if value is None or value == "":
-                    continue
-                serialized[field] = value
-            return serialized
-
+    def repr_style_configs(self):
         colors = []
         for color_config in ColorConfig.objects.filter(style=self):
-            color = serialize_fields(
+            color = self._serialize_fields(
                 color_config, ["name", "visible", "use_feature_props", "single_color"]
             )
             try:
-                colormap = serialize_fields(
+                colormap = self._serialize_fields(
                     color_config.colormap,
                     ["discrete", "clamp", "n_colors", "color_by", "null_color"],
                 )
@@ -186,9 +186,9 @@ class LayerStyle(models.Model):
 
         sizes = []
         for size_config in SizeConfig.objects.filter(style=self):
-            size = serialize_fields(size_config, ["name", "zoom_scaling", "single_size"])
+            size = self._serialize_fields(size_config, ["name", "zoom_scaling", "single_size"])
             try:
-                size_range = serialize_fields(
+                size_range = self._serialize_fields(
                     size_config.size_range, ["size_by", "minimum", "maximum"]
                 )
                 size_range["null_size"] = {
@@ -202,7 +202,9 @@ class LayerStyle(models.Model):
 
         filters = []
         for filter_config in FilterConfig.objects.filter(style=self):
-            filter_ = serialize_fields(filter_config, ["filter_by", "include", "transparency"])
+            filter_ = self._serialize_fields(
+                filter_config, ["filter_by", "include", "transparency"]
+            )
             if filter_config.range_minimum is not None and filter_config.range_maximum is not None:
                 filter_["range"] = [
                     float(filter_config.range_minimum),
