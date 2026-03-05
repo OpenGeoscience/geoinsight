@@ -181,13 +181,20 @@ def flood_simulation(result_id):
             # Create a default style for new layer
             layer = dataset.layers.first()
             style = LayerStyle.objects.create(
-                name="Flood Depth Viridis",
+                name="Flood Depth",
                 layer=layer,
                 project=result.project,
             )
             layer.default_style = style
             layer.save()
-            ocean = Colormap.objects.filter(name="ocean").first()
+            cmap, _ = Colormap.objects.get_or_create(
+                name="flood",
+                project=result.project,
+                markers=[
+                    {"color": "#002081", "value": 0},
+                    {"color": "#2AD3FF", "value": 1}
+                ],
+            )
             style.save_style_configs(
                 {
                     "default_frame": 0,
@@ -197,7 +204,7 @@ def flood_simulation(result_id):
                             "name": "all",
                             "visible": True,
                             "colormap": {
-                                "id": ocean.id,
+                                "id": cmap.id,
                                 "discrete": False,
                                 "clamp": True,
                                 "color_by": "value",

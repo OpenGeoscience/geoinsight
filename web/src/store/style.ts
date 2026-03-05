@@ -330,7 +330,8 @@ export const useStyleStore = defineStore('style', () => {
         colormaps.value = []
         if (projectStore.currentProject) {
             getProjectColormaps(projectStore.currentProject.id).then((results) => {
-                colormaps.value = results
+                colormaps.value = results;
+                layerStore.updateLayersShown()
             })
         }
     }
@@ -435,6 +436,17 @@ export const useStyleStore = defineStore('style', () => {
         }
         const paint: Record<string, any> = {};
         const propsSpec = vector?.summary?.properties;
+
+        // Ensure that all colormaps have been fetched from db
+        styleSpec.colors.forEach((colorConfig) => {
+          if (
+            colorConfig.colormap?.id &&
+            !colormaps.value.map((cmap) => cmap.id).includes(colorConfig.colormap.id)
+          ) {
+            fetchColormaps()
+          }
+        })
+
         if (mapLayerId.includes("fill") && propsSpec) {
             paint['fill-opacity'] = opacity / 2;
             const color = getVectorColorPaintProperty(styleSpec, 'polygons', propsSpec, colormaps.value);
