@@ -329,7 +329,10 @@ watch(newBasemapStyleJSON, createNewBasemapPreview)
         <v-card class="control-menu">
           <div class="control-menu-title">Saved View States</div>
           <v-card-text class="pa-3">
-            <v-btn class="control-menu-row" @click="showViewStateDialog">
+            <div v-if="isComparing">
+              While using map comparison mode, saving a new view state is not supported.
+            </div>
+            <v-btn v-else class="control-menu-row" @click="showViewStateDialog">
               <div>Save current view state</div>
             </v-btn>
             <v-list v-if="projectStore.availableViewStates.length" density="compact" bg-color="transparent">
