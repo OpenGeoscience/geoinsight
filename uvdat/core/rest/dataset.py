@@ -4,8 +4,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
+from uvdat.core.access_control import DatasetGuardianPermission
 from uvdat.core.models import Dataset, DatasetTag
-from uvdat.core.rest.access_control import DatasetGuardianPermission, GuardianFilter
 from uvdat.core.rest.serializers import (
     DatasetSerializer,
     FileItemSerializer,
@@ -21,7 +21,6 @@ class DatasetViewSet(ModelViewSet):
     queryset = Dataset.objects.all()
     serializer_class = DatasetSerializer
     permission_classes = [DatasetGuardianPermission]
-    filter_backends = [GuardianFilter]
 
     def get_queryset(self):
         qs = super().get_queryset()
