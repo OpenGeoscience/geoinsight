@@ -190,10 +190,7 @@ def flood_simulation(result_id):
             cmap, _ = Colormap.objects.get_or_create(
                 name="flood",
                 project=result.project,
-                markers=[
-                    {"color": "#002081", "value": 0},
-                    {"color": "#2AD3FF", "value": 1}
-                ],
+                markers=[{"color": "#002081", "value": 0}, {"color": "#2AD3FF", "value": 1}],
             )
             style.save_style_configs(
                 {
