@@ -6,8 +6,9 @@ from django.db import models, transaction
 from guardian.models import UserObjectPermission
 from guardian.shortcuts import assign_perm, get_users_with_perms
 
-from uvdat.core.models.querysets import ProjectQuerySet
 from uvdat.core.tasks.dataset import convert_dataset
+
+from .querysets import ProjectQuerySet
 
 if typing.TYPE_CHECKING:
     from django.contrib.auth.models import User
@@ -122,7 +123,6 @@ class Dataset(models.Model):
 
     def get_networks(self):
         from uvdat.core.models import Network
-
         return Network.objects.filter(vector_data__dataset=self)
 
     def get_regions(self):
