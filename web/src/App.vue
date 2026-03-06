@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { watch, onMounted, computed } from "vue";
 import { oauthClient } from "./api/auth";
+import { useTheme } from "vuetify/lib/framework.mjs";
+
 import ToggleCompareMap from "./components/map/ToggleCompareMap.vue";
 import SideBars from "./components/sidebars/SideBars.vue";
 import ControlsBar from "./components/ControlsBar.vue";
@@ -12,6 +14,9 @@ const projectStore = useProjectStore();
 const conversionStore = useConversionStore();
 
 const showError = computed(() => appStore.currentError !== undefined);
+
+// useTheme must be called within a setup function
+appStore.themeManager = useTheme()
 
 function onReady() {
   if (appStore.currentUser) {

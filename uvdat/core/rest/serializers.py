@@ -23,6 +23,7 @@ from uvdat.core.models import (
     Region,
     TaskResult,
     VectorData,
+    ViewState,
 )
 
 
@@ -66,7 +67,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     def get_center(self, obj):
         # Web client expects Lon, Lat
         if obj.default_map_center:
-            return [obj.default_map_center.y, obj.default_map_center.x]
+            return [obj.default_map_center.x, obj.default_map_center.y]
         return None
 
     def get_owner(self, obj: Project):
@@ -89,7 +90,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         center = data.get("default_map_center")
         data = super().to_internal_value(data)
         if isinstance(center, list):
-            data["default_map_center"] = Point(center[1], center[0])
+            data["default_map_center"] = Point(center[0], center[1])
         return data
 
     class Meta:
@@ -280,4 +281,25 @@ class TaskResultSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TaskResult
+        fields = "__all__"
+
+
+class ViewStateSerializer(serializers.ModelSerializer):
+    map_center = serializers.SerializerMethodField("get_center")
+
+    def get_center(self, obj):
+        # Web client expects Lon, Lat
+        if obj.map_center:
+            return [obj.map_center.x, obj.map_center.y]
+        return None
+
+    def to_internal_value(self, data):
+        center = data.get("map_center")
+        data = super().to_internal_value(data)
+        if isinstance(center, list):
+            data["map_center"] = Point(center[0], center[1])
+        return data
+
+    class Meta:
+        model = ViewState
         fields = "__all__"

@@ -1,209 +1,209 @@
 [
-    {
-        "type": "Project",
-        "name": "Sentinel-2 Clipped Images",
-        "datasets": [
-            "Sequential Test Rasters"
-        ],
-        "default_map_center": [
-            43.135763,
-            -74.1767949
-        ],
-        "default_map_zoom": 11
-    },
-    {
-        "type": "Dataset",
-        "name": "Sequential Test Rasters",
-        "description": "Clipped Sentinel-2 images downloaded and clipped around point",
-        "category": "imagery",
-        "files": [
-            {
-                "path": "sequentialTestRasters/S2C_T18TWN_20250822T155805_L2A_visual_clip_10km.tif",
-                "name": "Frame 0"
-            },
-            {
-                "path": "sequentialTestRasters/S2C_T18TWN_20250812T155109_L2A_visual_clip_10km.tif",
-                "name": "Frame 1"
-            },
-            {
-                "path": "sequentialTestRasters/S2C_T18TWN_20250802T155417_L2A_visual_clip_10km.tif",
-                "name": "Frame 2"
-            },
-            {
-                "path": "sequentialTestRasters/S2C_T18TWN_20250723T155909_L2A_visual_clip_10km.tif",
-                "name": "Frame 3"
-            },
-            {
-                "path": "sequentialTestRasters/S2B_T18TWN_20250608T155508_L2A_visual_clip_10km.tif",
-                "name": "Frame 4"
-            },
-            {
-                "path": "sequentialTestRasters/S2C_T18TWN_20250603T155650_L2A_visual_clip_10km.tif",
-                "name": "Frame 5"
-            },
-            {
-                "path": "sequentialTestRasters/S2A_T18TWN_20250526T155707_L2A_visual_clip_10km.tif",
-                "name": "Frame 6"
-            },
-            {
-                "path": "sequentialTestRasters/S2C_T18TWN_20250424T155922_L2A_visual_clip_10km.tif",
-                "name": "Frame 7"
-            },
-            {
-                "path": "sequentialTestRasters/S2A_T18TWN_20250327T155839_L2A_visual_clip_10km.tif",
-                "name": "Frame 8"
-            },
-            {
-                "path": "sequentialTestRasters/S2A_T18TWN_20241125T155718_L2A_visual_clip_10km.tif",
-                "name": "Frame 9"
-            },
-            {
-                "path": "sequentialTestRasters/S2A_T18TWN_20241115T160059_L2A_visual_clip_10km.tif",
-                "name": "Frame 10"
-            },
-            {
-                "path": "sequentialTestRasters/S2A_T18TWN_20241105T155941_L2A_visual_clip_10km.tif",
-                "name": "Frame 11"
-            },
-            {
-                "path": "sequentialTestRasters/S2B_T18TWN_20241031T155727_L2A_visual_clip_10km.tif",
-                "name": "Frame 12"
-            },
-            {
-                "path": "sequentialTestRasters/S2A_T18TWN_20241026T155709_L2A_visual_clip_10km.tif",
-                "name": "Frame 13"
-            },
-            {
-                "path": "sequentialTestRasters/S2B_T18TWN_20241021T155603_L2A_visual_clip_10km.tif",
-                "name": "Frame 14"
-            },
-            {
-                "path": "sequentialTestRasters/S2B_T18TWN_20241011T155627_L2A_visual_clip_10km.tif",
-                "name": "Frame 15"
-            },
-            {
-                "path": "sequentialTestRasters/S2A_T18TWN_20241006T160103_L2A_visual_clip_10km.tif",
-                "name": "Frame 16"
-            },
-            {
-                "path": "sequentialTestRasters/S2A_T18TWN_20240916T155314_L2A_visual_clip_10km.tif",
-                "name": "Frame 17"
-            },
-            {
-                "path": "sequentialTestRasters/S2B_T18TWN_20240911T155232_L2A_visual_clip_10km.tif",
-                "name": "Frame 18"
-            },
-            {
-                "path": "sequentialTestRasters/S2B_T18TWN_20240901T155454_L2A_visual_clip_10km.tif",
-                "name": "Frame 19"
-            }
-        ],
-        "layers": [
-            {
-                "name": "Sequential Test Layers",
-                "frames": [
-                    {
-                        "name": "Sequential Layer 0",
-                        "index": 0,
-                        "data": "S2C_T18TWN_20250822T155805_L2A_visual_clip_10km.tif"
-                    },
-                    {
-                        "name": "Sequential Layer 1",
-                        "index": 1,
-                        "data": "S2C_T18TWN_20250812T155109_L2A_visual_clip_10km.tif"
-                    },
-                    {
-                        "name": "Sequential Layer 2",
-                        "index": 2,
-                        "data": "S2C_T18TWN_20250802T155417_L2A_visual_clip_10km.tif"
-                    },
-                    {
-                        "name": "Sequential Layer 3",
-                        "index": 3,
-                        "data": "S2C_T18TWN_20250723T155909_L2A_visual_clip_10km.tif"
-                    },
-                    {
-                        "name": "Sequential Layer 4",
-                        "index": 4,
-                        "data": "S2B_T18TWN_20250608T155508_L2A_visual_clip_10km.tif"
-                    },
-                    {
-                        "name": "Sequential Layer 5",
-                        "index": 5,
-                        "data": "S2C_T18TWN_20250603T155650_L2A_visual_clip_10km.tif"
-                    },
-                    {
-                        "name": "Sequential Layer 6",
-                        "index": 6,
-                        "data": "S2A_T18TWN_20250526T155707_L2A_visual_clip_10km.tif"
-                    },
-                    {
-                        "name": "Sequential Layer 7",
-                        "index": 7,
-                        "data": "S2C_T18TWN_20250424T155922_L2A_visual_clip_10km.tif"
-                    },
-                    {
-                        "name": "Sequential Layer 8",
-                        "index": 8,
-                        "data": "S2A_T18TWN_20250327T155839_L2A_visual_clip_10km.tif"
-                    },
-                    {
-                        "name": "Sequential Layer 9",
-                        "index": 9,
-                        "data": "S2A_T18TWN_20241125T155718_L2A_visual_clip_10km.tif"
-                    },
-                    {
-                        "name": "Sequential Layer 10",
-                        "index": 10,
-                        "data": "S2A_T18TWN_20241115T160059_L2A_visual_clip_10km.tif"
-                    },
-                    {
-                        "name": "Sequential Layer 11",
-                        "index": 11,
-                        "data": "S2A_T18TWN_20241105T155941_L2A_visual_clip_10km.tif"
-                    },
-                    {
-                        "name": "Sequential Layer 12",
-                        "index": 12,
-                        "data": "S2B_T18TWN_20241031T155727_L2A_visual_clip_10km.tif"
-                    },
-                    {
-                        "name": "Sequential Layer 13",
-                        "index": 13,
-                        "data": "S2A_T18TWN_20241026T155709_L2A_visual_clip_10km.tif"
-                    },
-                    {
-                        "name": "Sequential Layer 14",
-                        "index": 14,
-                        "data": "S2B_T18TWN_20241021T155603_L2A_visual_clip_10km.tif"
-                    },
-                    {
-                        "name": "Sequential Layer 15",
-                        "index": 15,
-                        "data": "S2B_T18TWN_20241011T155627_L2A_visual_clip_10km.tif"
-                    },
-                    {
-                        "name": "Sequential Layer 16",
-                        "index": 16,
-                        "data": "S2A_T18TWN_20241006T160103_L2A_visual_clip_10km.tif"
-                    },
-                    {
-                        "name": "Sequential Layer 17",
-                        "index": 17,
-                        "data": "S2A_T18TWN_20240916T155314_L2A_visual_clip_10km.tif"
-                    },
-                    {
-                        "name": "Sequential Layer 18",
-                        "index": 18,
-                        "data": "S2B_T18TWN_20240911T155232_L2A_visual_clip_10km.tif"
-                    },
-                    {
-                        "name": "Sequential Layer 19",
-                        "index": 19,
-                        "data": "S2B_T18TWN_20240901T155454_L2A_visual_clip_10km.tif"
-                    }
-                ]
-            }
+  {
+    "type": "Project",
+    "name": "Sentinel-2 Clipped Images",
+    "datasets": [
+      "Sequential Test Rasters"
+    ],
+    "default_map_center": [
+      -74.1767949,
+      43.135763
+    ],
+    "default_map_zoom": 11
+  },
+  {
+    "type": "Dataset",
+    "name": "Sequential Test Rasters",
+    "description": "Clipped Sentinel-2 images downloaded and clipped around point",
+    "category": "imagery",
+    "files": [
+      {
+        "path": "sequentialTestRasters/S2C_T18TWN_20250822T155805_L2A_visual_clip_10km.tif",
+        "name": "Frame 0"
+      },
+      {
+        "path": "sequentialTestRasters/S2C_T18TWN_20250812T155109_L2A_visual_clip_10km.tif",
+        "name": "Frame 1"
+      },
+      {
+        "path": "sequentialTestRasters/S2C_T18TWN_20250802T155417_L2A_visual_clip_10km.tif",
+        "name": "Frame 2"
+      },
+      {
+        "path": "sequentialTestRasters/S2C_T18TWN_20250723T155909_L2A_visual_clip_10km.tif",
+        "name": "Frame 3"
+      },
+      {
+        "path": "sequentialTestRasters/S2B_T18TWN_20250608T155508_L2A_visual_clip_10km.tif",
+        "name": "Frame 4"
+      },
+      {
+        "path": "sequentialTestRasters/S2C_T18TWN_20250603T155650_L2A_visual_clip_10km.tif",
+        "name": "Frame 5"
+      },
+      {
+        "path": "sequentialTestRasters/S2A_T18TWN_20250526T155707_L2A_visual_clip_10km.tif",
+        "name": "Frame 6"
+      },
+      {
+        "path": "sequentialTestRasters/S2C_T18TWN_20250424T155922_L2A_visual_clip_10km.tif",
+        "name": "Frame 7"
+      },
+      {
+        "path": "sequentialTestRasters/S2A_T18TWN_20250327T155839_L2A_visual_clip_10km.tif",
+        "name": "Frame 8"
+      },
+      {
+        "path": "sequentialTestRasters/S2A_T18TWN_20241125T155718_L2A_visual_clip_10km.tif",
+        "name": "Frame 9"
+      },
+      {
+        "path": "sequentialTestRasters/S2A_T18TWN_20241115T160059_L2A_visual_clip_10km.tif",
+        "name": "Frame 10"
+      },
+      {
+        "path": "sequentialTestRasters/S2A_T18TWN_20241105T155941_L2A_visual_clip_10km.tif",
+        "name": "Frame 11"
+      },
+      {
+        "path": "sequentialTestRasters/S2B_T18TWN_20241031T155727_L2A_visual_clip_10km.tif",
+        "name": "Frame 12"
+      },
+      {
+        "path": "sequentialTestRasters/S2A_T18TWN_20241026T155709_L2A_visual_clip_10km.tif",
+        "name": "Frame 13"
+      },
+      {
+        "path": "sequentialTestRasters/S2B_T18TWN_20241021T155603_L2A_visual_clip_10km.tif",
+        "name": "Frame 14"
+      },
+      {
+        "path": "sequentialTestRasters/S2B_T18TWN_20241011T155627_L2A_visual_clip_10km.tif",
+        "name": "Frame 15"
+      },
+      {
+        "path": "sequentialTestRasters/S2A_T18TWN_20241006T160103_L2A_visual_clip_10km.tif",
+        "name": "Frame 16"
+      },
+      {
+        "path": "sequentialTestRasters/S2A_T18TWN_20240916T155314_L2A_visual_clip_10km.tif",
+        "name": "Frame 17"
+      },
+      {
+        "path": "sequentialTestRasters/S2B_T18TWN_20240911T155232_L2A_visual_clip_10km.tif",
+        "name": "Frame 18"
+      },
+      {
+        "path": "sequentialTestRasters/S2B_T18TWN_20240901T155454_L2A_visual_clip_10km.tif",
+        "name": "Frame 19"
+      }
+    ],
+    "layers": [
+      {
+        "name": "Sequential Test Layers",
+        "frames": [
+          {
+            "name": "Sequential Layer 0",
+            "index": 0,
+            "data": "S2C_T18TWN_20250822T155805_L2A_visual_clip_10km.tif"
+          },
+          {
+            "name": "Sequential Layer 1",
+            "index": 1,
+            "data": "S2C_T18TWN_20250812T155109_L2A_visual_clip_10km.tif"
+          },
+          {
+            "name": "Sequential Layer 2",
+            "index": 2,
+            "data": "S2C_T18TWN_20250802T155417_L2A_visual_clip_10km.tif"
+          },
+          {
+            "name": "Sequential Layer 3",
+            "index": 3,
+            "data": "S2C_T18TWN_20250723T155909_L2A_visual_clip_10km.tif"
+          },
+          {
+            "name": "Sequential Layer 4",
+            "index": 4,
+            "data": "S2B_T18TWN_20250608T155508_L2A_visual_clip_10km.tif"
+          },
+          {
+            "name": "Sequential Layer 5",
+            "index": 5,
+            "data": "S2C_T18TWN_20250603T155650_L2A_visual_clip_10km.tif"
+          },
+          {
+            "name": "Sequential Layer 6",
+            "index": 6,
+            "data": "S2A_T18TWN_20250526T155707_L2A_visual_clip_10km.tif"
+          },
+          {
+            "name": "Sequential Layer 7",
+            "index": 7,
+            "data": "S2C_T18TWN_20250424T155922_L2A_visual_clip_10km.tif"
+          },
+          {
+            "name": "Sequential Layer 8",
+            "index": 8,
+            "data": "S2A_T18TWN_20250327T155839_L2A_visual_clip_10km.tif"
+          },
+          {
+            "name": "Sequential Layer 9",
+            "index": 9,
+            "data": "S2A_T18TWN_20241125T155718_L2A_visual_clip_10km.tif"
+          },
+          {
+            "name": "Sequential Layer 10",
+            "index": 10,
+            "data": "S2A_T18TWN_20241115T160059_L2A_visual_clip_10km.tif"
+          },
+          {
+            "name": "Sequential Layer 11",
+            "index": 11,
+            "data": "S2A_T18TWN_20241105T155941_L2A_visual_clip_10km.tif"
+          },
+          {
+            "name": "Sequential Layer 12",
+            "index": 12,
+            "data": "S2B_T18TWN_20241031T155727_L2A_visual_clip_10km.tif"
+          },
+          {
+            "name": "Sequential Layer 13",
+            "index": 13,
+            "data": "S2A_T18TWN_20241026T155709_L2A_visual_clip_10km.tif"
+          },
+          {
+            "name": "Sequential Layer 14",
+            "index": 14,
+            "data": "S2B_T18TWN_20241021T155603_L2A_visual_clip_10km.tif"
+          },
+          {
+            "name": "Sequential Layer 15",
+            "index": 15,
+            "data": "S2B_T18TWN_20241011T155627_L2A_visual_clip_10km.tif"
+          },
+          {
+            "name": "Sequential Layer 16",
+            "index": 16,
+            "data": "S2A_T18TWN_20241006T160103_L2A_visual_clip_10km.tif"
+          },
+          {
+            "name": "Sequential Layer 17",
+            "index": 17,
+            "data": "S2A_T18TWN_20240916T155314_L2A_visual_clip_10km.tif"
+          },
+          {
+            "name": "Sequential Layer 18",
+            "index": 18,
+            "data": "S2B_T18TWN_20240911T155232_L2A_visual_clip_10km.tif"
+          },
+          {
+            "name": "Sequential Layer 19",
+            "index": 19,
+            "data": "S2B_T18TWN_20240901T155454_L2A_visual_clip_10km.tif"
+          }
         ]
-    }
+      }
+    ]
+  }
 ]

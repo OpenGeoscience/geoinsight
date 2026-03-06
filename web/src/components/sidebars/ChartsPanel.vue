@@ -186,14 +186,14 @@ const downloadReady = computed(() => {
           />
         </div>
           <Line :data="data" :options="options" />
-          <div v-if="showXRange">
+          <div v-if="showXRange" class="pt-3">
             Current X Axis Slice (From {{ maxX }} values)
             <div style="display: flex">
               <v-text-field
                 type="number"
                 label="Number of values"
                 density="compact"
-                v-model="currentXRange"
+                v-model.number="currentXRange"
                 :max="maxX"
                 min="0"
               />
@@ -201,7 +201,7 @@ const downloadReady = computed(() => {
                 type="number"
                 label="Starting from"
                 density="compact"
-                v-model="currentXStart"
+                v-model.number="currentXStart"
                 :max="maxX"
                 min="0"
               />

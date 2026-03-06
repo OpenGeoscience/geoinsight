@@ -1,98 +1,97 @@
 [
-    {
-        "type": "Project",
-        "name": "Los Angeles Wildfires (Jan 2025)",
-        "default_map_center": [
-            34.27,
-            -118.47
-        ],
-        "default_map_zoom": 9,
-        "datasets": [
-            "MODIS 1km 48h USA + Hawaii",
-            "USA Current Wildfire Perimeters",
-            "USA Current Wildfire Incidents",
-            "California Fire Perimeters",
-            "Palisades Satellite Imagery",
-            "Eaton/Altadena Satellite Imagery"
-        ]
-    },
-     {
-        "type": "Dataset",
-        "name": "MODIS 1km 48h USA + Hawaii",
-        "description": "MODIS 1km USA (Conterminous) + Hawaii 48h shapefile. From: https://firms.modaps.eosdis.nasa.gov/active_fire/",
-        "category": "region",
-        "files": [
-            {
-                "path": "la-fire-2025/modis-1-48.zip",
-                "url": "https://data.kitware.com/api/v1/item/67aa368b091a514e82eec908/download",
-                "hash": "5271a47008fdd75b8bd9d3df453ece9eae27d6bbe3050cbf8c00e486edd286e4"
-            }
-        ]
-    },
-    {
-        "type": "Dataset",
-        "name": "USA Current Wildfire Perimeters",
-        "description": "NIFC, taken on Feb 4, 2025. From: https://data-nifc.opendata.arcgis.com/",
-        "category": "region",
-        "files": [
-            {
-                "path": "la-fire-2025/current_fire_perimeters.geojson",
-                "url": "https://data.kitware.com/api/v1/item/67aa368c091a514e82eec90b/download",
-                "hash": "781b75f35db48ac53a917a524809f87108cd183941deaefe2503e128f86e465e"
-            }
-        ]
-    },
-    {
-        "type": "Dataset",
-        "name": "USA Current Wildfire Incidents",
-        "description": "IRWIN, taken on Feb 4, 2025. From: https://forestsandrangelands.gov/WFIT/applications/IRWIN/index.shtml",
-        "category": "region",
-        "files": [
-            {
-                "path": "la-fire-2025/current_fire_incidents.geojson",
-                "url": "https://data.kitware.com/api/v1/item/67aa368c091a514e82eec90e/download",
-                "hash": "649f641ec200ff2bb64f12ba3928e289cc35fcfc942fc16b5890dc3382ce4a79"
-            }
-        ]
-    },
-    {
-        "type": "Dataset",
-        "name": "California Fire Perimeters",
-        "description": "NIFC + FIRIS, taken Feb 4, 2025. From: https://www.fire.ca.gov/incidents/2025/1/7/palisades-fire",
-        "category": "region",
-        "files": [
-            {
-                "path": "la-fire-2025/ca_perimeters_nifc_firis.geojson",
-                "url": "https://data.kitware.com/api/v1/item/67aa33ed091a514e82eec8ff/download",
-                "hash": "53fdb0484bd05725fe1569302ebd7c66404d93e9f8772bf557473f6e59c3a02a"
-            }
-        ]
-    },
-    {
-        "type": "Dataset",
-        "name": "Palisades Satellite Imagery",
-        "description": "MAXAR, Jan 14, 2025. From: https://registry.opendata.aws/maxar-open-data/",
-        "category": "region",
-        "files": [
-            {
-                "path": "la-fire-2025/palidades-2025-01-14.tif",
-                "url": "https://data.kitware.com/api/v1/item/67aa368a091a514e82eec905/download",
-                "hash": "7630707f87a54ae134ec56012911884c5648d55419c8742e264c4d4c4354ea1f"
-            }
-        ]
-    },
-    {
-        "type": "Dataset",
-        "name": "Eaton/Altadena Satellite Imagery",
-        "description": "MAXAR, Jan 14-19, 2025. From: https://registry.opendata.aws/maxar-open-data/",
-        "category": "region",
-        "files": [
-            {
-                "path": "la-fire-2025/eaton-2025-01-14_to_19.tif",
-                "url": "https://data.kitware.com/api/v1/item/67aa353a091a514e82eec902/download",
-                "hash": "163a8b84bf7fb356b66ff2700ec0d2043c25a9a153f7778e84b9b85ca51dcf74"
-            }
-        ]
-    }
-
+  {
+    "type": "Project",
+    "name": "Los Angeles Wildfires (Jan 2025)",
+    "default_map_center": [
+      -118.47,
+      34.27
+    ],
+    "default_map_zoom": 9,
+    "datasets": [
+      "MODIS 1km 48h USA + Hawaii",
+      "USA Current Wildfire Perimeters",
+      "USA Current Wildfire Incidents",
+      "California Fire Perimeters",
+      "Palisades Satellite Imagery",
+      "Eaton/Altadena Satellite Imagery"
+    ]
+  },
+  {
+    "type": "Dataset",
+    "name": "MODIS 1km 48h USA + Hawaii",
+    "description": "MODIS 1km USA (Conterminous) + Hawaii 48h shapefile. From: https://firms.modaps.eosdis.nasa.gov/active_fire/",
+    "category": "region",
+    "files": [
+      {
+        "path": "la-fire-2025/modis-1-48.zip",
+        "url": "https://data.kitware.com/api/v1/item/67aa368b091a514e82eec908/download",
+        "hash": "5271a47008fdd75b8bd9d3df453ece9eae27d6bbe3050cbf8c00e486edd286e4"
+      }
+    ]
+  },
+  {
+    "type": "Dataset",
+    "name": "USA Current Wildfire Perimeters",
+    "description": "NIFC, taken on Feb 4, 2025. From: https://data-nifc.opendata.arcgis.com/",
+    "category": "region",
+    "files": [
+      {
+        "path": "la-fire-2025/current_fire_perimeters.geojson",
+        "url": "https://data.kitware.com/api/v1/item/67aa368c091a514e82eec90b/download",
+        "hash": "781b75f35db48ac53a917a524809f87108cd183941deaefe2503e128f86e465e"
+      }
+    ]
+  },
+  {
+    "type": "Dataset",
+    "name": "USA Current Wildfire Incidents",
+    "description": "IRWIN, taken on Feb 4, 2025. From: https://forestsandrangelands.gov/WFIT/applications/IRWIN/index.shtml",
+    "category": "region",
+    "files": [
+      {
+        "path": "la-fire-2025/current_fire_incidents.geojson",
+        "url": "https://data.kitware.com/api/v1/item/67aa368c091a514e82eec90e/download",
+        "hash": "649f641ec200ff2bb64f12ba3928e289cc35fcfc942fc16b5890dc3382ce4a79"
+      }
+    ]
+  },
+  {
+    "type": "Dataset",
+    "name": "California Fire Perimeters",
+    "description": "NIFC + FIRIS, taken Feb 4, 2025. From: https://www.fire.ca.gov/incidents/2025/1/7/palisades-fire",
+    "category": "region",
+    "files": [
+      {
+        "path": "la-fire-2025/ca_perimeters_nifc_firis.geojson",
+        "url": "https://data.kitware.com/api/v1/item/67aa33ed091a514e82eec8ff/download",
+        "hash": "53fdb0484bd05725fe1569302ebd7c66404d93e9f8772bf557473f6e59c3a02a"
+      }
+    ]
+  },
+  {
+    "type": "Dataset",
+    "name": "Palisades Satellite Imagery",
+    "description": "MAXAR, Jan 14, 2025. From: https://registry.opendata.aws/maxar-open-data/",
+    "category": "region",
+    "files": [
+      {
+        "path": "la-fire-2025/palidades-2025-01-14.tif",
+        "url": "https://data.kitware.com/api/v1/item/67aa368a091a514e82eec905/download",
+        "hash": "7630707f87a54ae134ec56012911884c5648d55419c8742e264c4d4c4354ea1f"
+      }
+    ]
+  },
+  {
+    "type": "Dataset",
+    "name": "Eaton/Altadena Satellite Imagery",
+    "description": "MAXAR, Jan 14-19, 2025. From: https://registry.opendata.aws/maxar-open-data/",
+    "category": "region",
+    "files": [
+      {
+        "path": "la-fire-2025/eaton-2025-01-14_to_19.tif",
+        "url": "https://data.kitware.com/api/v1/item/67aa353a091a514e82eec902/download",
+        "hash": "163a8b84bf7fb356b66ff2700ec0d2043c25a9a153f7778e84b9b85ca51dcf74"
+      }
+    ]
+  }
 ]

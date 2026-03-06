@@ -8,13 +8,16 @@ import 'vanilla-jsoneditor/themes/jse-theme-dark.css'
 import { Mode } from 'vanilla-jsoneditor'
 import { validateStyleMin } from '@maplibre/maplibre-gl-style-spec';
 
-import { useAppStore, useLayerStore, useMapStore } from "@/store";
+import { useAppStore, useLayerStore, useMapStore, useProjectStore } from "@/store";
 import { useMapCompareStore } from "@/store/compare";
-import { createBasemap } from "@/api/rest";
+import { createBasemap, createViewState, deleteViewState, uploadFile } from "@/api/rest";
 import { storeToRefs } from "pinia";
+import { ViewState } from "@/types";
+
 const appStore = useAppStore();
 const layerStore = useLayerStore();
 const mapStore = useMapStore();
+const projectStore = useProjectStore();
 const { isComparing } = storeToRefs(useMapCompareStore());
 
 const copyMenuShown = ref(false);
@@ -35,6 +38,27 @@ const newBasemapValid = computed(() => (
   newBasemapStyleJSON.value &&
   !jsonErrors.value.length
 ))
+
+const showViewStateCreation = ref(false);
+const viewStateToDelete = ref();
+const newViewStateName = ref('');
+const newViewStateThumbnail = ref();
+const newViewStateThumbnailURL = computed(() => {
+  if (!newViewStateThumbnail.value) return null;
+  return URL.createObjectURL(newViewStateThumbnail.value);
+})
+const newViewStateValid = computed(() => {
+  return newViewStateName.value.length && !projectStore.availableViewStates.map((v) => v.name).includes(newViewStateName.value)
+})
+const userHasEditPermission = computed(() => {
+  const user = appStore.currentUser;
+  const project = projectStore.currentProject;
+  return user?.is_superuser || (
+    project && user && (
+      project.owner.id === user.id || project.collaborators.map((u) => u.id).includes(user.id)
+    )
+  )
+})
 
 function createBasemapPreviews() {
   if (basemapList.value) {
@@ -147,46 +171,97 @@ async function fitMap() {
   loadingBounds.value = false;
 }
 
-function takeScreenshot(save: boolean) {
+async function takeScreenshot() {
   copyMenuShown.value = false;
   const screenshotTarget = document.getElementById("app");
   if (screenshotTarget) {
-    html2canvas(screenshotTarget, {
-      ignoreElements: (element) => {
+    const canvas = await html2canvas(screenshotTarget, {
+      ignoreElements: (element: Element) => {
         return (
           element.id === "controls-bar" ||
           element.classList.contains("control-menu") ||
           (mapOnly.value && element.classList.contains('v-navigation-drawer'))
         );
-      },
-    }).then((canvas) => {
-      canvas.toBlob((blob) => {
-        if (blob) {
-          if (save) {
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = "geodatalytics_screenshot.png";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          } else {
-            const clipboardItem = new ClipboardItem({
-              "image/png": blob,
-            });
-            navigator.clipboard.write([clipboardItem]);
-          }
-
-          // animate camera flash with overlay
-          setTimeout(() => {
-            screenOverlayShown.value = true;
-            setTimeout(() => {
-              screenOverlayShown.value = false;
-            }, 200);
-          }, 200);
-        }
-      });
-    });
+      }
+    })
+    const blob: Blob | null = await new Promise(resolve => canvas.toBlob(resolve));
+    return blob;
   }
+}
+
+async function copyScreenshot() {
+  const blob = await takeScreenshot();
+  if (blob) {
+    const clipboardItem = new ClipboardItem({ "image/png": blob })
+    navigator.clipboard.write([clipboardItem]);
+    animateCameraFlash();
+  }
+}
+
+async function saveScreenshot() {
+  const blob = await takeScreenshot();
+  if (blob) {
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "geodatalytics_screenshot.png";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    animateCameraFlash();
+  }
+}
+
+function animateCameraFlash() {
+  // animate camera flash with overlay
+  setTimeout(() => {
+    screenOverlayShown.value = true;
+    setTimeout(() => {
+      screenOverlayShown.value = false;
+    }, 200);
+  }, 200);
+}
+
+function showViewStateDialog() {
+  takeScreenshot().then((blob) => {
+    newViewStateThumbnail.value = blob
+  })
+  showViewStateCreation.value = true;
+}
+
+function cancelCreateViewState() {
+  newViewStateName.value = '';
+  newViewStateThumbnail.value = undefined;
+  showViewStateCreation.value = false;
+}
+
+function submitNewViewState() {
+  if (newViewStateValid.value && newViewStateThumbnail.value) {
+    const thumbnailFile = new File([newViewStateThumbnail.value], 'thumbnail.png', { type: 'image/png' })
+    uploadFile(thumbnailFile).then((thumbnailURL) => {
+      const viewState = projectStore.getCurrentViewState()
+      if (viewState) {
+        viewState.name = newViewStateName.value;
+        viewState.thumbnail = thumbnailURL;
+        createViewState(viewState).then((createdViewState) => {
+          cancelCreateViewState();
+          projectStore.fetchProjectViewStates();
+          projectStore.navigateToViewState(createdViewState);
+        })
+      }
+    })
+  }
+}
+
+function submitDeleteViewState() {
+  deleteViewState(viewStateToDelete.value).then(() => {
+    viewStateToDelete.value = undefined
+    projectStore.fetchProjectViewStates();
+  })
+}
+
+function copyViewStateLink(viewState: ViewState) {
+  const url = `${window.location.origin}/view/${viewState.id}`
+  navigator.clipboard.writeText(url);
 }
 
 watch(basemapList, createBasemapPreviews)
@@ -237,12 +312,49 @@ watch(newBasemapStyleJSON, createNewBasemapPreview)
             <div class="control-menu-row">
               <v-checkbox v-model="mapOnly" label="Map Only" density="compact" hide-details />
             </div>
-            <div class="control-menu-row" @click="() => takeScreenshot(false)">
-              <div>Copy image to clipboard</div>
+            <v-btn class="control-menu-row" @click="copyScreenshot">
+              Copy image to clipboard
+            </v-btn>
+            <v-btn class="control-menu-row" @click="saveScreenshot">
+              Save image
+            </v-btn>
+          </v-card-text>
+        </v-card>
+      </v-menu>
+    </v-btn>
+    <v-btn class="control-btn" v-if="projectStore.currentProject" variant="flat">
+      <v-icon icon="mdi-view-array" class="pb-1 pr-2"></v-icon>
+      <v-icon icon="mdi-share" style="position: absolute; left: 15px; top: 8px; max-width: 10px"></v-icon>
+      <v-menu activator="parent" :open-on-hover="true" :close-on-content-click="false" width="450">
+        <v-card class="control-menu">
+          <div class="control-menu-title">Saved View States</div>
+          <v-card-text class="pa-3">
+            <div v-if="isComparing">
+              While using map comparison mode, saving a new view state is not supported.
             </div>
-            <div class="control-menu-row" @click="() => takeScreenshot(true)">
-              <div>Save image</div>
-            </div>
+            <v-btn v-else class="control-menu-row" @click="showViewStateDialog">
+              <div>Save current view state</div>
+            </v-btn>
+            <v-list v-if="projectStore.availableViewStates.length" density="compact" bg-color="transparent">
+              <v-list-item v-for="viewState in projectStore.availableViewStates" :key="viewState.id" class="control-menu-row pa-1"
+                @click="projectStore.navigateToViewState(viewState)">
+                <template v-slot:prepend>
+                  <img :src="viewState.thumbnail" height="70px"></img>
+                </template>
+                <template v-slot:title>
+                  <div style="width: 150px; text-wrap: wrap;">
+                    {{ viewState.name }}
+                  </div>
+                </template>
+                <template v-slot:append>
+                  <v-btn v-if="userHasEditPermission" icon="mdi-delete" v-tooltip="'Delete this view state'" flat
+                    variant="text" @click.stop.prevent="viewStateToDelete = viewState"></v-btn>
+                  <v-btn icon="mdi-share" v-tooltip="'Copy shareable link'" flat variant="text"
+                    @click.stop.prevent="copyViewStateLink(viewState)"></v-btn>
+                </template>
+              </v-list-item>
+            </v-list>
+            <div v-else>No saved view states exist for this project.</div>
           </v-card-text>
         </v-card>
       </v-menu>
@@ -320,6 +432,58 @@ watch(newBasemapStyleJSON, createNewBasemapPreview)
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog :model-value="showViewStateCreation" width="500">
+      <v-card>
+        <v-card-title class="pa-3">
+          New View State
+          <v-btn class="close-button transparent" variant="flat" icon @click="cancelCreateViewState">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <span v-if="newViewStateName.length && !newViewStateValid">
+            Name must not match an existing view in this project.
+          </span>
+          <v-text-field v-model="newViewStateName" label="Name" autofocus hide-details class="mb-4"
+            @keydown.enter="submitNewViewState"></v-text-field>
+          <div v-if="newViewStateThumbnailURL">
+            This thumbnail will be saved as a visual reference, but loading the view state
+            later may result in slight differences (e.g. newly created objects appearing in lists)</div>
+          <v-img v-if="newViewStateThumbnailURL" :src="newViewStateThumbnailURL"></v-img>
+          <div v-else>Loading thumbnail...</div>
+        </v-card-text>
+        <v-card-actions style="text-align: right;">
+          <v-btn @click="cancelCreateViewState" variant="tonal">
+            Cancel
+          </v-btn>
+          <v-btn color="primary" :disabled="!newViewStateValid || !newViewStateThumbnail" @click="submitNewViewState">
+            Create
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog :model-value="viewStateToDelete !== undefined" width="500">
+      <v-card>
+        <v-card-title>
+          Delete View State
+          <v-btn class="close-button transparent" variant="flat" icon @click="viewStateToDelete = undefined">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text v-if="viewStateToDelete">
+          Are you sure you want to delete view state "{{ viewStateToDelete.name }}"?
+        </v-card-text>
+        <v-card-actions style="text-align: right;">
+          <v-btn @click="viewStateToDelete = undefined" variant="tonal">
+            Cancel
+          </v-btn>
+          <v-btn color="error" variant="tonal" @click="submitDeleteViewState()">
+            <v-icon color="error" class="mr-1">mdi-delete</v-icon>
+            Delete
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -328,7 +492,7 @@ watch(newBasemapStyleJSON, createNewBasemapPreview)
   padding: 3px 8px;
   position: absolute;
   top: 10px;
-  left: 225px;
+  left: 250px;
   opacity: 80%;
   background-color: rgb(var(--v-theme-surface));
   display: flex;

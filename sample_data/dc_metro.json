@@ -1,39 +1,39 @@
 [
-    {
-        "type": "Project",
-        "name": "DC Transportation",
-        "default_map_center": [
-            38.9,
-            -77.1
-        ],
-        "default_map_zoom": 11,
-        "datasets": [
-            "DC Metro"
-        ]
-    },
-    {
-        "type": "Dataset",
-        "name": "DC Metro",
-        "description": "DC Metro Lines and Stations",
-        "category": "transportation",
-        "tags": [
-            "public transit",
-            "network"
-        ],
-        "files": [
-            {
-                "url": "https://data.kitware.com/api/v1/item/64b80188cf6a0eaef6c1416e/download",
-                "hash": "d0d4c957a7571402ce102d47cb53a3bddee11b0c8f278f509dc5615a9810c83f",
-                "path": "washington/DC_Metro.zip",
-                "metadata": {
-                    "combine_contents": "true"
-                }
-            }
-        ],
-        "network_options": {
-            "connection_column": "LINE",
-            "connection_column_delimiter": ", ",
-            "node_id_column": "NAME"
+  {
+    "type": "Project",
+    "name": "DC Transportation",
+    "default_map_center": [
+      -77.1,
+      38.9
+    ],
+    "default_map_zoom": 11,
+    "datasets": [
+      "DC Metro"
+    ]
+  },
+  {
+    "type": "Dataset",
+    "name": "DC Metro",
+    "description": "DC Metro Lines and Stations",
+    "category": "transportation",
+    "tags": [
+      "public transit",
+      "network"
+    ],
+    "files": [
+      {
+        "url": "https://data.kitware.com/api/v1/item/64b80188cf6a0eaef6c1416e/download",
+        "hash": "d0d4c957a7571402ce102d47cb53a3bddee11b0c8f278f509dc5615a9810c83f",
+        "path": "washington/DC_Metro.zip",
+        "metadata": {
+          "combine_contents": "true"
         }
+      }
+    ],
+    "network_options": {
+      "connection_column": "LINE",
+      "connection_column_delimiter": ", ",
+      "node_id_column": "NAME"
     }
+  }
 ]

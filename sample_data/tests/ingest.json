@@ -3,8 +3,8 @@
     "type": "Project",
     "name": "Boston Transportation",
     "default_map_center": [
-      42.4,
-      -71.1
+      -71.1,
+      42.4
     ],
     "default_map_zoom": 11,
     "datasets": [
