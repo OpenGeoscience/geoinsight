@@ -94,7 +94,8 @@ class Dataset(models.Model):
         )
 
         if asynchronous:
-            from uvdat.core.models.task_result import TaskResult
+            # Prevent circular import
+            from uvdat.core.models.task_result import TaskResult  # noqa: PLC0415
 
             result = TaskResult.objects.create(
                 name=f"Conversion of Dataset {self.name}",

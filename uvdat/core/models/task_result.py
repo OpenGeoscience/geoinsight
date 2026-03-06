@@ -52,7 +52,8 @@ class TaskResult(models.Model):
 
 @receiver(post_save, sender=TaskResult)
 def result_post_save(sender, instance, **kwargs):
-    from uvdat.core.rest.serializers import TaskResultSerializer
+    # Prevent circular import
+    from uvdat.core.rest.serializers import TaskResultSerializer  # noqa: PLC0415
 
     payload = TaskResultSerializer(instance).data
     group_name = "conversion"

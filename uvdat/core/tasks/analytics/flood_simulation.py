@@ -64,7 +64,8 @@ class FloodSimulation(AnalysisType):
 
 @shared_task
 def flood_simulation(result_id):
-    from uvdat_flood_sim import run_sim, write_multiframe_geotiff
+    # Only available with [tasks] extra
+    from uvdat_flood_sim import run_sim, write_multiframe_geotiff  # noqa: PLC0415
 
     result = TaskResult.objects.get(id=result_id)
 

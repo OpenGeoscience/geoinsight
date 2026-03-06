@@ -49,7 +49,8 @@ class NetworkRecovery(AnalysisType):
         return settings.UVDAT_ENABLE_NETWORK_RECOVERY
 
     def get_input_options(self):
-        from uvdat.core.tasks.analytics import analysis_types
+        # Prevent circular import
+        from uvdat.core.tasks.analytics import analysis_types  # noqa: PLC0415
 
         node_failure_analysis_types = [
             at().db_value
