@@ -136,7 +136,6 @@ function saveProjectMapLocation(project: Project | undefined) {
 function selectProject(project: Project) {
   if (selectedProject.value?.id !== project.id) {
     selectedProject.value = project;
-    projectStore.loadingDatasets = true;
     projectStore.refreshAllDatasets()
     refreshProjectDatasets(null);
   }
@@ -222,12 +221,6 @@ onMounted(() => {
 });
 
 watch(selectedProject, resetProjectEdit);
-
-watch(() => projectStore.allDatasets, () => {
-  if (projectStore.allDatasets && projDatasets.value) {
-    projectStore.loadingDatasets = false;
-  }
-})
 
 watch(() => projectStore.projectConfigMode, () => {
   if (projectStore.currentProject) {

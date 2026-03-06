@@ -251,7 +251,9 @@ export const useProjectStore = defineStore('project', () => {
     }
 
     async function refreshAllDatasets() {
-        allDatasets.value = await getDatasets()
+      loadingDatasets.value = true;
+      allDatasets.value = await getDatasets()
+      loadingDatasets.value = false;
     }
 
     watch(projectConfigMode, loadProjects);
