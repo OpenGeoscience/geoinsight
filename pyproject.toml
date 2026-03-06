@@ -170,7 +170,6 @@ ignore = [
 
   # Project-specific
   "BLE001", # blind-except
-  "PLC0415", # import-outside-top-level
   "TRY301", # raise-within-try
 ]
 
