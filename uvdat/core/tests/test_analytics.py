@@ -2,14 +2,21 @@ from __future__ import annotations
 
 import re
 
+from django.contrib.auth.models import User
 from django.core.management import call_command
 import pytest
+
+from uvdat.core.models import Chart, Dataset, Network
+from uvdat.core.tasks.analytics import (
+    FloodNetworkFailure,
+    FloodSimulation,
+    NetworkRecovery,
+    analysis_types,
+)
 
 
 @pytest.mark.django_db
 def test_rest_list_analysis_types(user, authenticated_api_client, project):
-    from uvdat.core.tasks.analytics import analysis_types
-
     # TODO: remove this when analytics are no longer hidden from non-superusers
     user.is_superuser = True
     user.save()
@@ -72,15 +79,6 @@ def test_rest_run_analysis_task_no_inputs(authenticated_api_client, user, projec
 @pytest.mark.slow
 @pytest.mark.django_db
 def test_flood_analysis_chain(project):
-    from django.contrib.auth.models import User
-
-    from uvdat.core.models import Chart, Dataset, Network
-    from uvdat.core.tasks.analytics import (
-        FloodNetworkFailure,
-        FloodSimulation,
-        NetworkRecovery,
-    )
-
     # ensure a superuser exists
     User.objects.create_superuser("testsuper")
 

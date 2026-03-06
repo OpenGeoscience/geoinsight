@@ -16,6 +16,7 @@ import json
 from pathlib import Path
 
 import click
+import numpy as np
 from pyproj import Transformer
 from pystac_client import Client
 import rasterio
@@ -67,8 +68,6 @@ def read_cog_window_rgb(cog_url, lon, lat, size_km=10):
 
     Returns 3-band numpy array data (RGB) and updated affine transform.
     """
-    import numpy as np
-
     with rasterio.Env(), rasterio.open(cog_url) as src:
         transformer = Transformer.from_crs("EPSG:4326", src.crs, always_xy=True)
         x, y = transformer.transform(lon, lat)
