@@ -27,7 +27,8 @@ class Chart(models.Model):
         conversion_options=None,
         asynchronous=True,
     ):
-        from uvdat.core.tasks.chart import convert_chart
+        # Prevent circular import
+        from uvdat.core.tasks.chart import convert_chart  # noqa: PLC0415
 
         convert_chart_signature = convert_chart.s(self.id, conversion_options)
         if asynchronous:
