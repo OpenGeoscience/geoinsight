@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import { createPinia } from 'pinia';
+import * as Sentry from '@sentry/vue';
 // Vuetify
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
@@ -14,6 +15,8 @@ import { THEMES } from "./themes";
 
 import JsonEditorVue from 'json-editor-vue'
 
+
+const SENTRY_DSN = import.meta.env.VITE_APP_SENTRY_DSN;
 
 // Must first initialize pinia, so we can set the default theme
 const app = createApp(App);
@@ -31,6 +34,12 @@ const vuetify = createVuetify({
 });
 app.use(vuetify)
 app.use(JsonEditorVue);
+
+Sentry.init({
+  app,
+  dsn: SENTRY_DSN,
+  sendDefaultPii: true,
+});
 
 // Finally, mount the app
 restoreLogin().then(() => {
