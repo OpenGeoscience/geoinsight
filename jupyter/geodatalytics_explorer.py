@@ -212,7 +212,7 @@ class GeoDatalyticsExplorer:
             for dataset in datasets:
                 node = Node(dataset.get("name"), icon="database")
                 node.observe(self.get_dataset_layers, "selected")
-                self.tree_nodes[node._id] = dataset
+                self.tree_nodes[node._id] = dataset  # noqa: SLF001
                 self.tree.add_node(node)
 
             children = [self.tree, self.output]
@@ -223,7 +223,7 @@ class GeoDatalyticsExplorer:
             node = event.get("owner")
             for child in node.nodes:
                 node.remove_node(child)
-            node_id = node._id
+            node_id = node._id  # noqa: SLF001
             dataset = self.tree_nodes[node_id]
             dataset_id = dataset.get("id")
 
@@ -234,13 +234,13 @@ class GeoDatalyticsExplorer:
             for layer in layers:
                 child_node = Node(layer.get("name"), icon="file")
                 child_node.observe(self.select_layer, "selected")
-                self.tree_nodes[child_node._id] = layer
+                self.tree_nodes[child_node._id] = layer  # noqa: SLF001
                 node.add_node(child_node)
 
     def select_layer(self, event):
         with self.output:
             node = event.get("owner")
-            node_id = node._id
+            node_id = node._id  # noqa: SLF001
             layer = self.tree_nodes[node_id]
 
             self.map = LayerRepresentation(

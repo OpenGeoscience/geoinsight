@@ -33,10 +33,12 @@ class AnalyticsViewSet(ReadOnlyModelViewSet):
             for k, v in instance.get_input_options().items():
                 if isinstance(v, QuerySet):
                     filtered_queryset = v.filter_by_projects(Project.objects.filter(id=project_id))
-                    v = [{"id": o.id, "name": o.name} for o in filtered_queryset]
+                    options = [{"id": o.id, "name": o.name} for o in filtered_queryset]
                 elif any(not isinstance(o, dict) for o in v):
-                    v = [{"id": o, "name": o} for o in v]
-                filtered_input_options[k] = v
+                    options = [{"id": o, "name": o} for o in v]
+                else:
+                    options = v
+                filtered_input_options[k] = options
             serializer = uvdat_serializers.AnalysisTypeSerializer(
                 data={
                     "name": instance.name,
