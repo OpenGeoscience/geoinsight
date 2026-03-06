@@ -111,21 +111,3 @@ class Dataset(models.Model):
         else:
             convert_dataset_signature.apply()
             return None
-
-    def get_size(self):
-        from uvdat.core.models import FileItem
-
-        size = 0
-        for file_item in FileItem.objects.filter(dataset=self):
-            if file_item.file_size is not None:
-                size += file_item.file_size
-        return size
-
-    def get_networks(self):
-        from uvdat.core.models import Network
-        return Network.objects.filter(vector_data__dataset=self)
-
-    def get_regions(self):
-        from uvdat.core.models import Region
-
-        return Region.objects.filter(dataset=self)
