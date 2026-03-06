@@ -82,7 +82,8 @@ def geoai_segmentation(result_id):  # noqa: PLR0915
 
         # Run task
         if not result.error:
-            import geoai
+            # Only available with [tasks] extra
+            import geoai  # noqa: PLC0415
 
             # Update name
             result.name = f"Segmentation of {segmentation_prompt} in {imagery.name}"
