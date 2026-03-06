@@ -8,7 +8,7 @@ from django.utils import timezone
 import networkx as nx
 import numpy as np
 
-from uvdat.core.models import Chart, Network, TaskResult
+from uvdat.core.models import Chart, Network, NetworkEdge, NetworkNode, TaskResult
 
 from .analysis_type import AnalysisType
 
@@ -74,8 +74,6 @@ class NetworkRecovery(AnalysisType):
 
 
 def get_network_graph(network):
-    from uvdat.core.models import NetworkEdge, NetworkNode
-
     network = {
         "nodes": NetworkNode.objects.filter(network=network),
         "edges": NetworkEdge.objects.filter(network=network),

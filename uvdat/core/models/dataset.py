@@ -6,8 +6,6 @@ from django.db import models, transaction
 from guardian.models import UserObjectPermission
 from guardian.shortcuts import assign_perm, get_users_with_perms
 
-from uvdat.core.tasks.dataset import convert_dataset
-
 from .querysets import ProjectQuerySet
 
 if typing.TYPE_CHECKING:
@@ -85,6 +83,9 @@ class Dataset(models.Model):
         region_options=None,
         asynchronous=True,
     ):
+        # Prevent circular import
+        from uvdat.core.tasks.dataset import convert_dataset  # noqa: PLC0415
+
         convert_dataset_signature = convert_dataset.s(
             dataset_id=self.id,
             layer_options=layer_options,
