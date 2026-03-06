@@ -1,9 +1,9 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling==1.29.0"]
 build-backend = "hatchling.build"
 
 [project]
-name = "uvdat"
+name = "geodatalytics"
 version = "1.31.0"
 requires-python = ">=3.12"
 license = "Apache-2.0"
@@ -11,71 +11,71 @@ license-files = ["LICENSE", "NOTICE"]
 classifiers = ["Private :: Do Not Upload"]
 dependencies = [
   # Runtime dependencies, always needed
-  "celery",
-  "channels-redis",
-  "channels[daphne]",
-  "django[argon2]",
-  "django-allauth",
-  "django-auth-style",
-  "django-click",
-  "django-cors-headers",
-  "django-environ",
-  "django-extensions",
-  "django-filter",
-  "django-guardian",
-  "django-large-image",
-  "django-oauth-toolkit",
-  "django-resonant-settings[allauth,celery]",
-  "django-resonant-utils[allauth,s3_storage]",
-  "django-stubs-ext",
-  "djangorestframework",
-  "drf-yasg",
+  "celery==5.6.2",
+  "channels-redis==4.3.0",
+  "channels[daphne]==4.3.2",
+  "django[argon2]==5.2.9",
+  "django-allauth==65.14.0",
+  "django-auth-style==0.14.0",
+  "django-click==2.5.0",
+  "django-cors-headers==4.9.0",
+  "django-environ==0.12.1",
+  "django-extensions==4.1",
+  "django-filter==25.2",
+  "django-guardian==3.2.0",
+  "django-large-image==0.10.2",
+  "django-oauth-toolkit==3.2.0",
+  "django-resonant-settings[allauth,celery]==0.48.1",
+  "django-resonant-utils[allauth,s3_storage]==0.17.0",
+  "django-stubs-ext==5.2.8",
+  "djangorestframework==3.16.1",
+  "drf-yasg==1.21.11",
   # Needed for GeoDjango and "large-image[gdal]"
   # gdal 3.10 is the newest supported by Django: https://docs.djangoproject.com/en/5.2/ref/contrib/gis/install/geolibs/
-  'gdal==3.10.*',
-  "geopandas",
-  "large-image-converter",
-  "large-image[gdal]",
-  "matplotlib", # for raster colormaps
-  "networkx",
-  "numpy",
-  "pooch[progress]",
-  "psycopg[binary,pool]",
+  'gdal==3.10.3',
+  "geopandas==1.1.1",
+  "large-image-converter==1.33.3",
+  "large-image[gdal]==1.33.3",
+  "matplotlib==3.9.2", # for raster colormaps
+  "networkx==3.3",
+  "numpy==2.4.2",
+  "pooch[progress]==1.8.2",
+  "psycopg[binary,pool]==3.3.2",
   # Needed by "large-image-converter"
-  "pylibtiff",
-  "pyshp",
-  "rasterio",
-  "rich",
-  "webcolors",
-  "whitenoise[brotli]",
+  "pylibtiff==0.7.0.4.7.1",
+  "pyshp==2.3.1",
+  "rasterio==1.3.11",
+  "rich==14.2.0",
+  "webcolors==24.6.0",
+  "whitenoise[brotli]==6.11.0",
   # Production-only
-  "django-s3-file-field[s3]",
-  "django-storages[s3]",
-  "sentry-sdk[celery,django,pure_eval]",
-  "uvicorn",
-  "websockets",
+  "django-s3-file-field[s3]==1.1.0",
+  "django-storages[s3]==1.14.6",
+  "sentry-sdk[celery,django,pure_eval]==2.48.0",
+  "uvicorn==0.40.0",
+  "websockets==15.0.1",
 ]
 
 [project.optional-dependencies]
 development = [
   # Runtime dependencies, only needed with "development" settings
-  "daphne",
-  "django-browser-reload",
-  "django-debug-toolbar",
-  "django-minio-storage",
-  "django-resonant-utils[minio_storage]",
-  "django-s3-file-field[minio]",
-  "ipython",
-  "watchdog",
-  "werkzeug",
+  "daphne==4.2.1",
+  "django-browser-reload==1.21.0",
+  "django-debug-toolbar==6.1.0",
+  "django-minio-storage==0.5.9",
+  "django-resonant-utils[minio_storage]==0.17.0",
+  "django-s3-file-field[minio]==1.1.0",
+  "ipython==9.8.0",
+  "watchdog==6.0.0",
+  "werkzeug==3.1.4",
 ]
 tasks = [
-  "geoai-py",
-  "osmnx",
+  "geoai-py==0.5.3",
+  "osmnx==2.0.6",
   # Needed by "uvdat-flood-sim[large-image-writer]"
-  "pyvips",
-  "uvdat-flood-sim[large-image-writer]",
-  "xdg-base-dirs",
+  "pyvips==3.1.1.8.17.3",
+  "uvdat-flood-sim[large-image-writer]==1.0.4",
+  "xdg-base-dirs==6.0.2",
 ]
 
 [dependency-groups]
@@ -83,32 +83,32 @@ dev = [
   # Additional developer tools
   # The "dev" dependency group is installed by default,
   # so use this to install "development" extras by default too
-  "uvdat[development]",
-  "pre-commit",
-  "tox",
-  "tox-uv",
+  "geodatalytics[development]",
+  "pre-commit==4.5.1",
+  "tox==4.33.0",
+  "tox-uv==1.29.0",
 ]
 lint = [
-  "ruff",
+  "ruff==0.15.2",
 ]
 type = [
-  "mypy",
-  "celery-types",
-  "django-stubs[compatible-mypy]",
-  "djangorestframework-stubs",
-  "pandas-stubs",
-  "types-channels",
+  "mypy==1.19.1",
+  "celery-types==0.24.0",
+  "django-stubs[compatible-mypy]==5.2.8",
+  "djangorestframework-stubs[compatible-mypy]==3.16.6",
+  "pandas-stubs==3.0.0.260204",
+  "types-channels==4.3.0.20250822",
 ]
 test = [
-  "django-s3-file-field-client",
-  "factory-boy",
-  "pytest",
-  "pytest-django",
-  "pytest-mock",
+  "django-s3-file-field-client==1.1.0",
+  "factory-boy==3.3.3",
+  "pytest==9.0.2",
+  "pytest-django==4.11.1",
+  "pytest-mock==3.15.1",
   # Enable with "pytest --random-order ..."
-  "pytest-random-order",
+  "pytest-random-order==1.2.0",
   # Enable with "pytest --count=... ..."
-  "pytest-repeat",
+  "pytest-repeat==0.9.4",
 ]
 
 [[tool.uv.index]]
@@ -230,6 +230,7 @@ warn_unused_configs = true
 warn_unused_ignores = true
 plugins = [
   "mypy_django_plugin.main",
+  "mypy_drf_plugin.main",
 ]
 
 [tool.django-stubs]
