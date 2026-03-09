@@ -2,6 +2,10 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
+import celery
+
+from uvdat.core.models import TaskResult
+
 
 class AnalysisType(ABC):
     def __init__(self, *args):
@@ -24,3 +28,13 @@ class AnalysisType(ABC):
     @abstractmethod
     def run_task(self, *, project, **inputs):
         raise NotImplementedError
+
+
+class AnalysisTask(celery.Task):
+    def on_failure(self, exc, task_id, args, kwargs, einfo):
+        # All analysis tasks use this signature
+        task_result_id = args[0]
+
+        task_result = TaskResult.objects.get(pk=task_result_id)
+        task_result.write_error("An error occurred during this task. See logs for details.")
+        task_result.complete()
