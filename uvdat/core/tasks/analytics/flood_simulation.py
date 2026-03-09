@@ -78,9 +78,7 @@ def flood_simulation(result_id):
         "annual_probability",
     ]:
         if result.inputs.get(input_key) is None:
-            result.write_error(f"{input_key} not provided")
-            result.complete()
-            return
+            raise ValueError(f"{input_key} not provided")
 
     result.write_status("Interpreting input values")
     initial_conditions_id = result.inputs.get("initial_conditions_id")
