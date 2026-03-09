@@ -11,7 +11,7 @@ from pyproj import CRS, Transformer
 
 from uvdat.core.models import Dataset, FileItem, RasterData, TaskResult
 
-from .analysis_type import AnalysisTask, AnalysisType
+from .analysis_type import AnalysisInputError, AnalysisTask, AnalysisType
 
 
 class GeoAISegmentation(AnalysisType):
@@ -77,8 +77,8 @@ def geoai_segmentation(result_id):  # noqa: PLR0915
     else:
         try:
             imagery = RasterData.objects.get(id=imagery_id)
-        except RasterData.DoesNotExist:
-            raise AnalysisInputError("Aerial imagery raster data not found")
+        except RasterData.DoesNotExist as e:
+            raise AnalysisInputError("Aerial imagery raster data not found") from e
 
     # Run task
     import geoai

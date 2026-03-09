@@ -146,8 +146,8 @@ def network_recovery(result_id):  # noqa: C901, PLR0912, PLR0915
     else:
         try:
             failure = TaskResult.objects.get(id=failure_id)
-        except TaskResult.DoesNotExist:
-            raise AnalysisInputError("Network failure result not found")
+        except TaskResult.DoesNotExist as e:
+            raise AnalysisInputError("Network failure result not found") from e
 
     mode = result.inputs.get("recovery_mode")
     if mode is None:
@@ -162,8 +162,8 @@ def network_recovery(result_id):  # noqa: C901, PLR0912, PLR0915
         else:
             try:
                 network = Network.objects.get(id=network_id)
-            except Network.DoesNotExist:
-                raise AnalysisInputError("Network not found")
+            except Network.DoesNotExist as e:
+                raise AnalysisInputError("Network not found") from e
 
     # Run task
     result.name = f"{mode.title()} Recovery from Failure Result {failure.id}"

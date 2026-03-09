@@ -46,14 +46,14 @@ def test_rest_list_analysis_types(user, authenticated_api_client, project):
 @pytest.mark.django_db
 def test_rest_run_analysis_task_no_inputs(authenticated_api_client, user, project, task):
     project.set_followers([user])
-    data = None
+    resp = None
     with pytest.raises(AnalysisInputError):
         resp = authenticated_api_client.post(
             f"/api/v1/analytics/project/{project.id}/types/{task}/run/"
         )
-        data = resp.json()
-    if data is None:
+    if resp is None:
         return
+    data = resp.json()
 
     # evaluate initial response
     assert data.get("task_type") == task
