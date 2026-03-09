@@ -10,7 +10,6 @@ import type { StyleSpecification, Map, ResourceType } from "maplibre-gl";
 import { useTheme } from 'vuetify';
 import { Protocol } from "pmtiles";
 import { storeToRefs } from "pinia";
-import { map } from "lodash";
 
 const ATTRIBUTION = [
   "<a target='_blank' href='https://maplibre.org/'>© MapLibre</a>",
@@ -52,6 +51,7 @@ attributionControl.onAdd = (map: Map): HTMLElement => {
 
 function setAttributionControlStyle() {
   const container = attributionControl._container;
+  if (!container) return;
   container.style.padding = "3px 8px";
   container.style.marginRight = "5px";
   container.style.borderRadius = "15px";
@@ -87,13 +87,13 @@ const handleMapReady = async (newMap: Map, mapId: 'A' | 'B') => {
       // check if click is in the compare map and it's enabled
       if (e.point.x > compareStore.sliderEnd.position && isComparing.value) {
         return; // let the compare map handle this click
-      } 
+      }
       mapStore.clickedFeature = undefined;
     });
     if (mapId === 'A') {
         newMap.setStyle(mapStore.currentBasemap?.style as StyleSpecification);
         mapStore.map = newMap;
-        mapStore.setMapCenter(undefined, true);
+        mapStore.resetMapPosition(undefined, true);
     } else if (mapId === 'B') {
         mapStore.compareMap = newMap;
         newMap.on("click", () => {mapStore.compareClickedFeature = undefined });
@@ -161,6 +161,7 @@ const transformRequest = (url: string, _resourceType?: ResourceType) => {
     return { url };
 }
 
+// @ts-ignore for "Type instantiation is excessively deep and possibly infinite"
 const mapStyleA: Ref<StyleSpecification | string> = ref(mapStore.currentBasemap?.style as StyleSpecification);
 watch(isComparing, (newVal) => {
    if (!newVal && mapStore.map) {
@@ -205,8 +206,8 @@ const updateBasemap = () => {
                 compareStore.mapLayersB = compareStore.updateCompareLayersList('B');
               });
             }
-          } 
-        });  
+          }
+        });
       }
     }
   }

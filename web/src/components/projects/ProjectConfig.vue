@@ -124,7 +124,7 @@ function saveProjectMapLocation(project: Project | undefined) {
         projectStore.currentProject.default_map_center = project.default_map_center
         projectStore.currentProject.default_map_zoom = project.default_map_zoom
       }
-      mapStore.setMapCenter(project);
+      mapStore.resetMapPosition(project);
       saving.value = "done";
       setTimeout(() => {
         saving.value = undefined;
@@ -136,7 +136,6 @@ function saveProjectMapLocation(project: Project | undefined) {
 function selectProject(project: Project) {
   if (selectedProject.value?.id !== project.id) {
     selectedProject.value = project;
-    projectStore.loadingDatasets = true;
     projectStore.refreshAllDatasets()
     refreshProjectDatasets(null);
   }
@@ -222,12 +221,6 @@ onMounted(() => {
 });
 
 watch(selectedProject, resetProjectEdit);
-
-watch(() => projectStore.allDatasets, () => {
-  if (projectStore.allDatasets && projDatasets.value) {
-    projectStore.loadingDatasets = false;
-  }
-})
 
 watch(() => projectStore.projectConfigMode, () => {
   if (projectStore.currentProject) {
@@ -320,7 +313,7 @@ watch(() => projectStore.projectConfigMode, () => {
         </template>
         <v-card width="250">
           <v-list selectable>
-            <v-list-item @click="() => mapStore.setMapCenter(projectStore.currentProject)">
+            <v-list-item @click="() => mapStore.resetMapPosition(projectStore.currentProject)">
               Go to project default map position
             </v-list-item>
             <v-list-item @click="() => saveProjectMapLocation(projectStore.currentProject)">

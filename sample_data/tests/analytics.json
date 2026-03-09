@@ -1,77 +1,77 @@
 [
-    {
-        "type": "Project",
-        "name": "Boston Transportation",
-        "default_map_center": [
-            42.4,
-            -71.1
-        ],
-        "default_map_zoom": 11,
-        "datasets": [
-            "MBTA Rapid Transit"
-        ]
-    },
-    {
-        "type": "Dataset",
-        "name": "MBTA Rapid Transit",
-        "description": "Boston Subway System Lines and Stops",
-        "category": "transportation",
-        "tags": [
-            "boston",
-            "public transit",
-            "network"
-        ],
-        "files": [
-            {
-                "url": "https://data.kitware.com/api/v1/item/64b95be1cf6a0eaef6c141f6/download",
-                "hash": "1a8d1a602e7880d091a156b3b97a47d453260ba41c7c4e6e872ca4543453985d",
-                "path": "boston/mbta_rapid_transit.zip",
-                "metadata": {
-                    "combine_contents": "true"
-                }
-            }
-        ],
-        "network_options": {
-            "connection_column": "ROUTE",
-            "connection_column_delimiter": "/",
-            "node_id_column": "STATION"
-        }
-    },
-    {
-        "type": "Chart",
-        "name": "Charles River Hydrograph (Short Flow Length)",
-        "description": "Hourly hydrograph for Charles River, using a shorter flow length measurement directly from Waltham gage to mouth. Uses the following units. Timestep is one hour. Values are volume without units - volume is a proportion of total flood volume. Since these are hourly timesteps, each value can also be thought of as a per-hour rate (volume/hour = discharge).",
-        "project": "Boston Transportation",
-        "files": [
-            {
-                "url": "https://data.kitware.com/api/v1/item/68d950f63ba8f1c07a875e65/download",
-                "hash": "d0ce5335c53bc2ee80b8762b5c458d06f0cdce8e03cfce935964d365da118c4d",
-                "path": "boston/hydrograph_charles_short.csv"
-            }
-        ],
+  {
+    "type": "Project",
+    "name": "Boston Transportation",
+    "default_map_center": [
+      -71.1,
+      42.4
+    ],
+    "default_map_zoom": 11,
+    "datasets": [
+      "MBTA Rapid Transit"
+    ]
+  },
+  {
+    "type": "Dataset",
+    "name": "MBTA Rapid Transit",
+    "description": "Boston Subway System Lines and Stops",
+    "category": "transportation",
+    "tags": [
+      "boston",
+      "public transit",
+      "network"
+    ],
+    "files": [
+      {
+        "url": "https://data.kitware.com/api/v1/item/64b95be1cf6a0eaef6c141f6/download",
+        "hash": "1a8d1a602e7880d091a156b3b97a47d453260ba41c7c4e6e872ca4543453985d",
+        "path": "boston/mbta_rapid_transit.zip",
         "metadata": {
-            "method": "NRCS lag equation",
-            "watershed_slope_percent": 3,
-            "curve_number": 85,
-            "flow_length_ft": 81840,
-            "time_of_concentration_hours": 8.8,
-            "peak_rate_factor": 484,
-            "time_to_peak_hours": 5.2,
-            "attribution": "Calculated by August Posch, September 2025, Northeastern University."
-        },
-        "chart_options": {
-            "chart_title": "Proportional Discharge over 24 hours",
-            "x_title": "Hour",
-            "y_title": "Proportional discharge rate (volume/hour)"
-        },
-        "conversion_options": {
-            "labels": "hour",
-            "datasets": [
-                "discharge"
-            ],
-            "palette": {
-                "discharge": "blue"
-            }
+          "combine_contents": "true"
         }
+      }
+    ],
+    "network_options": {
+      "connection_column": "ROUTE",
+      "connection_column_delimiter": "/",
+      "node_id_column": "STATION"
     }
+  },
+  {
+    "type": "Chart",
+    "name": "Charles River Hydrograph (Short Flow Length)",
+    "description": "Hourly hydrograph for Charles River, using a shorter flow length measurement directly from Waltham gage to mouth. Uses the following units. Timestep is one hour. Values are volume without units - volume is a proportion of total flood volume. Since these are hourly timesteps, each value can also be thought of as a per-hour rate (volume/hour = discharge).",
+    "project": "Boston Transportation",
+    "files": [
+      {
+        "url": "https://data.kitware.com/api/v1/item/68d950f63ba8f1c07a875e65/download",
+        "hash": "d0ce5335c53bc2ee80b8762b5c458d06f0cdce8e03cfce935964d365da118c4d",
+        "path": "boston/hydrograph_charles_short.csv"
+      }
+    ],
+    "metadata": {
+      "method": "NRCS lag equation",
+      "watershed_slope_percent": 3,
+      "curve_number": 85,
+      "flow_length_ft": 81840,
+      "time_of_concentration_hours": 8.8,
+      "peak_rate_factor": 484,
+      "time_to_peak_hours": 5.2,
+      "attribution": "Calculated by August Posch, September 2025, Northeastern University."
+    },
+    "chart_options": {
+      "chart_title": "Proportional Discharge over 24 hours",
+      "x_title": "Hour",
+      "y_title": "Proportional discharge rate (volume/hour)"
+    },
+    "conversion_options": {
+      "labels": "hour",
+      "datasets": [
+        "discharge"
+      ],
+      "palette": {
+        "discharge": "blue"
+      }
+    }
+  }
 ]

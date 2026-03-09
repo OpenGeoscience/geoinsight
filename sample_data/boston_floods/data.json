@@ -1,357 +1,357 @@
 [
-    {
-        "type": "Project",
-        "name": "Boston Transportation",
-        "default_map_center": [
-            42.4,
-            -71.1
-        ],
-        "default_map_zoom": 11,
-        "datasets": [
-            "MBTA Rapid Transit",
-            "MBTA Commuter Rail",
-            "Massachusetts Elevation Data",
-            "Boston Orthoimagery",
-            "Boston Neighborhoods",
-            "Boston Census 2020 Block Groups",
-            "Boston Zip Codes",
-            "Boston Rivers Boundary",
-            "Massachusetts Amenities"
-        ]
-    },
-    {
-        "type": "Dataset",
-        "name": "MBTA Rapid Transit",
-        "description": "Boston Subway System Lines and Stops",
-        "category": "transportation",
-        "tags": [
-            "boston",
-            "public transit",
-            "network"
-        ],
-        "files": [
-            {
-                "url": "https://data.kitware.com/api/v1/item/64b95be1cf6a0eaef6c141f6/download",
-                "hash": "1a8d1a602e7880d091a156b3b97a47d453260ba41c7c4e6e872ca4543453985d",
-                "path": "boston/mbta_rapid_transit.zip",
-                "metadata": {
-                    "combine_contents": "true"
-                }
-            }
-        ],
-        "conversion_script": "./ingest_mbta.py",
-        "network_options": {
-            "connection_column": "ROUTE",
-            "connection_column_delimiter": "/",
-            "node_id_column": "STATION"
-        }
-    },
-    {
-        "type": "Dataset",
-        "name": "MBTA Commuter Rail",
-        "description": "Rail linework and station points for passenger, freight, and Amtrak and MBTA Commuter Rail trains.",
-        "category": "transportation",
-        "tags": [
-            "boston",
-            "public transit",
-            "network"
-        ],
-        "files": [
-            {
-                "url": "https://data.kitware.com/api/v1/item/64907c77f04fb368544295ed/download",
-                "hash": "57158adcedb10e6e8db680d2b031556ad7ff31b2e936ac29679b5e68746aa2e0",
-                "path": "boston/commuter_rail.zip",
-                "metadata": {
-                    "combine_contents": "true"
-                }
-            }
-        ]
-    },
-    {
-        "type": "Dataset",
-        "name": "Massachusetts Elevation Data",
-        "description": "Low resolution sampling of land elevation in meters above sea level",
-        "category": "elevation",
-        "tags": [
-            "boston",
-            "terrain"
-        ],
-        "files": [
-            {
-                "url": "https://data.kitware.com/api/v1/item/64907e4df04fb368544295f0/download",
-                "hash": "fceb76454c786d4e5ad6e05220073a0009e8deb008f5fd9195ff21c432fb8682",
-                "path": "boston/easternmass.tif"
-            }
-        ],
-        "layers": [
-            {
-                "name": "Elevation",
-                "frames": [
-                    {
-                        "name": "Band 1",
-                        "data": "easternmass.tif"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "type": "Dataset",
-        "name": "Boston Orthoimagery",
-        "description": "Sourced from https://gis.data.mass.gov/maps/6c7009c789354573a42af7251fb768a4/about",
-        "category": "imagery",
-        "tags": [
-            "boston",
-            "aerial imagery"
-        ],
-        "files": [
-            {
-                "url": "https://data.kitware.com/api/v1/item/6744df3c22f196cb5d931161/download",
-                "hash": "ea35f2e3d2c5dc0b2d3621ea66c1faf23632a2e1de6438cd2303e1896f75f4d4",
-                "path": "boston/boston_orthoimagery.tiff"
-            }
-        ],
-        "layers": [
-            {
-                "name": "Orthoimagery from a single precomposited image",
-                "frames": [
-                    {
-                        "name": "2023",
-                        "index": 0,
-                        "data": "boston_orthoimagery.tiff"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "type": "Dataset",
-        "name": "Boston Neighborhoods",
-        "description": "The Neighborhood boundaries data layer is a combination of zoning neighborhood boundaries, zip code boundaries and 2010 Census tract boundaries",
-        "category": "region",
-        "tags": [
-            "boston",
-            "region boundaries",
-            "census",
-            "neighborhoods"
-        ],
-        "files": [
-            {
-                "url": "https://data.kitware.com/api/v1/item/64caa3da77edef4e1ea8ef57/download",
-                "hash": "9917afa67c77b3f7a4e13637b21af60ec348cee0cd18bca92a0c87adf9d7134f",
-                "path": "boston/neighborhoods2020.json"
-            }
-        ],
-        "region_options": {
-            "name_property": "BlockGr202"
-        }
-    },
-    {
-        "type": "Dataset",
-        "name": "Boston Census 2020 Block Groups",
-        "description": "Block groups (between 600 and 3,000 people per block) for Boston from the 2020 census",
-        "category": "region",
-        "tags": [
-            "boston",
-            "region boundaries",
-            "census"
-        ],
-        "files": [
-            {
-                "url": "https://data.boston.gov/dataset/c478b600-3e3e-46fd-9f57-da89459e9928/resource/11282722-9386-4272-8a82-2fcec89e6d55/download/census2020_blockgroups.zip",
-                "hash": "98d6346c117ea2bf6e7da3a382f88e75e3a028fd395fe4419a46022e76c2cf50",
-                "path": "mass/blockgroups.zip"
-            }
-        ],
-        "region_options": {
-            "name_property": "GEOID20"
-        }
-    },
-    {
-        "type": "Dataset",
-        "name": "Boston Zip Codes",
-        "description": "Zip codes 01001-02791",
-        "category": "region",
-        "tags": [
-            "boston",
-            "region boundaries"
-        ],
-        "files": [
-            {
-                "url": "https://data.kitware.com/api/v1/item/64fbb4c6e99e9e6006f00114/download",
-                "hash": "44ea42d43c6699118e6e9b4d4939ecc1fde95f1150b9d288842efbd9900eaa3f",
-                "path": "boston/zipcodes.zip"
-            }
-        ],
-        "region_options": {
-            "name_property": "GEOID20"
-        }
-    },
-    {
-        "type": "Dataset",
-        "name": "Boston Rivers Boundary",
-        "description": "Area including Charles River, Mystic River, Boston Harbor, and other small streams",
-        "category": "region",
-        "tags": [
-            "boston",
-            "region boundaries",
-            "water"
-        ],
-        "files": [
-            {
-                "url": "https://data.kitware.com/api/v1/item/690a354103d1a144cbcf4244/download",
-                "hash": "708e4988c943db421a67b84926aee834e8dac5eb0a3b4331451ba2b401ac764a",
-                "path": "boston/water_boundary.geojson"
-            }
-        ]
-    },
-    {
-        "type": "Dataset",
-        "name": "Massachusetts Amenities",
-        "description": "Various amenity locations, sourced from https://maps.massgis.digital.mass.gov/MassMapper/MassMapper.html",
-        "category": "amenities",
-        "tags": [
-            "massachusetts",
-            "infrastructure"
-        ],
-        "files": [
-            {
-                "url": "https://data.kitware.com/api/v1/item/698a39825389b41db2e728a9/download",
-                "hash": "2a251bbd270341e9648f2bcbf488fa769b04995e3a9e93bf3ccaa0f36af327f9",
-                "path": "mass/amenities.zip"
-            }
-        ]
-    },
-    {
-        "type": "Chart",
-        "name": "Boston Harbor Daily Tide Levels",
-        "description": "Raw data was obtained using the NOAA CO-OPS API for Data Retrieval and reformatted in tabular form",
-        "project": "Boston Transportation",
-        "files": [
-            {
-                "url": "https://data.kitware.com/api/v1/item/64beb508b4d956782eee8cb1/download",
-                "hash": "299afb2e6726024cc943c0267507cae7b635282db358fea688be81b569f0b9db",
-                "path": "boston/tide_level_data.csv"
-            }
-        ],
-        "editable": false,
+  {
+    "type": "Project",
+    "name": "Boston Transportation",
+    "default_map_center": [
+      -71.1,
+      42.4
+    ],
+    "default_map_zoom": 11,
+    "datasets": [
+      "MBTA Rapid Transit",
+      "MBTA Commuter Rail",
+      "Massachusetts Elevation Data",
+      "Boston Orthoimagery",
+      "Boston Neighborhoods",
+      "Boston Census 2020 Block Groups",
+      "Boston Zip Codes",
+      "Boston Rivers Boundary",
+      "Massachusetts Amenities"
+    ]
+  },
+  {
+    "type": "Dataset",
+    "name": "MBTA Rapid Transit",
+    "description": "Boston Subway System Lines and Stops",
+    "category": "transportation",
+    "tags": [
+      "boston",
+      "public transit",
+      "network"
+    ],
+    "files": [
+      {
+        "url": "https://data.kitware.com/api/v1/item/64b95be1cf6a0eaef6c141f6/download",
+        "hash": "1a8d1a602e7880d091a156b3b97a47d453260ba41c7c4e6e872ca4543453985d",
+        "path": "boston/mbta_rapid_transit.zip",
         "metadata": {
-            "columns": {
-                "Date": "YYYY-MM-DD",
-                "H": "High water",
-                "HH": "Higher High water",
-                "L": "Low water",
-                "LL": "Lower Low Water"
-            },
-            "contents": "Daily high-low tide levels",
-            "date_range": {
-                "from": "01-Jan-1980",
-                "to": "30-Jun-2023"
-            },
-            "location": {
-                "latitude": 42.3539,
-                "longitude": -71.0503
-            },
-            "rows": 15857,
-            "source": "https://api.tidesandcurrents.noaa.gov/api/prod/",
-            "station": {
-                "datum": "Station Datum (STND)",
-                "id": 8443970
-            }
-        },
-        "chart_options": {
-            "chart_title": "Daily Tide Levels",
-            "x_title": "Date Recorded",
-            "y_title": "Distance from Sensor (m)"
-        },
-        "conversion_options": {
-            "labels": "Date",
-            "datasets": [
-                "HH",
-                "H",
-                "L",
-                "LL"
-            ],
-            "palette": {
-                "HH": "red",
-                "H": "pink",
-                "L": "lightblue",
-                "LL": "blue"
-            }
+          "combine_contents": "true"
         }
-    },
-    {
-        "type": "Chart",
-        "name": "Charles River Hydrograph (Long Flow Length)",
-        "description": "Hourly hydrograph for Charles River, using a longer flow length measurement coming from Chester Brook. Uses the following units. Timestep is one hour. Values are volume without units - volume is a proportion of total flood volume. Since these are hourly timesteps, each value can also be thought of as a per-hour rate (volume/hour = discharge).",
-        "project": "Boston Transportation",
-        "files": [
-            {
-                "url": "https://data.kitware.com/api/v1/item/68d950f73ba8f1c07a875e68/download",
-                "hash": "c2c7164b0b9ad8272c225c496e2f17a40a84d0712b00fe6e5aa3f677910cef1f",
-                "path": "boston/hydrograph_charles_long.csv"
-            }
-        ],
-        "metadata": {
-            "method": "NRCS lag equation",
-            "watershed_slope_percent": 3,
-            "curve_number": 85,
-            "flow_length_ft": 124080,
-            "time_of_concentration_hours": 12.3,
-            "peak_rate_factor": 484,
-            "time_to_peak_hours": 7.2,
-            "attribution": "Calculated by August Posch, September 2025, Northeastern University."
-        },
-        "chart_options": {
-            "chart_title": "Proportional Discharge over 24 hours",
-            "x_title": "Hour",
-            "y_title": "Proportional discharge rate (volume/hour)"
-        },
-        "conversion_options": {
-            "labels": "hour",
-            "datasets": [
-                "discharge"
-            ],
-            "palette": {
-                "discharge": "blue"
-            }
-        }
-    },
-    {
-        "type": "Chart",
-        "name": "Charles River Hydrograph (Short Flow Length)",
-        "description": "Hourly hydrograph for Charles River, using a shorter flow length measurement directly from Waltham gage to mouth. Uses the following units. Timestep is one hour. Values are volume without units - volume is a proportion of total flood volume. Since these are hourly timesteps, each value can also be thought of as a per-hour rate (volume/hour = discharge).",
-        "project": "Boston Transportation",
-        "files": [
-            {
-                "url": "https://data.kitware.com/api/v1/item/68d950f63ba8f1c07a875e65/download",
-                "hash": "d0ce5335c53bc2ee80b8762b5c458d06f0cdce8e03cfce935964d365da118c4d",
-                "path": "boston/hydrograph_charles_short.csv"
-            }
-        ],
-        "metadata": {
-            "method": "NRCS lag equation",
-            "watershed_slope_percent": 3,
-            "curve_number": 85,
-            "flow_length_ft": 81840,
-            "time_of_concentration_hours": 8.8,
-            "peak_rate_factor": 484,
-            "time_to_peak_hours": 5.2,
-            "attribution": "Calculated by August Posch, September 2025, Northeastern University."
-        },
-        "chart_options": {
-            "chart_title": "Proportional Discharge over 24 hours",
-            "x_title": "Hour",
-            "y_title": "Proportional discharge rate (volume/hour)"
-        },
-        "conversion_options": {
-            "labels": "hour",
-            "datasets": [
-                "discharge"
-            ],
-            "palette": {
-                "discharge": "blue"
-            }
-        }
+      }
+    ],
+    "conversion_script": "./ingest_mbta.py",
+    "network_options": {
+      "connection_column": "ROUTE",
+      "connection_column_delimiter": "/",
+      "node_id_column": "STATION"
     }
+  },
+  {
+    "type": "Dataset",
+    "name": "MBTA Commuter Rail",
+    "description": "Rail linework and station points for passenger, freight, and Amtrak and MBTA Commuter Rail trains.",
+    "category": "transportation",
+    "tags": [
+      "boston",
+      "public transit",
+      "network"
+    ],
+    "files": [
+      {
+        "url": "https://data.kitware.com/api/v1/item/64907c77f04fb368544295ed/download",
+        "hash": "57158adcedb10e6e8db680d2b031556ad7ff31b2e936ac29679b5e68746aa2e0",
+        "path": "boston/commuter_rail.zip",
+        "metadata": {
+          "combine_contents": "true"
+        }
+      }
+    ]
+  },
+  {
+    "type": "Dataset",
+    "name": "Massachusetts Elevation Data",
+    "description": "Low resolution sampling of land elevation in meters above sea level",
+    "category": "elevation",
+    "tags": [
+      "boston",
+      "terrain"
+    ],
+    "files": [
+      {
+        "url": "https://data.kitware.com/api/v1/item/64907e4df04fb368544295f0/download",
+        "hash": "fceb76454c786d4e5ad6e05220073a0009e8deb008f5fd9195ff21c432fb8682",
+        "path": "boston/easternmass.tif"
+      }
+    ],
+    "layers": [
+      {
+        "name": "Elevation",
+        "frames": [
+          {
+            "name": "Band 1",
+            "data": "easternmass.tif"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Dataset",
+    "name": "Boston Orthoimagery",
+    "description": "Sourced from https://gis.data.mass.gov/maps/6c7009c789354573a42af7251fb768a4/about",
+    "category": "imagery",
+    "tags": [
+      "boston",
+      "aerial imagery"
+    ],
+    "files": [
+      {
+        "url": "https://data.kitware.com/api/v1/item/6744df3c22f196cb5d931161/download",
+        "hash": "ea35f2e3d2c5dc0b2d3621ea66c1faf23632a2e1de6438cd2303e1896f75f4d4",
+        "path": "boston/boston_orthoimagery.tiff"
+      }
+    ],
+    "layers": [
+      {
+        "name": "Orthoimagery from a single precomposited image",
+        "frames": [
+          {
+            "name": "2023",
+            "index": 0,
+            "data": "boston_orthoimagery.tiff"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Dataset",
+    "name": "Boston Neighborhoods",
+    "description": "The Neighborhood boundaries data layer is a combination of zoning neighborhood boundaries, zip code boundaries and 2010 Census tract boundaries",
+    "category": "region",
+    "tags": [
+      "boston",
+      "region boundaries",
+      "census",
+      "neighborhoods"
+    ],
+    "files": [
+      {
+        "url": "https://data.kitware.com/api/v1/item/64caa3da77edef4e1ea8ef57/download",
+        "hash": "9917afa67c77b3f7a4e13637b21af60ec348cee0cd18bca92a0c87adf9d7134f",
+        "path": "boston/neighborhoods2020.json"
+      }
+    ],
+    "region_options": {
+      "name_property": "BlockGr202"
+    }
+  },
+  {
+    "type": "Dataset",
+    "name": "Boston Census 2020 Block Groups",
+    "description": "Block groups (between 600 and 3,000 people per block) for Boston from the 2020 census",
+    "category": "region",
+    "tags": [
+      "boston",
+      "region boundaries",
+      "census"
+    ],
+    "files": [
+      {
+        "url": "https://data.boston.gov/dataset/c478b600-3e3e-46fd-9f57-da89459e9928/resource/11282722-9386-4272-8a82-2fcec89e6d55/download/census2020_blockgroups.zip",
+        "hash": "98d6346c117ea2bf6e7da3a382f88e75e3a028fd395fe4419a46022e76c2cf50",
+        "path": "mass/blockgroups.zip"
+      }
+    ],
+    "region_options": {
+      "name_property": "GEOID20"
+    }
+  },
+  {
+    "type": "Dataset",
+    "name": "Boston Zip Codes",
+    "description": "Zip codes 01001-02791",
+    "category": "region",
+    "tags": [
+      "boston",
+      "region boundaries"
+    ],
+    "files": [
+      {
+        "url": "https://data.kitware.com/api/v1/item/64fbb4c6e99e9e6006f00114/download",
+        "hash": "44ea42d43c6699118e6e9b4d4939ecc1fde95f1150b9d288842efbd9900eaa3f",
+        "path": "boston/zipcodes.zip"
+      }
+    ],
+    "region_options": {
+      "name_property": "GEOID20"
+    }
+  },
+  {
+    "type": "Dataset",
+    "name": "Boston Rivers Boundary",
+    "description": "Area including Charles River, Mystic River, Boston Harbor, and other small streams",
+    "category": "region",
+    "tags": [
+      "boston",
+      "region boundaries",
+      "water"
+    ],
+    "files": [
+      {
+        "url": "https://data.kitware.com/api/v1/item/690a354103d1a144cbcf4244/download",
+        "hash": "708e4988c943db421a67b84926aee834e8dac5eb0a3b4331451ba2b401ac764a",
+        "path": "boston/water_boundary.geojson"
+      }
+    ]
+  },
+  {
+    "type": "Dataset",
+    "name": "Massachusetts Amenities",
+    "description": "Various amenity locations, sourced from https://maps.massgis.digital.mass.gov/MassMapper/MassMapper.html",
+    "category": "amenities",
+    "tags": [
+      "massachusetts",
+      "infrastructure"
+    ],
+    "files": [
+      {
+        "url": "https://data.kitware.com/api/v1/item/698a39825389b41db2e728a9/download",
+        "hash": "2a251bbd270341e9648f2bcbf488fa769b04995e3a9e93bf3ccaa0f36af327f9",
+        "path": "mass/amenities.zip"
+      }
+    ]
+  },
+  {
+    "type": "Chart",
+    "name": "Boston Harbor Daily Tide Levels",
+    "description": "Raw data was obtained using the NOAA CO-OPS API for Data Retrieval and reformatted in tabular form",
+    "project": "Boston Transportation",
+    "files": [
+      {
+        "url": "https://data.kitware.com/api/v1/item/64beb508b4d956782eee8cb1/download",
+        "hash": "299afb2e6726024cc943c0267507cae7b635282db358fea688be81b569f0b9db",
+        "path": "boston/tide_level_data.csv"
+      }
+    ],
+    "editable": false,
+    "metadata": {
+      "columns": {
+        "Date": "YYYY-MM-DD",
+        "H": "High water",
+        "HH": "Higher High water",
+        "L": "Low water",
+        "LL": "Lower Low Water"
+      },
+      "contents": "Daily high-low tide levels",
+      "date_range": {
+        "from": "01-Jan-1980",
+        "to": "30-Jun-2023"
+      },
+      "location": {
+        "latitude": 42.3539,
+        "longitude": -71.0503
+      },
+      "rows": 15857,
+      "source": "https://api.tidesandcurrents.noaa.gov/api/prod/",
+      "station": {
+        "datum": "Station Datum (STND)",
+        "id": 8443970
+      }
+    },
+    "chart_options": {
+      "chart_title": "Daily Tide Levels",
+      "x_title": "Date Recorded",
+      "y_title": "Distance from Sensor (m)"
+    },
+    "conversion_options": {
+      "labels": "Date",
+      "datasets": [
+        "HH",
+        "H",
+        "L",
+        "LL"
+      ],
+      "palette": {
+        "HH": "red",
+        "H": "pink",
+        "L": "lightblue",
+        "LL": "blue"
+      }
+    }
+  },
+  {
+    "type": "Chart",
+    "name": "Charles River Hydrograph (Long Flow Length)",
+    "description": "Hourly hydrograph for Charles River, using a longer flow length measurement coming from Chester Brook. Uses the following units. Timestep is one hour. Values are volume without units - volume is a proportion of total flood volume. Since these are hourly timesteps, each value can also be thought of as a per-hour rate (volume/hour = discharge).",
+    "project": "Boston Transportation",
+    "files": [
+      {
+        "url": "https://data.kitware.com/api/v1/item/68d950f73ba8f1c07a875e68/download",
+        "hash": "c2c7164b0b9ad8272c225c496e2f17a40a84d0712b00fe6e5aa3f677910cef1f",
+        "path": "boston/hydrograph_charles_long.csv"
+      }
+    ],
+    "metadata": {
+      "method": "NRCS lag equation",
+      "watershed_slope_percent": 3,
+      "curve_number": 85,
+      "flow_length_ft": 124080,
+      "time_of_concentration_hours": 12.3,
+      "peak_rate_factor": 484,
+      "time_to_peak_hours": 7.2,
+      "attribution": "Calculated by August Posch, September 2025, Northeastern University."
+    },
+    "chart_options": {
+      "chart_title": "Proportional Discharge over 24 hours",
+      "x_title": "Hour",
+      "y_title": "Proportional discharge rate (volume/hour)"
+    },
+    "conversion_options": {
+      "labels": "hour",
+      "datasets": [
+        "discharge"
+      ],
+      "palette": {
+        "discharge": "blue"
+      }
+    }
+  },
+  {
+    "type": "Chart",
+    "name": "Charles River Hydrograph (Short Flow Length)",
+    "description": "Hourly hydrograph for Charles River, using a shorter flow length measurement directly from Waltham gage to mouth. Uses the following units. Timestep is one hour. Values are volume without units - volume is a proportion of total flood volume. Since these are hourly timesteps, each value can also be thought of as a per-hour rate (volume/hour = discharge).",
+    "project": "Boston Transportation",
+    "files": [
+      {
+        "url": "https://data.kitware.com/api/v1/item/68d950f63ba8f1c07a875e65/download",
+        "hash": "d0ce5335c53bc2ee80b8762b5c458d06f0cdce8e03cfce935964d365da118c4d",
+        "path": "boston/hydrograph_charles_short.csv"
+      }
+    ],
+    "metadata": {
+      "method": "NRCS lag equation",
+      "watershed_slope_percent": 3,
+      "curve_number": 85,
+      "flow_length_ft": 81840,
+      "time_of_concentration_hours": 8.8,
+      "peak_rate_factor": 484,
+      "time_to_peak_hours": 5.2,
+      "attribution": "Calculated by August Posch, September 2025, Northeastern University."
+    },
+    "chart_options": {
+      "chart_title": "Proportional Discharge over 24 hours",
+      "x_title": "Hour",
+      "y_title": "Proportional discharge rate (volume/hour)"
+    },
+    "conversion_options": {
+      "labels": "hour",
+      "datasets": [
+        "discharge"
+      ],
+      "palette": {
+        "discharge": "blue"
+      }
+    }
+  }
 ]

@@ -121,14 +121,13 @@ export const useNetworkStore = defineStore('network', () => {
     });
 
     // Actions
-    function initNetworks(projectId: number) {
+    async function initNetworks(projectId: number) {
         loadingNetworks.value = true;
-        getProjectNetworks(projectId).then((networks) => {
-            availableNetworks.value = networks;
-            currentNetwork.value = undefined;
-            loadingNetworks.value = false;
-            networks.forEach((n) => resetNetworkState(n.id))
-        })
+        const networks = await getProjectNetworks(projectId)
+        availableNetworks.value = networks;
+        currentNetwork.value = undefined;
+        loadingNetworks.value = false;
+        networks.forEach((n) => resetNetworkState(n.id))
     }
 
     function resetNetworkState(networkId: number) {

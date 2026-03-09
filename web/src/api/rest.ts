@@ -21,6 +21,7 @@ import {
   TaskResult,
   Colormap,
   Basemap,
+  ViewState,
 } from "@/types";
 
 export async function getUsers(): Promise<User[]> {
@@ -259,4 +260,23 @@ export async function updateColormap(colormap: Colormap): Promise<Colormap> {
 
 export async function deleteColormap(colormapId: number): Promise<Colormap> {
   return (await apiClient.delete(`colormaps/${colormapId}/`)).data;
+}
+
+export async function getViewState(viewStateId: number): Promise<ViewState> {
+  return (await apiClient.get(
+    `view-states/${viewStateId}`,
+    {errorMsg: 'Could not load view state. Ensure that ID in URL is correct.'},
+  )).data;
+}
+
+export async function getProjectViewStates(projectId: number): Promise<ViewState[]> {
+  return (await apiClient.get(`view-states/?project=${projectId}`)).data.results;
+}
+
+export async function createViewState(viewState: ViewState): Promise<any> {
+  return (await apiClient.post('view-states/', viewState)).data;
+}
+
+export async function deleteViewState(viewState: ViewState): Promise<any> {
+  return (await apiClient.delete(`view-states/${viewState.id}/`,)).data;
 }
