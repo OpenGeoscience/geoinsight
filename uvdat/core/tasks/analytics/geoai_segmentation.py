@@ -73,12 +73,12 @@ def geoai_segmentation(result_id):  # noqa: PLR0915
     threshold = result.inputs.get("threshold")
     smoothing_sigma = result.inputs.get("smoothing_sigma")
     if imagery_id is None:
-        raise ValueError("Aerial imagery raster data not provided")
+        raise AnalysisInputError("Aerial imagery raster data not provided")
     else:
         try:
             imagery = RasterData.objects.get(id=imagery_id)
         except RasterData.DoesNotExist:
-            raise ValueError("Aerial imagery raster data not found")
+            raise AnalysisInputError("Aerial imagery raster data not found")
 
     # Run task
     import geoai

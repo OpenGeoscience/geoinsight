@@ -10,7 +10,7 @@ import numpy as np
 
 from uvdat.core.models import Chart, Network, TaskResult
 
-from .analysis_type import AnalysisTask, AnalysisType
+from .analysis_type import AnalysisInputError, AnalysisTask, AnalysisType
 
 RECOVERY_MODES = [
     "random",
@@ -142,28 +142,28 @@ def network_recovery(result_id):  # noqa: C901, PLR0912, PLR0915
     failure = None
     failure_id = result.inputs.get("network_failure")
     if failure_id is None:
-        raise ValueError("Network failure result not provided")
+        raise AnalysisInputError("Network failure result not provided")
     else:
         try:
             failure = TaskResult.objects.get(id=failure_id)
         except TaskResult.DoesNotExist:
-            raise ValueError("Network failure result not found")
+            raise AnalysisInputError("Network failure result not found")
 
     mode = result.inputs.get("recovery_mode")
     if mode is None:
-        raise ValueError("Recovery mode not provided")
+        raise AnalysisInputError("Recovery mode not provided")
     elif mode not in RECOVERY_MODES:
-        raise ValueError("Recovery mode not a valid option")
+        raise AnalysisInputError("Recovery mode not a valid option")
 
     if failure is not None:
         network_id = failure.inputs.get("network")
         if network_id is None:
-            raise ValueError("Network not provided")
+            raise AnalysisInputError("Network not provided")
         else:
             try:
                 network = Network.objects.get(id=network_id)
             except Network.DoesNotExist:
-                raise ValueError("Network not found")
+                raise AnalysisInputError("Network not found")
 
     # Run task
     result.name = f"{mode.title()} Recovery from Failure Result {failure.id}"

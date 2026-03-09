@@ -5,6 +5,8 @@ import re
 from django.core.management import call_command
 import pytest
 
+from uvdat.core.tasks.analytics.analysis_type import AnalysisInputError
+
 
 @pytest.mark.django_db
 def test_rest_list_analysis_types(user, authenticated_api_client, project):
@@ -45,7 +47,7 @@ def test_rest_list_analysis_types(user, authenticated_api_client, project):
 def test_rest_run_analysis_task_no_inputs(authenticated_api_client, user, project, task):
     project.set_followers([user])
     data = None
-    with pytest.raises(ValueError):
+    with pytest.raises(AnalysisInputError):
         resp = authenticated_api_client.post(
             f"/api/v1/analytics/project/{project.id}/types/{task}/run/"
         )

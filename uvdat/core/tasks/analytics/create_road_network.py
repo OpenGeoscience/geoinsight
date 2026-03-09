@@ -19,7 +19,7 @@ from uvdat.core.models import (
 from uvdat.core.tasks.data import create_vector_features
 from uvdat.core.tasks.networks import geojson_from_network
 
-from .analysis_type import AnalysisTask, AnalysisType
+from .analysis_type import AnalysisInputError, AnalysisTask, AnalysisType
 
 
 class CreateRoadNetwork(AnalysisType):
@@ -70,7 +70,7 @@ def create_road_network(result_id):
     result = TaskResult.objects.get(id=result_id)
     location = result.inputs.get("location")
     if location is None:
-        raise ValueError("location not provided")
+        raise AnalysisInputError("location not provided")
 
     result.write_status("Fetching road data via OSMnx...")
     roads = osmnx.graph_from_place(location, network_type="drive")

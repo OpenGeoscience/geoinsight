@@ -30,6 +30,10 @@ class AnalysisType(ABC):
         raise NotImplementedError
 
 
+class AnalysisInputError(Exception):
+    pass
+
+
 class AnalysisTask(celery.Task):
     def on_failure(self, exc, task_id, args, kwargs, einfo):
         # All analysis tasks use this signature
@@ -37,7 +41,7 @@ class AnalysisTask(celery.Task):
 
         task_result = TaskResult.objects.get(pk=task_result_id)
         err_msg = "An error occurred during this task. See logs for details."
-        if isinstance(exc, ValueError):
+        if isinstance(exc, AnalysisInputError):
             err_msg = str(exc)
         task_result.write_error(err_msg)
         task_result.complete()

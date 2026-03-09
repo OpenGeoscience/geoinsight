@@ -10,7 +10,7 @@ from django.core.files.base import ContentFile
 
 from uvdat.core.models import Chart, Colormap, Dataset, FileItem, LayerStyle, TaskResult
 
-from .analysis_type import AnalysisTask, AnalysisType
+from .analysis_type import AnalysisInputError, AnalysisTask, AnalysisType
 
 
 class FloodSimulation(AnalysisType):
@@ -78,7 +78,7 @@ def flood_simulation(result_id):
         "annual_probability",
     ]:
         if result.inputs.get(input_key) is None:
-            raise ValueError(f"{input_key} not provided")
+            raise AnalysisInputError(f"{input_key} not provided")
 
     result.write_status("Interpreting input values")
     initial_conditions_id = result.inputs.get("initial_conditions_id")
