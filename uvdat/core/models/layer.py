@@ -8,7 +8,7 @@ from .querysets import ProjectQuerySet
 
 
 def default_source_filters():
-    return {"band": 1}
+    return {}
 
 
 class Layer(models.Model):
