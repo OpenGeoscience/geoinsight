@@ -44,17 +44,19 @@ def fetch_vector_features(service_name=None, **kwargs):
             feature_page = None
             result_offset = 0
             while feature_page is None or len(feature_page) == RECORDS_PER_PAGE:
-                query_response = requests.get(
-                    f"{service_url}/{layer_id}/query?resultOffset={result_offset}&{QUERY_CONTENT}",
-                    timeout=30,
-                )
                 try:
+                    query_response = requests.get(
+                        f"{service_url}/{layer_id}/query?resultOffset={result_offset}&{QUERY_CONTENT}",
+                        timeout=30,
+                    )
+                    query_response.raise_for_status()
+                except requests.RequestException:
+                    print(f"\t\tFailed to get {service_name} data from NYSDP.")
+                else:
                     query_json = query_response.json()
                     feature_page = query_json.get("features", [])
                     feature_set += feature_page
                     result_offset += RECORDS_PER_PAGE
-                except Exception:
-                    print(f"\t\tFailed to get {service_name} data from NYSDP.")
         if len(feature_set):
             feature_sets[layer_id] = feature_set
     return feature_sets
