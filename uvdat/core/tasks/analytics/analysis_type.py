@@ -40,8 +40,10 @@ class AnalysisTask(celery.Task):
         task_result_id = args[0]
 
         task_result = TaskResult.objects.get(pk=task_result_id)
-        err_msg = "An error occurred during this task. See logs for details."
-        if isinstance(exc, AnalysisInputError):
-            err_msg = str(exc)
+        err_msg = (
+            str(exc)
+            if isinstance(exc, AnalysisInputError)
+            else "An error occurred during this task. See logs for details."
+        )
         task_result.write_error(err_msg)
         task_result.complete()
