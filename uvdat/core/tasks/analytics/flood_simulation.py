@@ -10,7 +10,7 @@ from django.core.files.base import ContentFile
 
 from uvdat.core.models import Chart, Colormap, Dataset, FileItem, LayerStyle, TaskResult
 
-from .analysis_type import AnalysisInputError, AnalysisTask, AnalysisType
+from .analysis_type import AnalysisTask, AnalysisType
 
 
 class FloodSimulation(AnalysisType):
@@ -67,19 +67,6 @@ def flood_simulation(result_id):
     from uvdat_flood_sim import run_sim, write_multiframe_geotiff
 
     result = TaskResult.objects.get(id=result_id)
-
-    for input_key in [
-        "initial_conditions_id",
-        "time_period",
-        "hydrograph",
-        "potential_evapotranspiration_percentile",
-        "soil_moisture_percentile",
-        "ground_water_percentile",
-        "annual_probability",
-    ]:
-        if result.inputs.get(input_key) is None:
-            raise AnalysisInputError(f"{input_key} not provided")
-
     result.write_status("Interpreting input values")
     initial_conditions_id = result.inputs.get("initial_conditions_id")
     time_period = result.inputs.get("time_period")
@@ -222,4 +209,4 @@ def flood_simulation(result_id):
             "precipitation_level_mm": precip,
             "discharge_ft3_per_second": discharge,
         }
-    result.complete()
+        result.save()

@@ -135,35 +135,18 @@ def _get_gcc(graph: nx.Graph, deactivated: list[int]) -> set[int]:
 
 
 @shared_task(base=AnalysisTask)
-def network_recovery(result_id):  # noqa: C901, PLR0912, PLR0915
+def network_recovery(result_id):
     result = TaskResult.objects.get(id=result_id)
 
     # Verify inputs
     failure = None
     failure_id = result.inputs.get("network_failure")
-    if failure_id is None:
-        raise AnalysisInputError("Network failure result not provided")
-    else:
-        try:
-            failure = TaskResult.objects.get(id=failure_id)
-        except TaskResult.DoesNotExist as e:
-            raise AnalysisInputError("Network failure result not found") from e
-
+    failure = TaskResult.objects.get(id=failure_id)
     mode = result.inputs.get("recovery_mode")
-    if mode is None:
-        raise AnalysisInputError("Recovery mode not provided")
-    elif mode not in RECOVERY_MODES:
+    if mode not in RECOVERY_MODES:
         raise AnalysisInputError("Recovery mode not a valid option")
-
-    if failure is not None:
-        network_id = failure.inputs.get("network")
-        if network_id is None:
-            raise AnalysisInputError("Network not provided")
-        else:
-            try:
-                network = Network.objects.get(id=network_id)
-            except Network.DoesNotExist as e:
-                raise AnalysisInputError("Network not found") from e
+    network_id = failure.inputs.get("network")
+    network = Network.objects.get(id=network_id)
 
     # Run task
     result.name = f"{mode.title()} Recovery from Failure Result {failure.id}"
@@ -249,4 +232,4 @@ def network_recovery(result_id):  # noqa: C901, PLR0912, PLR0915
         "gcc_chart": chart.id,
         "resiliency_score": resiliency,
     }
-    result.complete()
+    result.save()

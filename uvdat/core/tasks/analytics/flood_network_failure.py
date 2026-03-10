@@ -76,52 +76,23 @@ def _get_station_region(point: Point, radius_meters: float) -> dict[str, Any]:
 
 
 @shared_task(base=AnalysisTask)
-def flood_network_failure(result_id):  # noqa: C901, PLR0912, PLR0915
+def flood_network_failure(result_id):
     result = TaskResult.objects.get(id=result_id)
 
     # Verify inputs
     network = None
     network_id = result.inputs.get("network")
-    if network_id is None:
-        raise AnalysisInputError("Network not provided")
-    else:
-        try:
-            network = Network.objects.get(id=network_id)
-        except Network.DoesNotExist as e:
-            raise AnalysisInputError("Network not found") from e
-
+    network = Network.objects.get(id=network_id)
     flood_sim = None
     flood_sim_id = result.inputs.get("flood_simulation")
-    if flood_sim_id is None:
-        raise AnalysisInputError("Flood simulation not provided")
-    else:
-        try:
-            flood_sim = TaskResult.objects.get(id=flood_sim_id)
-        except TaskResult.DoesNotExist as e:
-            raise AnalysisInputError("Flood simulation not found") from e
-
-    tolerance = result.inputs.get("depth_tolerance_meters")
-    if tolerance is None:
-        raise AnalysisInputError("Depth tolerance not provided")
-    else:
-        try:
-            tolerance = float(tolerance)
-        except AnalysisInputError as e:
-            raise AnalysisInputError("Depth tolerance not valid") from e
-        if tolerance <= 0:
-            raise AnalysisInputError("Depth tolerance must be greater than 0")
-
-    radius_meters = result.inputs.get("station_radius_meters")
-    if radius_meters is None:
-        raise AnalysisInputError("Station radius not provided")
-    else:
-        try:
-            radius_meters = float(radius_meters)
-        except AnalysisInputError as e:
-            raise AnalysisInputError("Station radius not valid") from e
-        if radius_meters < 10:
-            # data is at 10 meter resolution
-            raise AnalysisInputError("Station radius must be greater than 10")
+    flood_sim = TaskResult.objects.get(id=flood_sim_id)
+    tolerance = float(result.inputs.get("depth_tolerance_meters"))
+    if tolerance <= 0:
+        raise AnalysisInputError("Depth tolerance must be greater than 0")
+    radius_meters = float(result.inputs.get("station_radius_meters"))
+    if radius_meters < 10:
+        # data is at 10 meter resolution
+        raise AnalysisInputError("Station radius must be greater than 10")
 
     # Run task
     result.name = (
@@ -162,4 +133,4 @@ def flood_network_failure(result_id):  # noqa: C901, PLR0912, PLR0915
                 node_failures.append(node_id)
         animation_results[frame_index] = node_failures.copy()
     result.outputs = {"failures": animation_results}
-    result.complete()
+    result.save()

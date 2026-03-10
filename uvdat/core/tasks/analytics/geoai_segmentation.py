@@ -11,7 +11,7 @@ from pyproj import CRS, Transformer
 
 from uvdat.core.models import Dataset, FileItem, RasterData, TaskResult
 
-from .analysis_type import AnalysisInputError, AnalysisTask, AnalysisType
+from .analysis_type import AnalysisTask, AnalysisType
 
 
 class GeoAISegmentation(AnalysisType):
@@ -62,9 +62,9 @@ class GeoAISegmentation(AnalysisType):
 
 @shared_task(base=AnalysisTask)
 def geoai_segmentation(result_id):  # noqa: PLR0915
-    result = TaskResult.objects.get(id=result_id)
+    import geoai
 
-    # Verify inputs
+    result = TaskResult.objects.get(id=result_id)
     imagery = None
     imagery_id = result.inputs.get("aerial_imagery")
     segmentation_prompt = result.inputs.get("segmentation_prompt")
@@ -72,16 +72,7 @@ def geoai_segmentation(result_id):  # noqa: PLR0915
     tile_overlap = result.inputs.get("tile_overlap")
     threshold = result.inputs.get("threshold")
     smoothing_sigma = result.inputs.get("smoothing_sigma")
-    if imagery_id is None:
-        raise AnalysisInputError("Aerial imagery raster data not provided")
-    else:
-        try:
-            imagery = RasterData.objects.get(id=imagery_id)
-        except RasterData.DoesNotExist as e:
-            raise AnalysisInputError("Aerial imagery raster data not found") from e
-
-    # Run task
-    import geoai
+    imagery = RasterData.objects.get(id=imagery_id)
 
     # Update name
     result.name = f"Segmentation of {segmentation_prompt} in {imagery.name}"
@@ -160,4 +151,4 @@ def geoai_segmentation(result_id):  # noqa: PLR0915
 
     dataset.spawn_conversion_task(asynchronous=False)
     result.outputs = {"result": dataset.id}
-    result.complete()
+    result.save()
