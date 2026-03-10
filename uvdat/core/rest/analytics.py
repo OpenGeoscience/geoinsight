@@ -8,6 +8,7 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 from uvdat.core.models import Project, TaskResult
 import uvdat.core.rest.serializers as uvdat_serializers
 from uvdat.core.tasks.analytics import analysis_types
+from uvdat.core.tasks.analytics.analysis_type import AnalysisInputError
 
 
 class AnalyticsViewSet(ReadOnlyModelViewSet):
@@ -81,7 +82,12 @@ class AnalyticsViewSet(ReadOnlyModelViewSet):
         )
         if analysis_type_class is None or not analysis_type_class.is_enabled():
             return Response(f'Analysis type "{task_type}" not found', status=404)
-        result = analysis_type_class().run_task(project=project, **request.data)
+        analysis_type = analysis_type_class()
+        try:
+            analysis_type.validate_inputs(request.data)
+        except AnalysisInputError as e:
+            return Response(str(e), status=400)
+        result = analysis_type.run_task(project=project, **request.data)
         return Response(
             uvdat_serializers.TaskResultSerializer(result).data,
             status=200,

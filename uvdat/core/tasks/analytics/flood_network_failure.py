@@ -58,6 +58,16 @@ class FloodNetworkFailure(AnalysisType):
         flood_network_failure.delay(result.id)
         return result
 
+    def validate_inputs(self, inputs):
+        super().validate_inputs(inputs)
+        tolerance = float(inputs.get("depth_tolerance_meters"))
+        if tolerance <= 0:
+            raise AnalysisInputError("Depth tolerance must be greater than 0")
+        radius_meters = float(inputs.get("station_radius_meters"))
+        if radius_meters < 10:
+            # data is at 10 meter resolution
+            raise AnalysisInputError("Station radius must be greater than 10")
+
 
 def _get_station_region(point: Point, radius_meters: float) -> dict[str, Any]:
     """Get a rectangular region around a point, sized by radius_meters."""
@@ -78,21 +88,12 @@ def _get_station_region(point: Point, radius_meters: float) -> dict[str, Any]:
 @shared_task(base=AnalysisTask)
 def flood_network_failure(result_id):
     result = TaskResult.objects.get(id=result_id)
-
-    # Verify inputs
-    network = None
     network_id = result.inputs.get("network")
     network = Network.objects.get(id=network_id)
-    flood_sim = None
     flood_sim_id = result.inputs.get("flood_simulation")
     flood_sim = TaskResult.objects.get(id=flood_sim_id)
     tolerance = float(result.inputs.get("depth_tolerance_meters"))
-    if tolerance <= 0:
-        raise AnalysisInputError("Depth tolerance must be greater than 0")
     radius_meters = float(result.inputs.get("station_radius_meters"))
-    if radius_meters < 10:
-        # data is at 10 meter resolution
-        raise AnalysisInputError("Station radius must be greater than 10")
 
     # Run task
     result.name = (

@@ -72,6 +72,12 @@ class NetworkRecovery(AnalysisType):
         network_recovery.delay(result.id)
         return result
 
+    def validate_inputs(self, inputs):
+        super().validate_inputs(inputs)
+        mode = inputs.get("recovery_mode")
+        if mode not in RECOVERY_MODES:
+            raise AnalysisInputError("Recovery mode not a valid option")
+
 
 def get_network_graph(network):
     from uvdat.core.models import NetworkEdge, NetworkNode
@@ -137,14 +143,9 @@ def _get_gcc(graph: nx.Graph, deactivated: list[int]) -> set[int]:
 @shared_task(base=AnalysisTask)
 def network_recovery(result_id):
     result = TaskResult.objects.get(id=result_id)
-
-    # Verify inputs
-    failure = None
     failure_id = result.inputs.get("network_failure")
     failure = TaskResult.objects.get(id=failure_id)
     mode = result.inputs.get("recovery_mode")
-    if mode not in RECOVERY_MODES:
-        raise AnalysisInputError("Recovery mode not a valid option")
     network_id = failure.inputs.get("network")
     network = Network.objects.get(id=network_id)
 

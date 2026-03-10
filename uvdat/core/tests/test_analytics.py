@@ -1,11 +1,7 @@
 from __future__ import annotations
 
-import re
-
 from django.core.management import call_command
 import pytest
-
-from uvdat.core.tasks.analytics.analysis_type import AnalysisInputError
 
 
 @pytest.mark.django_db
@@ -46,33 +42,11 @@ def test_rest_list_analysis_types(user, authenticated_api_client, project):
 @pytest.mark.django_db
 def test_rest_run_analysis_task_no_inputs(authenticated_api_client, user, project, task):
     project.set_followers([user])
-    resp = None
-    with pytest.raises(AnalysisInputError):
-        resp = authenticated_api_client.post(
-            f"/api/v1/analytics/project/{project.id}/types/{task}/run/"
-        )
-    if resp is None:
-        return
-    data = resp.json()
-
-    # evaluate initial response
-    assert data.get("task_type") == task
-    assert data.get("project") == project.id
-    assert data.get("status") == "Initializing task..."
-    assert data.get("inputs") == {}
-    assert data.get("error") == ""
-    assert data.get("outputs") is None
-    assert data.get("completed") is None
-
-    # result object should encounter error due to lack of inputs
-    result_id = data.get("id")
-    resp = authenticated_api_client.get(f"/api/v1/analytics/{result_id}/")
-    data = resp.json()
-    assert data.get("id") == result_id
-    assert data.get("task_type") == task
-    assert data.get("error") is not None
-    assert re.search(r"(.+) not provided", data.get("error")) is not None
-    assert re.search(r"Completed in (\d|.)+ seconds.", data.get("status")) is not None
+    resp = authenticated_api_client.post(
+        f"/api/v1/analytics/project/{project.id}/types/{task}/run/"
+    )
+    assert resp.status_code == 400
+    assert "not provided" in resp.json()
 
 
 @pytest.mark.slow
