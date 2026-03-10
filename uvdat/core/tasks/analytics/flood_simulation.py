@@ -204,9 +204,10 @@ def flood_simulation(result_id):
             }
         )
 
-        result.outputs = {
-            "flood": dataset.id,
-            "precipitation_level_mm": precip,
-            "discharge_ft3_per_second": discharge,
-        }
-        result.save()
+        result.write_outputs(
+            {
+                "flood": dataset.id,
+                "precipitation_level_mm": precip,
+                "discharge_ft3_per_second": discharge,
+            }
+        )

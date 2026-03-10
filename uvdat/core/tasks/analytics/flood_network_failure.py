@@ -132,5 +132,4 @@ def flood_network_failure(result_id):
             if node_id not in node_failures and np.any(np.where(region_data > tolerance)):
                 node_failures.append(node_id)
         animation_results[frame_index] = node_failures.copy()
-    result.outputs = {"failures": animation_results}
-    result.save()
+    result.write_outputs({"failures": animation_results})

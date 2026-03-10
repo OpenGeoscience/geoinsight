@@ -143,5 +143,4 @@ def create_road_network(result_id):
     create_vector_features(vector_data)
     vector_data.get_summary()
 
-    result.outputs = {"roads": dataset.id}
-    result.save()
+    result.write_outputs({"roads": dataset.id})

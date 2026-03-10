@@ -227,9 +227,10 @@ def network_recovery(result_id):
     # over area under gcc curve without outages
     resiliency = sum(gcc_values) / (network.nodes.count() * len(gcc_values))
 
-    result.outputs = {
-        "recoveries": recovery_timesteps,
-        "gcc_chart": chart.id,
-        "resiliency_score": resiliency,
-    }
-    result.save()
+    result.write_outputs(
+        {
+            "recoveries": recovery_timesteps,
+            "gcc_chart": chart.id,
+            "resiliency_score": resiliency,
+        }
+    )

@@ -150,5 +150,4 @@ def geoai_segmentation(result_id):  # noqa: PLR0915
         raster_file_item.file.save(mask_path, ContentFile(f.read()))
 
     dataset.spawn_conversion_task(asynchronous=False)
-    result.outputs = {"result": dataset.id}
-    result.save()
+    result.write_outputs({"result": dataset.id})
