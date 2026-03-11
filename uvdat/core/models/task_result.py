@@ -43,6 +43,10 @@ class TaskResult(models.Model):
         self.status = stat
         self.save()
 
+    def write_outputs(self, outputs):
+        self.outputs = outputs
+        self.save()
+
     def complete(self):
         self.completed = timezone.now()
         seconds = (self.completed - self.created).total_seconds()
