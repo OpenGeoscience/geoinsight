@@ -6387,7 +6387,7 @@ wheels = [
 
 [[package]]
 name = "uvdat"
-version = "1.33.1"
+version = "1.34.0"
 source = { editable = "." }
 dependencies = [
     { name = "celery" },
