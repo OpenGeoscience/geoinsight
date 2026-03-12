@@ -148,7 +148,7 @@ def geoai_segmentation(result_id):  # noqa: PLR0915
         file_size=mask_path.stat().st_size,
     )
     with mask_path.open("rb") as f:
-        raster_file_item.file.save(mask_path, File(f.read()))
+        raster_file_item.file.save(mask_path, File(f))
 
     dataset.spawn_conversion_task(asynchronous=False)
     result.write_outputs({"result": dataset.id})
