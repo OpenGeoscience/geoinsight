@@ -119,6 +119,7 @@ STATIC_URL = "static/"
 LOGIN_REDIRECT_URL = "/"
 ACCOUNT_LOGOUT_REDIRECT_URL = "/"
 ACCOUNT_SIGNUP_FORM_CLASS = "resonant_utils.allauth.FullNameSignupForm"
+ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True
 
 AUTHENTICATION_BACKENDS.append("guardian.backends.ObjectPermissionBackend")
 # django-guardian; raise PermissionDenied exception instead of redirecting to login page
