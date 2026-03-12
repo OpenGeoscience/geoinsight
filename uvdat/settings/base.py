@@ -120,6 +120,9 @@ LOGIN_REDIRECT_URL = "/"
 ACCOUNT_LOGOUT_REDIRECT_URL = "/"
 ACCOUNT_SIGNUP_FORM_CLASS = "resonant_utils.allauth.FullNameSignupForm"
 
+# Use codes for email verification; links can be modified by Microsoft Safe Links
+ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True
+
 AUTHENTICATION_BACKENDS.append("guardian.backends.ObjectPermissionBackend")
 # django-guardian; raise PermissionDenied exception instead of redirecting to login page
 GUARDIAN_RAISE_403 = True
