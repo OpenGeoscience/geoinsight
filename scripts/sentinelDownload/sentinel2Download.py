@@ -20,6 +20,7 @@ import numpy as np
 from pyproj import Transformer
 from pystac_client import Client
 import rasterio
+from rasterio.errors import RasterioError, RasterioIOError
 from rasterio.windows import from_bounds
 from shapely.geometry import Point, mapping
 
@@ -205,12 +206,11 @@ def download_stac_sentinel(  # noqa: PLR0913, PLR0915
                 data, meta = read_cog_window_rgb(url, lon, lat, size_km=size_km)
                 with rasterio.open(filepath, "w", **meta) as dst:
                     dst.write(data)
+            except (RasterioError, RasterioIOError) as e:
+                click.echo(f"  - ⚠️ Failed to read or save clipped image: {e}")
+            else:
                 click.echo(f"  - Saved clipped image to {filename}")
                 downloaded_files.append(filename)
-
-            except Exception as e:
-                click.echo(f"  - ⚠️ Failed to read or save clipped image: {e}")
-
         else:
             click.echo(f"  - ⚠️ Visual asset not available in item {item_id}")
 
