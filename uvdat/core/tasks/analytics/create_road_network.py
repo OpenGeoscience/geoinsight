@@ -62,8 +62,9 @@ def metadata_for_row(row):
 
 @shared_task(base=AnalysisTask)
 def create_road_network(result_id):
-    import osmnx
-    from xdg_base_dirs import xdg_cache_home
+    # Only available with [tasks] extra
+    import osmnx  # noqa: PLC0415
+    from xdg_base_dirs import xdg_cache_home  # noqa: PLC0415
 
     osmnx.settings.cache_folder = xdg_cache_home() / "osmnx"
 

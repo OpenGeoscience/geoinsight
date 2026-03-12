@@ -6,8 +6,10 @@ from typing import Any
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from uvdat.core.models import Colormap, Layer, Project
-from uvdat.core.models.querysets import ProjectQuerySet
+from .colormap import Colormap
+from .layer import Layer
+from .project import Project
+from .querysets import ProjectQuerySet
 
 
 class LayerStyle(models.Model):
