@@ -43,6 +43,10 @@ class TaskResult(models.Model):
         self.status = stat
         self.save()
 
+    def write_outputs(self, outputs):
+        self.outputs = outputs
+        self.save()
+
     def complete(self):
         self.completed = timezone.now()
         seconds = (self.completed - self.created).total_seconds()
@@ -52,7 +56,8 @@ class TaskResult(models.Model):
 
 @receiver(post_save, sender=TaskResult)
 def result_post_save(sender, instance, **kwargs):
-    from uvdat.core.rest.serializers import TaskResultSerializer
+    # Prevent circular import
+    from uvdat.core.rest.serializers import TaskResultSerializer  # noqa: PLC0415
 
     payload = TaskResultSerializer(instance).data
     group_name = "conversion"

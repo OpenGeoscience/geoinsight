@@ -16,9 +16,11 @@ import json
 from pathlib import Path
 
 import click
+import numpy as np
 from pyproj import Transformer
 from pystac_client import Client
 import rasterio
+from rasterio.errors import RasterioError, RasterioIOError
 from rasterio.windows import from_bounds
 from shapely.geometry import Point, mapping
 
@@ -67,8 +69,6 @@ def read_cog_window_rgb(cog_url, lon, lat, size_km=10):
 
     Returns 3-band numpy array data (RGB) and updated affine transform.
     """
-    import numpy as np
-
     with rasterio.Env(), rasterio.open(cog_url) as src:
         transformer = Transformer.from_crs("EPSG:4326", src.crs, always_xy=True)
         x, y = transformer.transform(lon, lat)
@@ -206,12 +206,11 @@ def download_stac_sentinel(  # noqa: PLR0913, PLR0915
                 data, meta = read_cog_window_rgb(url, lon, lat, size_km=size_km)
                 with rasterio.open(filepath, "w", **meta) as dst:
                     dst.write(data)
+            except (RasterioError, RasterioIOError) as e:
+                click.echo(f"  - ⚠️ Failed to read or save clipped image: {e}")
+            else:
                 click.echo(f"  - Saved clipped image to {filename}")
                 downloaded_files.append(filename)
-
-            except Exception as e:
-                click.echo(f"  - ⚠️ Failed to read or save clipped image: {e}")
-
         else:
             click.echo(f"  - ⚠️ Visual asset not available in item {item_id}")
 

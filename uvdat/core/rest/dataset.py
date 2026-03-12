@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from uvdat.core.access_control import DatasetGuardianPermission
-from uvdat.core.models import Dataset, DatasetTag
+from uvdat.core.models import Dataset, DatasetTag, Network
 from uvdat.core.rest.serializers import (
     DatasetSerializer,
     FileItemSerializer,
@@ -59,7 +59,10 @@ class DatasetViewSet(ModelViewSet):
     def networks(self, request, **kwargs):
         dataset = self.get_object()
         return Response(
-            [NetworkSerializer(network).data for network in dataset.get_networks().all()],
+            [
+                NetworkSerializer(network).data
+                for network in Network.objects.filter(vector_data__dataset=dataset)
+            ],
             status=200,
         )
 

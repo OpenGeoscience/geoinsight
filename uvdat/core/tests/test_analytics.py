@@ -1,15 +1,20 @@
 from __future__ import annotations
 
-import re
-
+from django.contrib.auth.models import User
 from django.core.management import call_command
 import pytest
+
+from uvdat.core.models import Chart, Dataset, Network
+from uvdat.core.tasks.analytics import (
+    FloodNetworkFailure,
+    FloodSimulation,
+    NetworkRecovery,
+    analysis_types,
+)
 
 
 @pytest.mark.django_db
 def test_rest_list_analysis_types(user, authenticated_api_client, project):
-    from uvdat.core.tasks.analytics import analysis_types
-
     # TODO: remove this when analytics are no longer hidden from non-superusers
     user.is_superuser = True
     user.save()
@@ -47,40 +52,13 @@ def test_rest_run_analysis_task_no_inputs(authenticated_api_client, user, projec
     resp = authenticated_api_client.post(
         f"/api/v1/analytics/project/{project.id}/types/{task}/run/"
     )
-    data = resp.json()
-
-    # evaluate initial response
-    assert data.get("task_type") == task
-    assert data.get("project") == project.id
-    assert data.get("status") == "Initializing task..."
-    assert data.get("inputs") == {}
-    assert data.get("error") == ""
-    assert data.get("outputs") is None
-    assert data.get("completed") is None
-
-    # result object should encounter error due to lack of inputs
-    result_id = data.get("id")
-    resp = authenticated_api_client.get(f"/api/v1/analytics/{result_id}/")
-    data = resp.json()
-    assert data.get("id") == result_id
-    assert data.get("task_type") == task
-    assert data.get("error") is not None
-    assert re.search(r"(.+) not provided", data.get("error")) is not None
-    assert re.search(r"Completed in (\d|.)+ seconds.", data.get("status")) is not None
+    assert resp.status_code == 400
+    assert "not provided" in resp.json()
 
 
 @pytest.mark.slow
 @pytest.mark.django_db
 def test_flood_analysis_chain(project):
-    from django.contrib.auth.models import User
-
-    from uvdat.core.models import Chart, Dataset, Network
-    from uvdat.core.tasks.analytics import (
-        FloodNetworkFailure,
-        FloodSimulation,
-        NetworkRecovery,
-    )
-
     # ensure a superuser exists
     User.objects.create_superuser("testsuper")
 

@@ -12,6 +12,8 @@ from typing import Any, Literal, TypedDict
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
 from django.core.files import File
+from django.db.models import Sum
+from django.db.models.functions import Coalesce
 import djclick as click
 import pooch
 
@@ -295,7 +297,10 @@ def ingest_datasets(
                 )
             dataset_for_conversion = new_dataset
 
-            dataset_size_mb = dataset_for_conversion.get_size() >> 20
+            dataset_size_bytes = FileItem.objects.filter(
+                dataset=dataset_for_conversion,
+            ).aggregate(total=Coalesce(Sum("file_size"), 0))["total"]
+            dataset_size_mb = dataset_size_bytes >> 20
             click.secho(
                 f"\t\t Dataset {dataset_for_conversion.name} of size {dataset_size_mb} MB.",
                 fg="green",

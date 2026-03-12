@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Self
 from django.db import models
 
 if TYPE_CHECKING:
-    from uvdat.core.models import Project
+    from .project import Project
 
 
 class ProjectQuerySet(models.QuerySet):

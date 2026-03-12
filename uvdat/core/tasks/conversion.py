@@ -22,8 +22,9 @@ IGNORE_FILETYPES = ["dbf", "sbn", "sbx", "cpg", "shp.xml", "shx", "vrt", "hdf", 
 
 
 def get_cog_path(file):
-    import large_image
-    import large_image_converter
+    # Slow import, so do it lazily
+    import large_image  # noqa: PLC0415
+    import large_image_converter  # noqa: PLC0415
 
     raster_path = None
     try:
@@ -66,6 +67,9 @@ def get_cog_path(file):
 
 
 def convert_files(*files, file_item=None, combine=False):  # noqa: C901, PLR0912
+    # Slow import, so do it lazily
+    import large_image  # noqa: PLC0415
+
     source_projection = "epsg:4326"
     geodata_set = []
     cog_set = []
@@ -121,8 +125,6 @@ def convert_files(*files, file_item=None, combine=False):  # noqa: C901, PLR0912
         logger.info("%s created for %s", vector_data, geodata.get("name"))
 
     for cog in cog_set:
-        import large_image
-
         cog_path = cog.get("path")
         source = large_image.open(cog_path)
         metadata.update(source.getMetadata())
