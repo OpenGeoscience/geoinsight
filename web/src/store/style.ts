@@ -115,13 +115,15 @@ function getRasterTilesQuery(styleSpec: StyleSpec, colormaps: Colormap[]) {
                     (marker) => marker.color
                 )
             }
+        } else if (colorSpec.single_color) {
+            colorQuery.palette = colorSpec.single_color
         }
         if (colorSpec.name === 'all') {
-            if (colorSpec.colormap && colorSpec.visible) query = colorQuery
+            if (colorSpec.visible) query = colorQuery
         } else {
             if (!query.bands) query.bands = []
             colorQuery.band = colorSpec.name.replace('Band ', '')
-            if (colorSpec.colormap && colorSpec.visible) query.bands.push(colorQuery)
+            if (colorSpec.visible) query.bands.push(colorQuery)
         }
     })
     styleSpec.filters.forEach((f) => {
@@ -129,7 +131,6 @@ function getRasterTilesQuery(styleSpec: StyleSpec, colormaps: Colormap[]) {
             query[f.filter_by] = f.list[0]
         }
     })
-    if (!Object.keys(query).length) return undefined
     return query;
 }
 
@@ -337,17 +338,6 @@ export const useStyleStore = defineStore('style', () => {
     }
 
     function getDefaultStyleSpec(raster: RasterData | null | undefined, layerId: number): StyleSpec {
-        let range: [number, number] | undefined;
-        let absMin: number | undefined, absMax: number | undefined;
-        if (raster) {
-            Object.values(raster.metadata.bands).forEach(({ min, max }) => {
-                if (!absMin || min < absMin) absMin = min;
-                if (!absMax || max < absMax) absMax = max;
-            })
-        }
-        if (absMin !== undefined && absMax !== undefined) {
-            range = [Math.floor(absMin), Math.ceil(absMax)] as [number, number];
-        }
         return {
             opacity: 1,
             default_frame: 0,
@@ -357,13 +347,7 @@ export const useStyleStore = defineStore('style', () => {
                     visible: true,
                     use_feature_props: true,
                     single_color: raster ? undefined : getDefaultColor(layerId),
-                    colormap: raster ? {
-                        range,
-                        color_by: 'value',
-                        discrete: false,
-                        n_colors: 5,
-                        null_color: 'transparent'
-                    } : undefined,
+                    colormap: undefined,
                 }
             ],
             sizes: [
@@ -488,14 +472,11 @@ export const useStyleStore = defineStore('style', () => {
             const source = map.getSource(mapLayer.source) as RasterTileSource;
             const sourceURL = mapStore.rasterSourceTileURLs[mapLayer.source];
             if (source && sourceURL) {
-                const oldQuery = new URLSearchParams(sourceURL.split('?')[1]);
                 const newQueryParams: { projection: string, style?: string } = { projection: 'epsg:3857' };
-                if (rasterTilesQuery) newQueryParams.style = JSON.stringify(rasterTilesQuery);
+                newQueryParams.style = JSON.stringify(rasterTilesQuery);
                 const newQuery = new URLSearchParams(newQueryParams);
-                if (newQuery.toString() !== oldQuery.toString()) {
-                    tileURL = sourceURL.split('?')[0] + '?' + newQuery.toString();
-                    return { paint, tileURL  }
-                }
+                tileURL = sourceURL.split('?')[0] + '?' + newQuery.toString();
+                return { paint, tileURL  }
             }
         }
         return { paint };

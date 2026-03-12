@@ -72,13 +72,13 @@ class LayerStyle(models.Model):
             color_config.visible = color_spec.get("visible", True)
             color_config.use_feature_props = color_spec.get("use_feature_props", True)
             single_color = color_spec.get("single_color")
+            colormap_spec = color_spec.get("colormap")
             if single_color is not None:
                 color_config.single_color = single_color
                 with contextlib.suppress(ColorConfig.colormap.RelatedObjectDoesNotExist):
                     color_config.colormap.delete()
-            else:
+            elif colormap_spec is not None:
                 color_config.single_color = ""
-                colormap_spec = color_spec.get("colormap")
                 colormap = Colormap.objects.get(id=colormap_spec.get("id"))
                 map_range = colormap_spec.get("range") or [None, None]
                 colormap_config_args = {
