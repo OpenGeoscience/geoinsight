@@ -169,7 +169,6 @@ ignore = [
   "TRY003", # raise-vanilla-args
 
   # Project-specific
-  "PLC0415", # import-outside-top-level
 ]
 
 [tool.ruff.lint.per-file-ignores]

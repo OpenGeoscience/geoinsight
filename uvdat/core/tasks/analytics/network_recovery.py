@@ -8,7 +8,7 @@ from django.utils import timezone
 import networkx as nx
 import numpy as np
 
-from uvdat.core.models import Chart, Network, TaskResult
+from uvdat.core.models import Chart, Network, NetworkEdge, NetworkNode, TaskResult
 
 from .analysis_type import AnalysisInputError, AnalysisTask, AnalysisType
 
@@ -49,7 +49,8 @@ class NetworkRecovery(AnalysisType):
         return settings.UVDAT_ENABLE_NETWORK_RECOVERY
 
     def get_input_options(self):
-        from uvdat.core.tasks.analytics import analysis_types
+        # Prevent circular import
+        from uvdat.core.tasks.analytics import analysis_types  # noqa: PLC0415
 
         node_failure_analysis_types = [
             at().db_value
@@ -80,8 +81,6 @@ class NetworkRecovery(AnalysisType):
 
 
 def get_network_graph(network):
-    from uvdat.core.models import NetworkEdge, NetworkNode
-
     network = {
         "nodes": NetworkNode.objects.filter(network=network),
         "edges": NetworkEdge.objects.filter(network=network),

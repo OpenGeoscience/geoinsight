@@ -62,7 +62,8 @@ class GeoAISegmentation(AnalysisType):
 
 @shared_task(base=AnalysisTask)
 def geoai_segmentation(result_id):  # noqa: PLR0915
-    import geoai
+    # Only available with [tasks] extra
+    import geoai  # noqa: PLC0415
 
     result = TaskResult.objects.get(id=result_id)
     imagery = None

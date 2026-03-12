@@ -6,8 +6,7 @@ from django.db import models, transaction
 from guardian.models import UserObjectPermission
 from guardian.shortcuts import assign_perm, get_users_with_perms
 
-from uvdat.core.models.querysets import ProjectQuerySet
-from uvdat.core.tasks.dataset import convert_dataset
+from .querysets import ProjectQuerySet
 
 if typing.TYPE_CHECKING:
     from django.contrib.auth.models import User
@@ -84,6 +83,9 @@ class Dataset(models.Model):
         region_options=None,
         asynchronous=True,
     ):
+        # Prevent circular import
+        from uvdat.core.tasks.dataset import convert_dataset  # noqa: PLC0415
+
         convert_dataset_signature = convert_dataset.s(
             dataset_id=self.id,
             layer_options=layer_options,
@@ -92,7 +94,8 @@ class Dataset(models.Model):
         )
 
         if asynchronous:
-            from uvdat.core.models.task_result import TaskResult
+            # Prevent circular import
+            from uvdat.core.models.task_result import TaskResult  # noqa: PLC0415
 
             result = TaskResult.objects.create(
                 name=f"Conversion of Dataset {self.name}",
@@ -110,22 +113,3 @@ class Dataset(models.Model):
         else:
             convert_dataset_signature.apply()
             return None
-
-    def get_size(self):
-        from uvdat.core.models import FileItem
-
-        size = 0
-        for file_item in FileItem.objects.filter(dataset=self):
-            if file_item.file_size is not None:
-                size += file_item.file_size
-        return size
-
-    def get_networks(self):
-        from uvdat.core.models import Network
-
-        return Network.objects.filter(vector_data__dataset=self)
-
-    def get_regions(self):
-        from uvdat.core.models import Region
-
-        return Region.objects.filter(dataset=self)
