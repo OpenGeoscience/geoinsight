@@ -6,7 +6,7 @@ from pathlib import Path
 import tempfile
 import zipfile
 
-from django.core.files.base import ContentFile
+from django.core.files import File
 from django_large_image import utilities
 import geopandas
 import numpy as np
@@ -135,7 +135,7 @@ def convert_files(*files, file_item=None, combine=False):  # noqa: C901, PLR0912
             metadata=metadata,
         )
         with cog_path.open("rb") as f:
-            raster_data.cloud_optimized_geotiff.save(cog_path.name, ContentFile(f.read()))
+            raster_data.cloud_optimized_geotiff.save(cog_path.name, File(f))
         logger.info("%s created for %s", raster_data, cog.get("name"))
 
 

@@ -6,7 +6,7 @@ import tempfile
 
 from celery import shared_task
 from django.conf import settings
-from django.core.files.base import ContentFile
+from django.core.files import File
 
 from uvdat.core.models import Chart, Colormap, Dataset, FileItem, LayerStyle, TaskResult
 
@@ -149,7 +149,7 @@ def flood_simulation(result_id):
             metadata=metadata,
         )
         with output_path.open("rb") as f:
-            file_item.file.save(output_path.name, ContentFile(f.read()))
+            file_item.file.save(output_path.name, File(f))
         dataset.spawn_conversion_task(
             layer_options=[
                 {

@@ -4,7 +4,7 @@ import datetime
 
 from celery import shared_task
 from django.conf import settings
-from django.core.files.base import ContentFile
+from django.core.files import File
 from django_large_image import utilities
 import large_image
 from pyproj import CRS, Transformer
@@ -148,7 +148,7 @@ def geoai_segmentation(result_id):  # noqa: PLR0915
         file_size=mask_path.stat().st_size,
     )
     with mask_path.open("rb") as f:
-        raster_file_item.file.save(mask_path, ContentFile(f.read()))
+        raster_file_item.file.save(mask_path, File(f))
 
     dataset.spawn_conversion_task(asynchronous=False)
     result.write_outputs({"result": dataset.id})

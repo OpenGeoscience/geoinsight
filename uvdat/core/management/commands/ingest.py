@@ -11,7 +11,7 @@ from typing import Any, Literal, TypedDict
 
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
-from django.core.files.base import ContentFile
+from django.core.files import File
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
 import djclick as click
@@ -149,7 +149,7 @@ def ingest_file(file_info, *, index=0, dataset=None, chart=None, replace=False, 
         )
         click.secho(f"FileItem {new_file_item.name} created.", fg="green")
         with file_location.open("rb") as f:
-            new_file_item.file.save(file_path, ContentFile(f.read()))
+            new_file_item.file.save(file_path, File(f))
 
 
 def ingest_projects(data: list[ProjectItem], *, replace=False) -> None:
