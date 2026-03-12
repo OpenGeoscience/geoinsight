@@ -45,6 +45,7 @@ class AnalyticsViewSet(ReadOnlyModelViewSet):
                     "name": instance.name,
                     "db_value": instance.db_value,
                     "description": instance.description,
+                    "details": instance.details,
                     "attribution": instance.attribution,
                     "input_options": filtered_input_options,
                     "input_types": instance.input_types,

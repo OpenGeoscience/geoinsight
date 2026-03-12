@@ -11,6 +11,7 @@ class AnalysisType(ABC):
     def __init__(self, *args):
         self.name = ""
         self.description = ""
+        self.details = None
         self.db_value = ""  # cannot be longer than 25 characters
         self.input_types = {}
         self.output_types = {}
@@ -34,6 +35,10 @@ class AnalysisType(ABC):
             if input_name not in inputs:
                 raise AnalysisInputError(f"{input_name} not provided.")
 
+    def finalize(self, result):
+        # Override this to perform custom finalization
+        pass
+
 
 class AnalysisInputError(Exception):
     pass
@@ -55,5 +60,15 @@ class AnalysisTask(celery.Task):
         task_result.write_error(err_msg)
 
     def after_return(self, status, retval, task_id, args, kwargs, einfo):  # noqa: PLR0913
+        # Avoid circular import
+        from . import analysis_types
+
         task_result = self.get_task_result(args)
         task_result.complete()
+
+        analysis_type = next(iter(
+            t for t in analysis_types
+            if t().db_value == task_result.task_type
+        ), None)
+        if analysis_type is not None:
+            analysis_type().finalize(task_result)

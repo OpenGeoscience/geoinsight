@@ -403,6 +403,7 @@ export interface AnalysisType {
   name: string;
   db_value: string;
   description: string;
+  details: string;
   attribution: string;
   input_options: Record<string, any>;
   input_types: Record<string, any>;

@@ -264,6 +264,7 @@ class AnalysisTypeSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=255)
     db_value = serializers.CharField(max_length=25)
     description = serializers.CharField(max_length=255)
+    details = serializers.CharField(max_length=2048, allow_null=True)
     attribution = serializers.CharField(max_length=255)
     input_options = serializers.JSONField()
     input_types = serializers.JSONField()
