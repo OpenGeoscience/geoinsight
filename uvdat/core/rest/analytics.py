@@ -1,9 +1,11 @@
 from __future__ import annotations
+import inspect
 
 from django.db.models import QuerySet
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.serializers import ModelSerializer
 
 from uvdat.core.models import Project, TaskResult
 import uvdat.core.rest.serializers as uvdat_serializers
@@ -34,7 +36,14 @@ class AnalyticsViewSet(ReadOnlyModelViewSet):
             for k, v in instance.get_input_options().items():
                 if isinstance(v, QuerySet):
                     filtered_queryset = v.filter_by_projects(Project.objects.filter(id=project_id))
-                    options = [{"id": o.id, "name": o.name} for o in filtered_queryset]
+                    input_serializer = next(iter([
+                        s for _, s in inspect.getmembers(uvdat_serializers, inspect.isclass)
+                        if issubclass(s, ModelSerializer) and s.Meta.model == filtered_queryset.model
+                    ]), None)
+                    if input_serializer is not None:
+                        options = [input_serializer(o).data for o in filtered_queryset]
+                    else:
+                        options = [{"id": o.id, "name": o.name} for o in filtered_queryset]
                 elif any(not isinstance(o, dict) for o in v):
                     options = [{"id": o, "name": o} for o in v]
                 else:
