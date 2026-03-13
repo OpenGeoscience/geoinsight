@@ -21,7 +21,7 @@
     "html2canvas": "^1.4.1",
     "json-editor-vue": "^0.18.1",
     "lodash": "^4.17.21",
-    "maplibre-gl": "^4.6.0",
+    "maplibre-gl": "^5.0.0",
     "pinia": "^3.0.2",
     "pmtiles": "^4.3.0",
     "shpjs": "^4.0.4",
