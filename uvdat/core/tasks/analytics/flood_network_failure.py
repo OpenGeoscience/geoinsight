@@ -68,6 +68,9 @@ class FloodNetworkFailure(AnalysisType):
             # data is at 10 meter resolution
             raise AnalysisInputError("Station radius must be greater than 10")
 
+    def finalize(self, result):
+        pass
+
 
 def _get_station_region(point: Point, radius_meters: float) -> dict[str, Any]:
     """Get a rectangular region around a point, sized by radius_meters."""

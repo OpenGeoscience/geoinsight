@@ -16,8 +16,15 @@ from .analysis_type import AnalysisTask, AnalysisType
 class FloodSimulation(AnalysisType):
     def __init__(self):
         super().__init__()
-        self.name = "Flood Simulation"
+        self.name = "AI Flood Simulation"
         self.description = "Select parameters to simulate a 24-hour flood of the Charles River"
+        self.details = (
+            "The AI extreme precipitation downscaler achieves a Mean Absolute Error (MAE) "
+            "of 3.82 mm and a MAE of Annual Precipitation Maxima of 20.46 mm when tested "
+            "on an unseen validation period of n=7305 days. The AI-optimized SIMHYD "
+            "hydrological model achieves a Nash-Sutcliffe Efficiency (NSE) of 0.70 when "
+            "tested on an unseen validation period of n=6209 days."
+        )
         self.db_value = "flood_simulation"
         self.input_types = {
             "initial_conditions_id": "string",
@@ -60,6 +67,14 @@ class FloodSimulation(AnalysisType):
         )
         flood_simulation.delay(result.id)
         return result
+
+    def finalize(self, result):
+        seconds = (result.completed - result.created).total_seconds()
+        result.status = (
+            f"AI Simulation completed in {seconds:.2f} seconds "
+            "(compare to baseline 5-hour numerical simulation)."
+        )
+        result.save()
 
 
 @shared_task(base=AnalysisTask)

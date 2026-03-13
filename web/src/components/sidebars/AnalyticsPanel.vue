@@ -233,6 +233,14 @@ watch(
             </template>
           </v-tooltip>
         </v-card-title>
+        <v-expansion-panels v-if="analysisStore.currentAnalysisType.details">
+          <v-expansion-panel bg-color="transparent">
+            <v-expansion-panel-title class="py-3" style="min-height: 0">Details</v-expansion-panel-title>
+            <v-expansion-panel-text class="px-3">
+              {{ analysisStore.currentAnalysisType.details }}
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
 
         <v-tabs v-model="analysisStore.currentAnalysisTab" align-tabs="center" fixed-tabs>
           <v-tab value="new">Run New</v-tab>

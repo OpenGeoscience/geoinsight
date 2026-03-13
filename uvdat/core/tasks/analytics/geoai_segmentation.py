@@ -59,6 +59,9 @@ class GeoAISegmentation(AnalysisType):
         geoai_segmentation.delay(result.id)
         return result
 
+    def finalize(self, result):
+        pass
+
 
 @shared_task(base=AnalysisTask)
 def geoai_segmentation(result_id):  # noqa: PLR0915
