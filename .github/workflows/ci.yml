@@ -8,7 +8,7 @@ permissions:
   contents: read
 jobs:
   lint-client:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - name: Install npm
