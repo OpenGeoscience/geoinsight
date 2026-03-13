@@ -51,6 +51,9 @@ class CreateRoadNetwork(AnalysisType):
         create_road_network.delay(result.id)
         return result
 
+    def finalize(self, result):
+        pass
+
 
 def metadata_for_row(row):
     return {

@@ -37,8 +37,7 @@ class AnalysisType(ABC):
 
     @abstractmethod
     def finalize(self, result):
-        # Override this to perform custom finalization
-        pass
+        raise NotImplementedError
 
 
 class AnalysisInputError(Exception):
