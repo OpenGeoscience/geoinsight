@@ -35,6 +35,7 @@ class AnalysisType(ABC):
             if input_name not in inputs:
                 raise AnalysisInputError(f"{input_name} not provided.")
 
+    @abstractmethod
     def finalize(self, result):
         # Override this to perform custom finalization
         pass
@@ -61,7 +62,7 @@ class AnalysisTask(celery.Task):
 
     def after_return(self, status, retval, task_id, args, kwargs, einfo):  # noqa: PLR0913
         # Avoid circular import
-        from . import analysis_types
+        from . import analysis_types  # noqa: PLC0415
 
         task_result = self.get_task_result(args)
         task_result.complete()

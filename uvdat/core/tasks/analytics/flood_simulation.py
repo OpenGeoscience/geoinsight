@@ -70,7 +70,10 @@ class FloodSimulation(AnalysisType):
 
     def finalize(self, result):
         seconds = (result.completed - result.created).total_seconds()
-        result.status = f"AI Simulation completed in {seconds:.2f} seconds (compare to baseline 5-hour numerical simulation)."
+        result.status = (
+            f"AI Simulation completed in {seconds:.2f} seconds "
+            "(compare to baseline 5-hour numerical simulation)."
+        )
         result.save()
 
 
