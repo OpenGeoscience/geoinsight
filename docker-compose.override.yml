@@ -102,7 +102,7 @@ services:
         condition: service_healthy
 
   web:
-    image: node:22
+    image: node:22.22.1
     command: ["sh", "-c", "npm install && npm run serve"]
     working_dir: /web
     volumes:
