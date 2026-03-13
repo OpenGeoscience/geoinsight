@@ -180,7 +180,7 @@ export const useLayerStore = defineStore('layer', () => {
           }
         }
 
-        // TODO: Move this conditional functionality into `addLayer`, and directly call addLayerFrameToMap there
+        // Add current frame to map if not added yet
         const sourceId = mapStore.sourceIdFromLayerFrame(layer, frame);
         if (layer.visible && !userMapLayers.some(
           (mapLayerId) => mapLayerId.includes(sourceId)
