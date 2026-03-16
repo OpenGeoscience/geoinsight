@@ -79,6 +79,9 @@ class NetworkRecovery(AnalysisType):
         if mode not in RECOVERY_MODES:
             raise AnalysisInputError("Recovery mode not a valid option")
 
+    def finalize(self, result):
+        pass
+
 
 def get_network_graph(network):
     network = {

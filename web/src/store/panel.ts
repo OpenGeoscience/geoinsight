@@ -64,7 +64,7 @@ function defaultPanelArrangement(): FloatingPanelConfig[] {
         },
         {
             id: "analytics",
-            label: "Analytics",
+            label: "AI & Analytics",
             visible: false,
             closeable: true,
             collapsed: true,
