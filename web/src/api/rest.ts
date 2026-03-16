@@ -226,6 +226,14 @@ export async function getTaskResult(resultId: number): Promise<TaskResult> {
   return (await apiClient.get(`analytics/${resultId}`)).data;
 }
 
+export async function subscribeToTaskResult(resultId: number): Promise<TaskResult> {
+  return (await apiClient.post(
+    `analytics/${resultId}/subscribe/`,
+    undefined,
+    {errorMsg: 'Failed to subscribe to task result. Task may already be completed.'}
+  )).data;
+}
+
 export async function getVectorDataBounds(vectorId: number): Promise<number[]> {
   return (await apiClient.get(`vectors/${vectorId}/bounds/`)).data;
 }

@@ -421,6 +421,7 @@ export interface TaskResult {
   error: string;
   created: string;
   completed: string;
+  subscribers: number[];
 }
 
 export interface FloatingPanelConfig {

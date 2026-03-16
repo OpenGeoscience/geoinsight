@@ -110,3 +110,14 @@ class AnalyticsViewSet(ReadOnlyModelViewSet):
             uvdat_serializers.TaskResultSerializer(result).data,
             status=200,
         )
+
+    @action(detail=True, methods=["post"], url_path=r"subscribe")
+    def subscribe(self, request, **kwargs):
+        task_result = self.get_object()
+        if task_result.completed:
+            return Response("Task already completed. Subscription not applied.", status=400)
+        task_result.subscribers.add(request.user)
+        return Response(
+            uvdat_serializers.TaskResultSerializer(task_result).data,
+            status=200,
+        )
