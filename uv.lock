@@ -1853,7 +1853,7 @@ wheels = [
 
 [[package]]
 name = "geodatalytics"
-version = "1.34.1"
+version = "1.34.2"
 source = { editable = "." }
 dependencies = [
     { name = "celery" },
