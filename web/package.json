@@ -43,7 +43,7 @@
     "eslint": "8.57.1",
     "eslint-config-prettier": "8.10.2",
     "eslint-plugin-prettier": "4.2.5",
-    "eslint-plugin-vue": "8.7.1",
+    "eslint-plugin-vue": "10.8.0",
     "prettier": "3.8.1",
     "sass": "1.98.0",
     "typescript": "5.9.3",
