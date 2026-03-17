@@ -66,10 +66,10 @@ class TaskResult(models.Model):
                 f"\n\n View the results at {settings.UVDAT_WEB_URL}."
             )
             send_mail(
-                subject,
-                message,
-                settings.DEFAULT_FROM_EMAIL,
-                self.subscribers.all(),
+                subject=subject,
+                message=message,
+                from_email=None,
+                recipient_list=self.subscribers.all(),
             )
 
 
