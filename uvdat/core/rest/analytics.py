@@ -119,7 +119,7 @@ class AnalyticsViewSet(ReadOnlyModelViewSet):
     def subscribe(self, request, result_id, **kwargs):
         task_result = TaskResult.objects.get(id=result_id)
         if task_result.completed:
-            return Response("Task already completed. Subscription not applied.", status=400)
+            return Response("Task already completed. Subscription not applied.", status=410)
         task_result.subscribers.add(request.user)
         return Response(
             uvdat_serializers.TaskResultSerializer(task_result).data,
