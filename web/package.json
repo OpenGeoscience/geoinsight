@@ -35,9 +35,9 @@
   },
   "devDependencies": {
     "@types/lodash": "4.17.24",
-    "@typescript-eslint/eslint-plugin": "5.62.0",
-    "@typescript-eslint/parser": "5.62.0",
-    "@typescript-eslint/typescript-estree": "6.21.0",
+    "@typescript-eslint/eslint-plugin": "8.57.1",
+    "@typescript-eslint/parser": "8.57.1",
+    "@typescript-eslint/typescript-estree": "8.57.1",
     "@vitejs/plugin-vue": "6.0.5",
     "@vue/eslint-config-typescript": "9.1.0",
     "eslint": "8.57.1",
