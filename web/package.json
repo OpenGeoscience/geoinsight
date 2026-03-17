@@ -24,7 +24,7 @@
     "maplibre-gl": "^4.6.0",
     "pinia": "^3.0.2",
     "pmtiles": "^4.3.0",
-    "shpjs": "^4.0.4",
+    "proj4": "^2.20.4",
     "sortablejs": "^1.15.0",
     "vue": "^3.2.13",
     "vue-chartjs": "^5.2.0",
