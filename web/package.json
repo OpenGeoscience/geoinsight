@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@mdi/font": "^7.2.96",
-    "@resonant/oauth-client": "^0.9.0",
+    "@resonant/oauth-client": "^1.0.0",
     "@turf/turf": "^7.1.0",
     "axios": "^1.4.0",
     "buffer": "^6.0.3",
