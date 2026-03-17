@@ -18,6 +18,8 @@ jobs:
         uses: astral-sh/setup-uv@v7
       - name: Install npm
         uses: actions/setup-node@v6
+        with:
+          node-version: 24
       - name: Run Semantic Release
         run: |
           uvx python-semantic-release version
