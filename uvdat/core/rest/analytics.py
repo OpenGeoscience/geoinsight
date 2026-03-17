@@ -111,9 +111,13 @@ class AnalyticsViewSet(ReadOnlyModelViewSet):
             status=200,
         )
 
-    @action(detail=True, methods=["post"], url_path=r"subscribe")
-    def subscribe(self, request, **kwargs):
-        task_result = self.get_object()
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path=r"(?P<result_id>[\d*]+)/subscribe",
+    )
+    def subscribe(self, request, result_id, **kwargs):
+        task_result = TaskResult.objects.get(id=result_id)
         if task_result.completed:
             return Response("Task already completed. Subscription not applied.", status=400)
         task_result.subscribers.add(request.user)
