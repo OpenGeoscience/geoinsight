@@ -10,6 +10,7 @@ from django.core.mail import send_mail
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.template.loader import render_to_string
 from django.utils import timezone
 
 from .project import Project
@@ -59,11 +60,9 @@ class TaskResult(models.Model):
 
         for subscriber in self.subscribers.all():
             subject = "GeoDatalytics Task Completed"
-            message = (
-                "You are receiving this email because you have requested a notification "
-                "upon the completion of a task in GeoDatalytics.\n\n"
-                f"The following Analytics Task has been completed: \n\n{self.name}\n\n"
-                f"\n\n View the results at {settings.UVDAT_WEB_URL}."
+            message = render_to_string(
+                "uvdat/email_task_complete.html",
+                {"task_name": self.name, "link": settings.UVDAT_WEB_URL},
             )
             send_mail(
                 subject=subject,
