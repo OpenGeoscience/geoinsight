@@ -3,6 +3,7 @@ from __future__ import annotations
 import inspect
 
 from django.db.models import QuerySet
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
@@ -117,7 +118,7 @@ class AnalyticsViewSet(ReadOnlyModelViewSet):
         url_path=r"(?P<result_id>[\d*]+)/subscribe",
     )
     def subscribe(self, request, result_id, **kwargs):
-        task_result = TaskResult.objects.get(id=result_id)
+        task_result = get_object_or_404(TaskResult, id=result_id)
         if task_result.completed:
             return Response("Task already completed. Subscription not applied.", status=410)
         task_result.subscribers.add(request.user)
