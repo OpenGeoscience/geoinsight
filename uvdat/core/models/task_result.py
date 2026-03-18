@@ -57,7 +57,7 @@ class TaskResult(models.Model):
         self.status = f"Completed in {seconds:.2f} seconds."
         self.save()
 
-        if self.subscribers.count():
+        for subscriber in self.subscribers.all():
             subject = "GeoDatalytics Task Completed"
             message = (
                 "You are receiving this email because you have requested a notification "
@@ -69,7 +69,7 @@ class TaskResult(models.Model):
                 subject=subject,
                 message=message,
                 from_email=None,
-                recipient_list=self.subscribers.all(),
+                recipient_list=[subscriber],
             )
 
 
