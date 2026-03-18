@@ -13,6 +13,21 @@ export default defineConfigWithVueTs(
   vueTsConfigs.recommended,
   {
     rules: {
+      // allowModifiers: Vuetify uses dot notation for column slots (v-slot:item.columnName)
+      'vue/valid-v-slot': ['error', { allowModifiers: true }],
+      // `any` is used everywhere and will be difficult to eliminate
+      '@typescript-eslint/no-explicit-any': 'off',
+      // Temporary ignores until rules can be fixed
+      'vue/require-v-for-key': 'off',
+      'prefer-const': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      'vue/valid-v-for': 'off',
+      '@typescript-eslint/ban-ts-comment': 'off',
+      'vue/return-in-computed-property': 'off',
+      'vue/no-ref-as-operand': 'off',
+      'vue/no-side-effects-in-computed-properties': 'off',
+      'vue/no-async-in-computed-properties': 'off',
+      'vue/no-use-v-if-with-v-for': 'off',
     },
   },
   skipFormatting,

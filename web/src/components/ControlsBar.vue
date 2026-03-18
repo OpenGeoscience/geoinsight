@@ -339,7 +339,7 @@ watch(newBasemapStyleJSON, createNewBasemapPreview)
               <v-list-item v-for="viewState in projectStore.availableViewStates" :key="viewState.id" class="control-menu-row pa-1"
                 @click="projectStore.navigateToViewState(viewState)">
                 <template v-slot:prepend>
-                  <img :src="viewState.thumbnail" height="70px"></img>
+                  <img :src="viewState.thumbnail" height="70px">
                 </template>
                 <template v-slot:title>
                   <div style="width: 150px; text-wrap: wrap;">

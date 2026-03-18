@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
 import { Map, Popup, AttributionControl, addProtocol } from "maplibre-gl";
 import { Protocol } from "pmtiles";
@@ -74,7 +73,6 @@ function createMap() {
   newMap.addControl(attributionControl);
 
   // Add spinner while loading
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const mapContainer = document.getElementById("mapContainer")!;
   mapContainer.classList.add("spinner");
   newMap.on("load", () => {
