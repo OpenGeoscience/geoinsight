@@ -61,7 +61,7 @@ class TaskResult(models.Model):
         for subscriber in self.subscribers.all():
             subject = "GeoDatalytics Task Completed"
             message = render_to_string(
-                "uvdat/email_task_complete.html",
+                "uvdat/email_task_complete.txt",
                 {"task_name": self.name, "link": settings.UVDAT_WEB_URL},
             )
             send_mail(
