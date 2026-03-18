@@ -185,7 +185,7 @@ function updateSelectedProject(newProjectData: Project) {
   selectedProject.value = newProjectData;
 }
 
-function refreshProjectDatasets(callback: Function | null) {
+function refreshProjectDatasets(callback: (() => void) | null) {
   if (selectedProject.value) {
     getProjectDatasets(selectedProject.value.id).then(async (datasets) => {
       projDatasets.value = datasets
