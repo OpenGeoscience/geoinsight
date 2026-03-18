@@ -63,13 +63,13 @@ def test_rest_subscribe_to_running_task(authenticated_api_client, user, project,
     resp = authenticated_api_client.post(f"/api/v1/analytics/{task_result.id}/subscribe/")
     assert resp.status_code == 200
     task_result.complete()
-    assert len(mailoutbox) == 1
-    mail = mailoutbox[0]
-    assert mail.subject == "GeoDatalytics Task Completed"
+    message = next(filter(lambda m: m.subject == "GeoDatalytics Task Completed", mailoutbox), None)
+    assert message is not None
+    assert task_result.name in message.body
 
 
 @pytest.mark.django_db
-def test_rest_subscribe_to_completed_task(authenticated_api_client, user, project, mailoutbox):
+def test_rest_subscribe_to_completed_task(authenticated_api_client, user, project):
     project.set_followers([user])
     task_result = TaskResult.objects.create(name="Test Task", project=project)
     task_result.complete()
