@@ -368,10 +368,10 @@ watch(
                   hide-details="auto"
                   class="my-1"
                 >
-                  <template #item="{ item, props: itemProps }">
+                  <template #item="{ internalItem, props: itemProps }">
                     <v-list-item
                       v-bind="itemProps"
-                      v-tooltip="item.title"
+                      v-tooltip="internalItem.title"
                       style="max-width: 400px"
                     />
                   </template>
