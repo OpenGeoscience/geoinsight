@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.core.management import call_command
 import pytest
 
-from uvdat.core.models import Chart, Dataset, Network
+from uvdat.core.models import Chart, Dataset, Network, TaskResult
 from uvdat.core.tasks.analytics import (
     FloodNetworkFailure,
     FloodSimulation,
@@ -54,6 +54,28 @@ def test_rest_run_analysis_task_no_inputs(authenticated_api_client, user, projec
     )
     assert resp.status_code == 400
     assert "not provided" in resp.json()
+
+
+@pytest.mark.django_db
+def test_rest_subscribe_to_running_task(authenticated_api_client, user, project, mailoutbox):
+    project.set_followers([user])
+    task_result = TaskResult.objects.create(name="Test Task", project=project)
+    resp = authenticated_api_client.post(f"/api/v1/analytics/{task_result.id}/subscribe/")
+    assert resp.status_code == 200
+    task_result.complete()
+    message = next(filter(lambda m: m.subject == "GeoDatalytics Task Completed", mailoutbox), None)
+    assert message is not None
+    assert task_result.name in message.body
+
+
+@pytest.mark.django_db
+def test_rest_subscribe_to_completed_task(authenticated_api_client, user, project):
+    project.set_followers([user])
+    task_result = TaskResult.objects.create(name="Test Task", project=project)
+    task_result.complete()
+    resp = authenticated_api_client.post(f"/api/v1/analytics/{task_result.id}/subscribe/")
+    assert resp.status_code == 410
+    assert resp.json() == "Task already completed. Subscription not applied."
 
 
 @pytest.mark.slow

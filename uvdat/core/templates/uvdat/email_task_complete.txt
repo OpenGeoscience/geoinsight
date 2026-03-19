@@ -1,0 +1,7 @@
+You are receiving this email because you have requested a notification upon the completion of a task in GeoDatalytics.
+
+The following Analytics Task has been completed:
+
+{{ task_name }}
+
+View the results at {{ link }}.

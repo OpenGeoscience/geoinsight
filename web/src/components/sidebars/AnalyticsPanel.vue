@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, watch, computed } from "vue";
 import {
-  getTaskResults,
   runAnalysis,
   getDataset,
   getChart,
   getTaskResult,
   getNetwork,
+  subscribeToTaskResult,
 } from "@/api/rest";
 import NodeAnimation from "./NodeAnimation.vue";
 import SliderNumericInput from "../SliderNumericInput.vue";
@@ -17,6 +17,7 @@ import {
   usePanelStore,
   useAnalysisStore,
   useProjectStore,
+  useAppStore,
 } from "@/store";
 
 const panelStore = usePanelStore();
@@ -24,6 +25,7 @@ const analysisStore = useAnalysisStore();
 const projectStore = useProjectStore();
 const networkStore = useNetworkStore();
 const layerStore = useLayerStore();
+const appStore = useAppStore();
 
 const searchText = ref<string | undefined>();
 const filteredAnalysisTypes = computed(() => {
@@ -187,6 +189,11 @@ async function fillInputsAndOutputs() {
   }
 }
 
+async function subscribe() {
+  if (analysisStore.currentResult){
+    analysisStore.currentResult.subscribers = (await subscribeToTaskResult(analysisStore.currentResult.id)).subscribers;
+  }
+}
 
 watch(() => analysisStore.currentAnalysisType, () => {
   fetchResults()
@@ -343,6 +350,26 @@ watch(
                         </tr>
                       </tbody>
                     </v-table>
+                  </div>
+                  <div v-else>
+                    <div
+                      v-if="appStore.currentUser && analysisStore.currentResult?.subscribers.includes(appStore.currentUser.id)"
+                      style="text-align: center;"
+                    >
+                      <v-icon icon="mdi-check" color="success" />
+                      Subscribed
+                      <v-icon
+                        icon="mdi-information-outline"
+                        v-tooltip="'An email will be sent to you when the task is completed.'"
+                      />
+                    </div>
+                    <v-btn
+                      v-else
+                      @click="subscribe"
+                      v-tooltip="'If subscribed, an email will be sent to you when the task is completed.'"
+                    >
+                      Notify Me Once Completed
+                    </v-btn>
                   </div>
                 </v-expansion-panel-text>
               </v-expansion-panel>

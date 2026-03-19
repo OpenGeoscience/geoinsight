@@ -4,9 +4,13 @@ import json
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.template.loader import render_to_string
 from django.utils import timezone
 
 from .project import Project
@@ -25,6 +29,7 @@ class TaskResult(models.Model):
     error = models.TextField(blank=True, default="")
     created = models.DateTimeField(auto_now_add=True, editable=False)
     completed = models.DateTimeField(null=True)
+    subscribers = models.ManyToManyField(User, related_name="task_subscriptions", blank=True)
 
     project_filter_path = "project"
     project_filter_allow_null = True
@@ -52,6 +57,19 @@ class TaskResult(models.Model):
         seconds = (self.completed - self.created).total_seconds()
         self.status = f"Completed in {seconds:.2f} seconds."
         self.save()
+
+        for subscriber in self.subscribers.all():
+            subject = "GeoDatalytics Task Completed"
+            message = render_to_string(
+                "uvdat/email_task_complete.txt",
+                {"task_name": self.name, "link": settings.UVDAT_WEB_URL},
+            )
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=None,
+                recipient_list=[subscriber],
+            )
 
 
 @receiver(post_save, sender=TaskResult)
