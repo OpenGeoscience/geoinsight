@@ -321,7 +321,7 @@ const swiperColor = computed(() => {
 
 .tooltip {
   border-radius: 5px;
-  padding: 10px 20px;
+  padding: 0;
   word-break: break-word;
   text-wrap: wrap;
   width: fit-content;
