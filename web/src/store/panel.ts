@@ -1,4 +1,4 @@
-import { FloatingPanelConfig, TaskResult, Chart, Dataset, Layer, Network, RasterData, VectorData } from '@/types';
+import type { FloatingPanelConfig, TaskResult, Chart, Dataset, Layer, Network, RasterData, VectorData } from '@/types';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { getChart, getDataset } from '@/api/rest';

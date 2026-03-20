@@ -4,9 +4,9 @@ import { useLayerStore } from './layer';
 import { cloneDeep, map } from 'lodash';
 import { useMapStore } from './map';
 import { useStyleStore } from './style';
-import { MapLayerStyleRaw } from './style';
-import { LayerStyle } from '@/types';
-import { SourceSpecification } from 'maplibre-gl';
+import type { MapLayerStyleRaw } from './style';
+import type { LayerStyle } from '@/types';
+import type { SourceSpecification } from 'maplibre-gl';
 
 interface DisplayCompareMapLayerItem {
     displayName: string;

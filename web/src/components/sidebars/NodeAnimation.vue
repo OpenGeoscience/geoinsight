@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { Layer } from "@/types";
+import type { Layer, Network } from "@/types";
 import { ref, watch, computed } from "vue";
-import { Network } from '../../types';
 
 import { useLayerStore, useNetworkStore } from "@/store";
 const networkStore = useNetworkStore();

@@ -12,7 +12,7 @@ import { useAppStore, useLayerStore, useMapStore, useProjectStore } from "@/stor
 import { useMapCompareStore } from "@/store/compare";
 import { createBasemap, createViewState, deleteViewState, uploadFile } from "@/api/rest";
 import { storeToRefs } from "pinia";
-import { ViewState } from "@/types";
+import type { ViewState } from "@/types";
 
 const appStore = useAppStore();
 const layerStore = useLayerStore();

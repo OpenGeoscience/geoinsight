@@ -1,4 +1,4 @@
-import { MapGeoJSONFeature, StyleSpecification } from "maplibre-gl";
+import type { MapGeoJSONFeature, StyleSpecification } from "maplibre-gl";
 
 export interface User {
   id: number;

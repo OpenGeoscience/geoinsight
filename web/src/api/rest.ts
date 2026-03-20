@@ -1,5 +1,5 @@
 import { apiClient, getS3ffClient } from "./auth";
-import {
+import type {
   User,
   Project,
   ProjectPatch,

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import DetailView from "../DetailView.vue";
-import { NetworkEdge, NetworkNode } from "@/types";
+import type { NetworkEdge, NetworkNode } from "@/types";
 
 import { useNetworkStore, usePanelStore } from "@/store";
 import { getNetworkEdges, getNetworkNodes } from "@/api/rest";

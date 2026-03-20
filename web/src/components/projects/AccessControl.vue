@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { onMounted, ref, Ref } from "vue";
-import { Project, ProjectPermissions, User } from "@/types";
+import { onMounted, ref } from "vue";
+import type { Ref } from "vue";
+import type { Project, ProjectPermissions, User } from "@/types";
 import { getUsers, updateProjectPermissions } from "@/api/rest";
 
 const props = defineProps<{

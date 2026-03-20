@@ -11,7 +11,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { ChartOptions } from "@/types";
+import type { ChartOptions } from "@/types";
 import DetailView from "../DetailView.vue";
 
 import { useAnalysisStore } from "@/store";

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, onMounted, Ref, ref, watch } from 'vue';
-import { Layer, LayerStyle, StyleSpec } from '@/types';
+import { computed, onMounted, ref, watch } from 'vue';
+import type { Ref } from 'vue';
+import type { Layer, LayerStyle, StyleSpec } from '@/types';
 import { getLayerStyles } from '@/api/rest';
 import SliderNumericInput from '../SliderNumericInput.vue';
 

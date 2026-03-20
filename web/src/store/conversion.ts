@@ -1,4 +1,4 @@
-import { TaskResult } from '@/types';
+import type { TaskResult } from '@/types';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { useProjectStore } from './project';
