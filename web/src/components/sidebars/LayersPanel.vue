@@ -6,7 +6,7 @@ import draggable from "vuedraggable";
 import LayerStyle from "./LayerStyle.vue";
 import CompareLayerStyle from "./CompareLayerStyle.vue";
 import DetailView from "../DetailView.vue";
-import SliderNumericInput from '../SliderNumericInput'
+import SliderNumericInput from '../SliderNumericInput.vue';
 
 import { useLayerStore, useMapStore } from "@/store";
 import { useMapCompareStore } from "@/store/compare";

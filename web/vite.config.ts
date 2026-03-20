@@ -4,20 +4,18 @@ import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 // Utilities
 import { defineConfig } from 'vite'
+import process from 'node:process'
 import { fileURLToPath, URL } from 'node:url'
 
 import packageJson from './package.json'
 
-
 process.env.VITE_APP_VERSION = packageJson.version;
 
-// https://vitejs.dev/config/
 export default defineConfig({
     plugins: [
         Vue({
             template: { transformAssetUrls },
         }),
-        // https://github.com/vuetifyjs/vuetify-loader/tree/master/packages/vite-plugin#readme
         Vuetify({
             autoImport: true,
         }),
@@ -25,25 +23,9 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url)),
-            // TODO: this is a fix for a bug in vite, see https://github.com/vitejs/vite/discussions/8549#discussioncomment-7333115
-            '@jsdevtools/ono': '@jsdevtools/ono/cjs/index.js',
         },
-        extensions: [
-            '.js',
-            '.json',
-            '.jsx',
-            '.mjs',
-            '.ts',
-            '.tsx',
-            '.vue',
-        ],
     },
     server: {
         port: 8080,
-    },
-    build: {
-        commonjsOptions: {
-            transformMixedEsModules: true,
-        },
     },
 })

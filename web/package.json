@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "serve": "vite",
+    "serve:prod": "vite preview",
     "build": "vite build",
     "lint": "eslint . --no-fix",
     "format": "eslint . --fix"
