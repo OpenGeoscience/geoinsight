@@ -84,11 +84,11 @@ dev = [
   # so use this to install "development" extras by default too
   "geodatalytics[development]",
   "pre-commit==4.5.1",
-  "tox==4.50.0",
+  "tox==4.50.3",
   "tox-uv==1.33.4",
 ]
 lint = [
-  "ruff==0.15.6",
+  "ruff==0.15.7",
 ]
 type = [
   "mypy==1.19.1",
