@@ -158,7 +158,7 @@ CHANNEL_LAYERS: dict[str, dict[str, Any]] = {
 }
 
 # Large image cache with Redis
-LARGE_IMAGE_CACHE_BACKEND = 'redis'
+LARGE_IMAGE_CACHE_BACKEND = "redis"
 LARGE_IMAGE_CACHE_REDIS_URL = env.url("DJANGO_REDIS_URL").geturl()
 
 UVDAT_WEB_URL: str = env.url("DJANGO_UVDAT_WEB_URL").geturl()
