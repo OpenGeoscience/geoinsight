@@ -19,10 +19,7 @@ export default defineConfigWithVueTs(
       '@typescript-eslint/no-explicit-any': 'off',
       // Temporary ignores until rules can be fixed
       'vue/require-v-for-key': 'off',
-      'prefer-const': 'off',
-      '@typescript-eslint/no-unused-vars': 'off',
       'vue/valid-v-for': 'off',
-      '@typescript-eslint/ban-ts-comment': 'off',
       'vue/return-in-computed-property': 'off',
       'vue/no-ref-as-operand': 'off',
       'vue/no-side-effects-in-computed-properties': 'off',

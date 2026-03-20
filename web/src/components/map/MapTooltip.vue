@@ -74,7 +74,8 @@ const rasterValue = computed(() => {
       const data = mapStore.rasterTooltipDataCache[raster.id]?.data;
       if (data) {
         const { lng, lat } = clickedFeature.value.pos;
-        let { xmin, xmax, ymin, ymax, srs } = raster.metadata.bounds;
+        const { srs } = raster.metadata.bounds;
+        let { xmin, xmax, ymin, ymax } = raster.metadata.bounds;
         [xmin, ymin] = proj4(srs, "EPSG:4326", [xmin, ymin]);
         [xmax, ymax] = proj4(srs, "EPSG:4326", [xmax, ymax]);
         // Convert lat/lng to array indices

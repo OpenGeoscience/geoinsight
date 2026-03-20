@@ -155,7 +155,6 @@ export const useMapStore = defineStore('map', () => {
 
   function setBasemapToDefault() {
     if (!currentBasemap.value || currentBasemap.value.name.toLowerCase().includes('basic')) {
-      // @ts-ignore for "Type instantiation is excessively deep and possibly infinite"
       currentBasemap.value = availableBasemaps.value.find((basemap) => {
         return basemap.name.toLowerCase() === 'basic ' + appStore.theme
       })
@@ -314,7 +313,7 @@ export const useMapStore = defineStore('map', () => {
 
     // Must collect all source Ids so they can be removed after all layers
     // have been removed, since multple layers may use the same source
-    let sourceIdsToRemove = new Set<string>();
+    const sourceIdsToRemove = new Set<string>();
     const updatedLayerIds: string[] = [];
     layerIds.forEach((id) => {
       // Rasters have implicit bounds layers that also need to be removed
@@ -520,7 +519,8 @@ export const useMapStore = defineStore('map', () => {
 
     const bounds = raster.metadata.bounds;
     const boundsSourceId = sourceId.replace('raster', 'bounds');
-    let { xmin, xmax, ymin, ymax, srs } = bounds;
+    const { srs } = bounds;
+    let { xmin, xmax, ymin, ymax } = bounds;
     [xmin, ymin] = proj4(srs, "EPSG:4326", [xmin, ymin]);
     [xmax, ymax] = proj4(srs, "EPSG:4326", [xmax, ymax]);
     map.addSource(boundsSourceId, {

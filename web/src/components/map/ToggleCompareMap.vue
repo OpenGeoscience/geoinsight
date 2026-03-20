@@ -7,7 +7,7 @@ import { ToggleCompare } from "vue-maplibre-compare";
 import { oauthClient } from "@/api/auth";
 import 'vue-maplibre-compare/dist/vue-maplibre-compare.css'
 import { addProtocol, AttributionControl, Popup } from "maplibre-gl";
-import type { StyleSpecification, Map, ResourceType } from "maplibre-gl";
+import type { StyleSpecification, Map } from "maplibre-gl";
 import { useTheme } from 'vuetify';
 import { Protocol } from "pmtiles";
 import { storeToRefs } from "pinia";
@@ -152,7 +152,7 @@ watch(() => appStore.openSidebars, () => {
   setAttributionControlStyle();
 });
 
-const transformRequest = (url: string, _resourceType?: ResourceType) => {
+const transformRequest = (url: string) => {
     // Only add auth headers to our own tile requests
     if (url.includes(import.meta.env.VITE_APP_API_ROOT)) {
         return {
@@ -163,7 +163,6 @@ const transformRequest = (url: string, _resourceType?: ResourceType) => {
     return { url };
 }
 
-// @ts-ignore for "Type instantiation is excessively deep and possibly infinite"
 const mapStyleA: Ref<StyleSpecification | string> = ref(mapStore.currentBasemap?.style as StyleSpecification);
 watch(isComparing, (newVal) => {
    if (!newVal && mapStore.map) {

@@ -45,8 +45,8 @@ const colormaps = computed(() => styleStore.colormaps);
 
 const projectPermission = computed(() => {
     if (!projectStore.currentProject || !appStore.currentUser) return 'none'
-    let user = appStore.currentUser
-    let proj = projectStore.currentProject
+    const user = appStore.currentUser
+    const proj = projectStore.currentProject
     let perm = 'follower'
     if (proj.owner?.id === user.id || user.is_superuser ) {
         perm = "owner";

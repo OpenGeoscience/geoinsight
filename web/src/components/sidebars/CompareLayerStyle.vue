@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import type { Ref } from 'vue';
 import type { Layer, LayerStyle, StyleSpec } from '@/types';
 import { getLayerStyles } from '@/api/rest';
 import SliderNumericInput from '../SliderNumericInput.vue';
 
 import { useStyleStore, usePanelStore, useLayerStore, useMapStore } from '@/store';
-import { cloneDeep, debounce, map } from 'lodash';
+import { cloneDeep } from 'lodash';
 import { useMapCompareStore } from '@/store/compare';
 const styleStore = useStyleStore();
 const panelStore = usePanelStore();

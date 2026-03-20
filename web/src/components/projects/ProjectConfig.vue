@@ -10,7 +10,7 @@ import {
   deleteProject,
   patchProject,
 } from "@/api/rest";
-import type { Project, Dataset, TaskResult } from "@/types";
+import type { Project, Dataset } from "@/types";
 
 import { useMapStore, useAppStore, useProjectStore } from "@/store";
 const projectStore = useProjectStore();
@@ -208,7 +208,7 @@ function handleEditFocus(focused: boolean) {
   }
 }
 
-function datasetUploaded(result: {dataset: Dataset, conversionTask: TaskResult}) {
+function datasetUploaded() {
   projectStore.refreshAllDatasets()
   refreshProjectDatasets(null)
 }

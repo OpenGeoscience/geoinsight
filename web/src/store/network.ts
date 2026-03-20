@@ -175,7 +175,7 @@ export const useNetworkStore = defineStore('network', () => {
     async function isNodeActive(nodeId: number, dataset: Dataset) {
         const network = await getNetwork(nodeId, dataset);
         if (network) {
-            let deactivated = Array.from(networkStates.value[network.id]?.deactivated?.nodes || []);
+            const deactivated = Array.from(networkStates.value[network.id]?.deactivated?.nodes || []);
             return !deactivated.includes(nodeId)
         }
     }

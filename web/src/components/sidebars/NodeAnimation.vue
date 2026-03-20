@@ -67,7 +67,7 @@ function rewind() {
 
 watch(currentTick, async () => {
   if (nodeChanges.value) {
-    let deactivated = nodeChanges.value[currentTick.value];
+    const deactivated = nodeChanges.value[currentTick.value];
     if (props.network) networkStore.setNetworkDeactivatedNodes(props.network, deactivated || [], true);
     if (props.additionalAnimationLayers) {
       props.additionalAnimationLayers.forEach((layer) => {

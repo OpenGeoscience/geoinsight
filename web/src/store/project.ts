@@ -94,7 +94,7 @@ export const useProjectStore = defineStore('project', () => {
           selected_layer_current_frames: styleKeysToCurrentFrames,
           selected_layer_order: Object.keys(styleKeysToCurrentFrames),
           selected_layer_styles: Object.fromEntries(
-            Object.entries(styleStore.selectedLayerStyles).filter(([styleKey, _]) => {
+            Object.entries(styleStore.selectedLayerStyles).filter(([styleKey]) => {
               return Object.keys(styleKeysToCurrentFrames).includes(styleKey)
             })
           ),
@@ -164,7 +164,7 @@ export const useProjectStore = defineStore('project', () => {
             analysisStore.currentChart = analysisStore.availableCharts?.find((c) => c.id === viewState.current_chart);
             networkStore.currentNetwork = networkStore.availableNetworks.find((n) => n.id === viewState.current_network);
 
-            // @ts-ignore for "Type instantiation is excessively deep and possibly infinite"
+            // @ts-expect-error for "Type instantiation is excessively deep and possibly infinite"
             mapStore.currentBasemap = mapStore.availableBasemaps?.find((b) => b.id === viewState.current_basemap);
             mapStore.setMapPosition(viewState.map_center as [number, number], viewState.map_zoom)
 

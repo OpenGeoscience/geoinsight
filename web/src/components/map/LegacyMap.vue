@@ -6,7 +6,6 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 import MapTooltip from "./MapTooltip.vue";
 import { oauthClient } from "@/api/auth";
-import { THEMES } from "@/themes";
 
 import { useAppStore, useMapStore, useLayerStore } from "@/store";
 const appStore = useAppStore();
