@@ -103,7 +103,7 @@ services:
 
   web:
     image: node:24.14.0
-    command: ["sh", "-c", "npm install && npm run serve"]
+    command: ["sh", "-c", "npm install && npm run serve -- --host 0.0.0.0"]
     working_dir: /web
     volumes:
       - ./web:/web
