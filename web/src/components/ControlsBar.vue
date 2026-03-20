@@ -75,8 +75,6 @@ function createBasemapPreviews() {
         bounds,
       });
 
-      // Ignore typing due to "Type instantiation is excessively deep and possibly infinite"
-      // @ts-ignore
       preview.setStyle(basemap.style);
       basemapPreviews.value[basemap.id] = preview;
     })

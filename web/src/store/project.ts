@@ -164,7 +164,7 @@ export const useProjectStore = defineStore('project', () => {
             analysisStore.currentChart = analysisStore.availableCharts?.find((c) => c.id === viewState.current_chart);
             networkStore.currentNetwork = networkStore.availableNetworks.find((n) => n.id === viewState.current_network);
 
-            // @ts-ignore for "Type instantiation is excessively deep and possibly infinite"
+            // @ts-expect-error for "Type instantiation is excessively deep and possibly infinite"
             mapStore.currentBasemap = mapStore.availableBasemaps?.find((b) => b.id === viewState.current_basemap);
             mapStore.setMapPosition(viewState.map_center as [number, number], viewState.map_zoom)
 

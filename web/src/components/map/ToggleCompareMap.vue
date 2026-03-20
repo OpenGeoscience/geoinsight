@@ -163,7 +163,6 @@ const transformRequest = (url: string, _resourceType?: ResourceType) => {
     return { url };
 }
 
-// @ts-ignore for "Type instantiation is excessively deep and possibly infinite"
 const mapStyleA: Ref<StyleSpecification | string> = ref(mapStore.currentBasemap?.style as StyleSpecification);
 watch(isComparing, (newVal) => {
    if (!newVal && mapStore.map) {

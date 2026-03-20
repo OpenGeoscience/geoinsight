@@ -155,7 +155,6 @@ export const useMapStore = defineStore('map', () => {
 
   function setBasemapToDefault() {
     if (!currentBasemap.value || currentBasemap.value.name.toLowerCase().includes('basic')) {
-      // @ts-ignore for "Type instantiation is excessively deep and possibly infinite"
       currentBasemap.value = availableBasemaps.value.find((basemap) => {
         return basemap.name.toLowerCase() === 'basic ' + appStore.theme
       })
