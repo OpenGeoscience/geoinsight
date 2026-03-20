@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { createDataset, createFileItem, spawnDatasetConversion, uploadFile } from '@/api/rest';
-import { Dataset } from '@/types';
+import type { Dataset } from '@/types';
 import { computed, ref, watch } from 'vue';
 
 import { VFileUpload, VFileUploadItem } from 'vuetify/labs/VFileUpload'

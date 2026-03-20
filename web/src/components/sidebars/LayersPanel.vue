@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { debounce } from "lodash"
-import { Layer } from "@/types";
+import type { Layer } from "@/types";
 import { computed, ref } from "vue";
 import draggable from "vuedraggable";
 import LayerStyle from "./LayerStyle.vue";

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Colormap } from '@/types';
+import type { Colormap } from '@/types';
 import { watch, ref, onMounted } from 'vue';
 import { useStyleStore } from '@/store';
 

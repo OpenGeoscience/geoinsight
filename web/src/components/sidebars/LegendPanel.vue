@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { Layer } from "@/types";
+import type { Layer } from "@/types";
 import ColormapPreview from './ColormapPreview.vue';
 
 import { useLayerStore, useStyleStore } from "@/store";

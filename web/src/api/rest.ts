@@ -1,5 +1,5 @@
-import { apiClient, getS3ffClient } from "./auth";
-import {
+import { apiClient, s3ffClient } from "./auth";
+import type {
   User,
   Project,
   ProjectPatch,
@@ -142,7 +142,6 @@ export async function getFileDataObjects(fileId: number): Promise<(RasterData | 
 }
 
 export async function uploadFile(file:File): Promise<string> {
-  const s3ffClient = getS3ffClient()
   return await s3ffClient.uploadFile(
     file, 'core.FileItem.file',
   )

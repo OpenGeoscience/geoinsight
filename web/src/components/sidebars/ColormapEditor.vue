@@ -5,7 +5,7 @@ import ColormapPreview from './ColormapPreview.vue';
 import { THEMES } from '@/themes';
 import { debounce } from 'lodash';
 import { createColormap, updateColormap } from '@/api/rest';
-import { Colormap } from '@/types';
+import type { Colormap } from '@/types';
 
 interface Marker {
     color: string,

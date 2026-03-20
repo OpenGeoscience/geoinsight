@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import DatasetList from '@/components/DatasetList.vue'
 import DetailView from '@/components/DetailView.vue'
-import { Dataset, Layer } from '@/types';
+import type { Dataset, Layer } from '@/types';
 
 import { useLayerStore, useConversionStore } from '@/store';
 const layerStore = useLayerStore();

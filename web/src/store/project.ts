@@ -7,7 +7,7 @@ import {
     getProjectViewStates,
     getLayer,
 } from '@/api/rest';
-import { Dataset, Project, ViewState } from '@/types';
+import type { Dataset, Project, ViewState } from '@/types';
 import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';

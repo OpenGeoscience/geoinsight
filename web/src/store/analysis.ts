@@ -1,5 +1,5 @@
 import { getProjectAnalysisTypes, getProjectCharts, getTaskResults } from '@/api/rest';
-import { Chart, AnalysisType, TaskResult } from '@/types';
+import type { Chart, AnalysisType, TaskResult } from '@/types';
 import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
 import { useProjectStore } from './project';

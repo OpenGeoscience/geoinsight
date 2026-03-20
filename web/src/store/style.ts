@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { RasterTileSource } from "maplibre-gl";
-import {
+import type {
     AppliedColormap,
     Colormap,
     Layer,

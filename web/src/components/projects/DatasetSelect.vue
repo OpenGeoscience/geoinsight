@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue';
 import DatasetList from '@/components/DatasetList.vue'
 import DetailView from '@/components/DetailView.vue'
-import { Dataset } from '@/types';
+import type { Dataset } from '@/types';
 import { deleteDataset } from '@/api/rest';
 
 import { useLayerStore, useConversionStore, useAppStore, useProjectStore } from '@/store';

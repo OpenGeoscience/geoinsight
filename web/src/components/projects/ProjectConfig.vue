@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, Ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
+import type { Ref } from "vue";
 import DatasetSelect from "@/components/projects/DatasetSelect.vue";
 import DatasetUpload from "@/components/projects/DatasetUpload.vue";
 import AccessControl from "@/components/projects/AccessControl.vue";
@@ -9,7 +10,7 @@ import {
   deleteProject,
   patchProject,
 } from "@/api/rest";
-import { Project, Dataset, TaskResult } from "@/types";
+import type { Project, Dataset, TaskResult } from "@/types";
 
 import { useMapStore, useAppStore, useProjectStore } from "@/store";
 const projectStore = useProjectStore();

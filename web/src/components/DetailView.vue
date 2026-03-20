@@ -2,7 +2,7 @@
 import { ref, computed, watch } from 'vue';
 import RecursiveTable from './RecursiveTable.vue';
 import { getChartFiles, getDatasetFiles, getFileDataObjects } from '@/api/rest';
-import { RasterData, VectorData } from '../types';
+import type { RasterData, VectorData } from '@/types';
 
 
 interface Details {

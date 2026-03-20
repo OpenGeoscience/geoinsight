@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { debounce, cloneDeep } from 'lodash'
 import { computed, onMounted, ref, watch } from 'vue';
-import { AppliedColormap, Colormap, Layer, LayerStyle, StyleSpec } from '@/types';
+import type { AppliedColormap, Colormap, Layer, LayerStyle, StyleSpec } from '@/types';
 import { createLayerStyle, deleteLayerStyle, getLayerStyles, updateLayerStyle, getVectorSummary, deleteColormap } from '@/api/rest';
 import ColormapPreview from './ColormapPreview.vue';
 import ColormapEditor from './ColormapEditor.vue';

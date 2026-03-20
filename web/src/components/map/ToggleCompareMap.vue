@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useAppStore, useLayerStore, useMapStore } from "@/store";
 import { useMapCompareStore } from "@/store/compare";
-import { computed, Ref, ref, shallowRef, watch } from "vue";
+import { computed, ref, watch } from "vue";
+import type { Ref } from "vue";
 import { ToggleCompare } from "vue-maplibre-compare";
 import { oauthClient } from "@/api/auth";
 import 'vue-maplibre-compare/dist/vue-maplibre-compare.css'

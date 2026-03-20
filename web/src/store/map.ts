@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref, shallowRef, watch } from 'vue';
-import {
+import type {
   ClickedFeatureData,
   Project,
   RasterData,
@@ -13,10 +13,14 @@ import {
   StyleFilter,
   Basemap,
 } from '@/types';
-import {
-  Map, MapLayerMouseEvent,
-  Popup, Source,
+import type {
+  MapLayerMouseEvent,
+  Source,
   LayerSpecification,
+} from "maplibre-gl";
+import {
+  Map,
+  Popup,
 } from "maplibre-gl";
 import { getBasemaps, getRasterDataValues } from '@/api/rest';
 import { baseURL } from '@/api/auth';

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
 import { getDatasetNetworks, getNetworkGCC, getProjectNetworks } from '@/api/rest';
-import { Dataset, GCCResult, Network, NetworkEdge, NetworkNode, NetworkStyle, NetworkState } from '@/types';
+import type { Dataset, GCCResult, Network, NetworkEdge, NetworkNode, NetworkStyle, NetworkState } from '@/types';
 
 import { usePanelStore, useMapStore, useStyleStore, useLayerStore } from '.';
 
