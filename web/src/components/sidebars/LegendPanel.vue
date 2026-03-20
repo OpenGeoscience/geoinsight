@@ -87,10 +87,12 @@ function setVisibility(layer: Layer, visible = true) {
 
 function getColorPropsCoverage(layer: Layer) {
   const frame_coverages = layerStore.layerFrames(layer).map(
-    (frame) => frame.vector?.summary?.color_props_coverage || 0
+    (frame) => frame.vector?.summary?.color_props_coverage || "none"
   )
-  const average = frame_coverages.reduce((acc, curr) => acc + curr) / frame_coverages.length
-  return average
+  if (frame_coverages.every((c) => c === 'full')) return 'full'
+  if (frame_coverages.every((c) => c === 'none')) return 'none'
+  return 'partial'
+
 }
 </script>
 
@@ -106,11 +108,11 @@ function getColorPropsCoverage(layer: Layer) {
                     {{ layer.name }}
                     <div v-for="colormap_preview in getColormapPreviews(layer)" class="ml-6">
                         <div v-if="getColormapPreviews(layer).length > 1">{{ colormap_preview.name }}</div>
-                        <span v-if="colormap_preview.useFeatureProps && getColorPropsCoverage(layer) > 0">
+                        <span v-if="colormap_preview.useFeatureProps && getColorPropsCoverage(layer) !== 'none'">
                           Use feature color properties
-                          <span v-if="getColorPropsCoverage(layer) < 1">; default to </span>
+                          <span v-if="getColorPropsCoverage(layer) !== 'full'">; default to </span>
                         </span>
-                        <div v-if="getColorPropsCoverage(layer) < 1">
+                        <div v-if="getColorPropsCoverage(layer) !== 'full'">
                           <span v-if="colormap_preview.colorBy">color by {{ colormap_preview.colorBy }}</span>
                           <span v-if="!colormap_preview.colormap">Use default style</span>
                           <div v-else>
