@@ -7,8 +7,9 @@
     "serve": "vite",
     "serve:prod": "vite preview",
     "build": "vite build",
-    "lint:type": "vue-tsc --build",
-    "lint": "eslint . --no-fix",
+    "test:lint": "eslint . --no-fix",
+    "test:type": "vue-tsc --build",
+    "test": "npm-run-all test:lint test:type",
     "format": "eslint . --fix"
   },
   "dependencies": {
@@ -45,6 +46,7 @@
     "eslint": "10.0.3",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-vue": "10.8.0",
+    "npm-run-all2": "^8.0.4",
     "prettier": "3.8.1",
     "sass": "1.98.0",
     "typescript": "5.9.3",
