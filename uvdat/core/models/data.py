@@ -126,15 +126,16 @@ class VectorData(models.Model):
 
     def check_color_props_coverage(self):
         if self.summary is not None and self.summary.get("color_props_coverage") is None:
-            n_covered_features = len(list(
-                feature
-                for feature in self.features.all()
-                if "fill" in feature.properties and "stroke" in feature.properties
-            ))
+            n_covered_features = len(
+                list(
+                    feature
+                    for feature in self.features.all()
+                    if "fill" in feature.properties and "stroke" in feature.properties
+                )
+            )
             coverage = n_covered_features / self.features.count()
             self.summary["color_props_coverage"] = (
-                "none" if coverage == 0 else
-                "full" if coverage == 1 else "partial"
+                "none" if coverage == 0 else "full" if coverage == 1 else "partial"
             )
             self.save()
 
