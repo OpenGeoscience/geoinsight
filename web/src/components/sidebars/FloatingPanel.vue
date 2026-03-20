@@ -27,7 +27,7 @@ function getPanelContainerClass() {
 }
 
 function getPanelContainerStyle() {
-  let styleObj: Record<string, string> = {};
+  const styleObj: Record<string, string> = {};
   styleObj.order = panel.value?.order.toString() || '0';
   if (!panel.value?.position) {
     if (panel.value?.height && !panel.value.collapsed) {
@@ -39,7 +39,7 @@ function getPanelContainerStyle() {
 }
 
 function getPanelStyle() {
-  let styleObj: Record<string, string> = {};
+  const styleObj: Record<string, string> = {};
   if (panel.value?.position) {
     styleObj["z-index"] = "2"; // above vuetify navigation drawer
     styleObj.visibility = "visible"; // prevent hiding when sidebar closes

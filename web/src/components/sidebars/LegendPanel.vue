@@ -26,12 +26,12 @@ function getColormapPreviews(layer: Layer) {
     )
     const vector = currentFrame?.vector
     return currentStyleSpec.colors.map((colorConfig) => {
-        let name = colorConfig.name
+        const name = colorConfig.name
         let discrete = false;
         let nColors = 1;
         let colorBy = undefined;
         let range: [number | undefined, number | undefined] = [undefined, undefined];
-        let useFeatureProps = vector && colorConfig.use_feature_props;
+        const useFeatureProps = vector && colorConfig.use_feature_props;
         let valueColors = undefined
         let colormap = styleStore.colormaps.find((cmap) => cmap.id === colorConfig.colormap?.id)
         if (colormap) {

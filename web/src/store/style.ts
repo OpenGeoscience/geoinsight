@@ -271,7 +271,7 @@ function getVectorSizePaintProperty(styleSpec: StyleSpec, groupName: string, pro
 }
 
 function getVectorVisibilityPaintProperty(styleSpec: StyleSpec, groupName: string) {
-    let filters: any[] = []
+    const filters: any[] = []
     const colorSpec = styleSpec.colors.find((c) => [groupName, 'all'].includes(c.name))
     if (colorSpec && !colorSpec.visible) {
         return 0
