@@ -13,14 +13,7 @@ This guide walks you through setting up GeoDatalytics for local development usin
 
 ## Initial Setup
 
-### 1. Prepare the Web Client
-
-```bash
-# Copy environment configuration
-cp web/.env.example web/.env
-```
-
-### 2. Build and Start Docker Containers
+### 1. Build and Start Docker Containers
 
 ```bash
 docker compose up
@@ -28,7 +21,7 @@ docker compose up
 
 > **Note:** Ensure all containers start and stay running before continuing. Check the logs for any errors.
 
-### 3. Initialize the Database
+### 2. Initialize the Database
 
 While the containers are running, open a **separate terminal** and run:
 
@@ -48,7 +41,7 @@ docker compose run --rm -it django ./manage.py createsuperuser
 > winpty docker compose run --rm -it django ./manage.py createsuperuser
 > ```
 
-### 4. Load Sample Data (Optional)
+### 3. Load Sample Data (Optional)
 
 The ingest command loads datasets, charts, and project configuration from an ingestion file:
 

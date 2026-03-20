@@ -10,6 +10,7 @@ import type { StyleSpecification, Map, ResourceType } from "maplibre-gl";
 import { useTheme } from 'vuetify';
 import { Protocol } from "pmtiles";
 import { storeToRefs } from "pinia";
+import MapTooltip from "./MapTooltip.vue";
 
 const ATTRIBUTION = [
   "<a target='_blank' href='https://maplibre.org/'>© MapLibre</a>",
