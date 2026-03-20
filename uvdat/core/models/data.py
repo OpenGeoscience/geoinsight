@@ -7,7 +7,6 @@ import tempfile
 from django.contrib.gis.db import models as geomodels
 from django.core.files.base import ContentFile
 from django.db import models
-from django.db.models import Q
 from django.dispatch import receiver
 import large_image
 from s3_file_field import S3FileField
@@ -128,7 +127,7 @@ class VectorData(models.Model):
     def check_color_props_coverage(self):
         if self.summary is not None and self.summary.get("color_props_coverage") is None:
             n_covered_features = self.features.filter(
-                Q(properties__has_key="fill") & Q(properties__has_key="stroke")
+                properties__has_keys=["fill", "stroke"]
             ).count()
             coverage = n_covered_features / self.features.count()
             self.summary["color_props_coverage"] = (
