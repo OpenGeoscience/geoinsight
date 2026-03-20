@@ -1,7 +1,6 @@
 // Plugins
 import Components from 'unplugin-vue-components/vite'
 import Vue from '@vitejs/plugin-vue'
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 // Utilities
@@ -24,7 +23,6 @@ export default defineConfig({
             autoImport: true,
         }),
         Components(),
-        nodePolyfills(),
     ],
     resolve: {
         alias: {
