@@ -94,7 +94,7 @@ export const useProjectStore = defineStore('project', () => {
           selected_layer_current_frames: styleKeysToCurrentFrames,
           selected_layer_order: Object.keys(styleKeysToCurrentFrames),
           selected_layer_styles: Object.fromEntries(
-            Object.entries(styleStore.selectedLayerStyles).filter(([styleKey, _]) => {
+            Object.entries(styleStore.selectedLayerStyles).filter(([styleKey]) => {
               return Object.keys(styleKeysToCurrentFrames).includes(styleKey)
             })
           ),
