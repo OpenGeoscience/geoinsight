@@ -1935,7 +1935,7 @@ wheels = [
 
 [[package]]
 name = "geodatalytics"
-version = "1.35.1"
+version = "1.36.0"
 source = { editable = "." }
 dependencies = [
     { name = "celery" },
@@ -2575,6 +2575,7 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pyyaml" },
 ]
+sdist = { url = "https://files.pythonhosted.org/packages/f0/55/cb2efc27c07d4002bea7705b866bd10d5f63261fca06163ee8b17c608cc8/jsonargparse-4.47.0.tar.gz", hash = "sha256:d4a7b71ecd92695147650cf896a317cd0b34f3e48e52559382964e60fa67371f", size = 226021, upload-time = "2026-03-21T09:07:43.202Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a3/57/e5153ad1e9d9ad7554aa96bfa9bbd037fc3b06fd910810e9ab9d0b1dff82/jsonargparse-4.47.0-py3-none-any.whl", hash = "sha256:b038671662c1073b4a7045aa29c868e8485abe81c09ffc6716e6deff31c3cf25", size = 129061, upload-time = "2026-03-13T11:52:07.383Z" },
 ]
@@ -4197,7 +4198,7 @@ name = "pexpect"
 version = "4.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "ptyprocess" },
+    { name = "ptyprocess", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/42/92/cc564bf6381ff43ce1f4d06852fc19a2f11d180f23dc32d9588bee2f149d/pexpect-4.9.0.tar.gz", hash = "sha256:ee7d41123f3c9911050ea2c2dac107568dc43b2d3b0c7557a33212c398ead30f", size = 166450, upload-time = "2023-11-25T09:07:26.339Z" }
 wheels = [
