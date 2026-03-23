@@ -31,7 +31,7 @@ dependencies = [
   "djangorestframework==3.17.0",
   "drf-yasg==1.21.15",
   # Needed for GeoDjango and "large-image[gdal]"
-  'gdal==3.12.2.1',
+  'gdal==3.12.3.1',
   "geopandas==1.1.3",
   "large-image-converter==1.34.0",
   "large-image[gdal]==1.34.0",
