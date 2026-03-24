@@ -33,8 +33,8 @@ dependencies = [
   # Needed for GeoDjango and "large-image[gdal]"
   'gdal==3.12.3.1',
   "geopandas==1.1.3",
-  "large-image-converter==1.34.0",
-  "large-image[gdal]==1.34.0",
+  "large-image-converter==1.34.1",
+  "large-image[gdal]==1.34.1",
   "matplotlib==3.10.8", # for raster colormaps
   "networkx==3.6.1",
   "numpy==2.4.3",
