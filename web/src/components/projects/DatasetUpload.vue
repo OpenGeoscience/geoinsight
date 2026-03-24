@@ -48,6 +48,7 @@ const fileUploadRules = [(fileset: File[]) => {
   if (fileset.some((f) => f.size > maxFileSize)) {
     return 'File Upload cannot be greater than 2 GB.'
   }
+  return true
 }]
 
 const similarExisting = computed(() => {
