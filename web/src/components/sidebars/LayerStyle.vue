@@ -963,7 +963,7 @@ onMounted(resetCurrentStyle)
                                                         <template v-slot:item="{ props, item }">
                                                             <v-list-item v-bind="props">
                                                                 <template v-slot:append>
-                                                                    <v-chip size="small" v-if="(item.raw as Record<string, any>).sample_label">{{ (item.raw as Record<string, any>).sample_label }}</v-chip>
+                                                                    <v-chip size="small" v-if="(item.raw as any).sample_label">{{ (item.raw as any).sample_label }}</v-chip>
                                                                 </template>
                                                             </v-list-item>
                                                         </template>
@@ -1207,9 +1207,9 @@ onMounted(resetCurrentStyle)
                                                     hide-details
                                                 >
                                                     <template v-slot:item="{ props, item }">
-                                                        <v-list-item v-bind="props" :disabled="!(item.raw as Record<string, any>).range">
+                                                        <v-list-item v-bind="props" :disabled="!(item.raw as any).range">
                                                             <template v-slot:append>
-                                                                <v-chip size="small" v-if="(item.raw as Record<string, any>).sample_label">{{ (item.raw as Record<string, any>).sample_label }}</v-chip>
+                                                                <v-chip size="small" v-if="(item.raw as any).sample_label">{{ (item.raw as any).sample_label }}</v-chip>
                                                             </template>
                                                         </v-list-item>
                                                     </template>
@@ -1328,7 +1328,7 @@ onMounted(resetCurrentStyle)
                                         <template v-slot:item="{ props, item }">
                                             <v-list-item v-bind="props">
                                                 <template v-slot:append>
-                                                    <v-chip size="small" v-if="(item.raw as Record<string, any>).sample_label">{{ (item.raw as Record<string, any>).sample_label }}</v-chip>
+                                                    <v-chip size="small" v-if="(item.raw as any).sample_label">{{ (item.raw as any).sample_label }}</v-chip>
                                                 </template>
                                             </v-list-item>
                                         </template>
