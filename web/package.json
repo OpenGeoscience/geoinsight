@@ -7,10 +7,13 @@
     "serve": "vite",
     "serve:prod": "vite preview",
     "build": "vite build",
-    "test:lint": "eslint . --no-fix",
+    "test:format": "prettier --experimental-cli --check .",
+    "test:lint": "eslint --no-fix .",
     "test:type": "vue-tsc --build",
-    "test": "npm-run-all test:lint test:type",
-    "format": "eslint . --fix"
+    "test": "npm-run-all test:format test:lint test:type",
+    "format:lint": "eslint --fix .",
+    "format:format": "prettier --experimental-cli --write .",
+    "format": "npm-run-all format:lint format:format"
   },
   "dependencies": {
     "@mdi/font": "7.4.47",
