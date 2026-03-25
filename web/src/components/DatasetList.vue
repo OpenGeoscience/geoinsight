@@ -6,7 +6,7 @@ import { useProjectStore } from "@/store";
 const projectStore = useProjectStore();
 
 const props = defineProps<{
-    datasets: Dataset[] | undefined;
+  datasets: Dataset[] | undefined;
 }>();
 
 const searchText = ref<string | undefined>();
@@ -14,15 +14,17 @@ const selectedTags = ref<string[]>();
 const showFilter = ref();
 const filteredDatasets = computed(() => {
   return props.datasets?.filter((dataset: any) => {
-    const searchMatch = !searchText.value ||
-      dataset.name.toLowerCase().includes(searchText.value.toLowerCase())
-    const tagMatch = !selectedTags.value?.length ||
-      dataset.tags.some((t: string) => selectedTags.value?.includes(t))
-    return searchMatch && tagMatch
+    const searchMatch =
+      !searchText.value ||
+      dataset.name.toLowerCase().includes(searchText.value.toLowerCase());
+    const tagMatch =
+      !selectedTags.value?.length ||
+      dataset.tags.some((t: string) => selectedTags.value?.includes(t));
+    return searchMatch && tagMatch;
   });
 });
 const datasetGroups = computed(() => {
-  const groupByKey = "category"
+  const groupByKey = "category";
   const groups: Record<string, Dataset[]> = {};
   filteredDatasets.value?.forEach((dataset: any) => {
     const groupName = dataset[groupByKey];
@@ -36,18 +38,18 @@ const datasetGroups = computed(() => {
 const expandedGroups = ref();
 
 function init() {
-  projectStore.fetchAvailableDatasetTags()
-  expandAllGroups()
+  projectStore.fetchAvailableDatasetTags();
+  expandAllGroups();
 }
 
 function expandAllGroups() {
   if (filteredDatasets.value) {
-    expandedGroups.value = Object.keys(datasetGroups.value)
+    expandedGroups.value = Object.keys(datasetGroups.value);
   }
 }
 
 onMounted(init);
-watch(filteredDatasets, expandAllGroups)
+watch(filteredDatasets, expandAllGroups);
 </script>
 
 <template>
@@ -79,13 +81,19 @@ watch(filteredDatasets, expandAllGroups)
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
-    <v-card :class="showFilter ? 'panel-content-inner with-tag-filter-open' : 'panel-content-inner with-tag-filter-closed'">
+    <v-card
+      :class="
+        showFilter
+          ? 'panel-content-inner with-tag-filter-open'
+          : 'panel-content-inner with-tag-filter-closed'
+      "
+    >
       <v-expansion-panels
         v-if="props.datasets?.length"
         v-model="expandedGroups"
         variant="accordion"
         class="dataset-list"
-        style="height: fit-content;"
+        style="height: fit-content"
         multiple
         flat
       >
@@ -103,7 +111,10 @@ watch(filteredDatasets, expandAllGroups)
           </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
-      <v-progress-linear v-else-if="projectStore.loadingDatasets" indeterminate></v-progress-linear>
+      <v-progress-linear
+        v-else-if="projectStore.loadingDatasets"
+        indeterminate
+      ></v-progress-linear>
       <v-card-text class="help-text" v-else>No available Datasets.</v-card-text>
     </v-card>
   </div>
@@ -122,7 +133,8 @@ watch(filteredDatasets, expandAllGroups)
   justify-content: space-between;
   padding: 12px 0px !important;
 }
-.dataset-list .v-selection-control__input, .dataset-list .v-selection-control__wrapper {
+.dataset-list .v-selection-control__input,
+.dataset-list .v-selection-control__wrapper {
   height: inherit;
 }
 .dataset-list .v-list-item--density-default {
@@ -158,8 +170,8 @@ watch(filteredDatasets, expandAllGroups)
 }
 .tag-filter-title {
   padding: 0px 0px 4px 0px !important;
-  min-height: 0px!important;
-  font-size: inherit!important;
+  min-height: 0px !important;
+  font-size: inherit !important;
 }
 
 .panel-content-inner.with-tag-filter-open {

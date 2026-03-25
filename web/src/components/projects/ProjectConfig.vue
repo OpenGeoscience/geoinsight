@@ -49,7 +49,7 @@ const permissions = computed(() => {
         perm = "collaborator";
       }
       return [p.id, perm];
-    })
+    }),
   );
   return ret;
 });
@@ -114,16 +114,19 @@ function saveProjectMapLocation(project: Project | undefined) {
       default_map_center: center,
       default_map_zoom: zoom,
     }).then((project) => {
-      projectStore.availableProjects = projectStore.availableProjects.map((p) => {
-        if (p.id === project.id) {
-          p.default_map_center = project.default_map_center;
-          p.default_map_zoom = project.default_map_zoom;
-        }
-        return p;
-      });
+      projectStore.availableProjects = projectStore.availableProjects.map(
+        (p) => {
+          if (p.id === project.id) {
+            p.default_map_center = project.default_map_center;
+            p.default_map_zoom = project.default_map_zoom;
+          }
+          return p;
+        },
+      );
       if (projectStore.currentProject) {
-        projectStore.currentProject.default_map_center = project.default_map_center
-        projectStore.currentProject.default_map_zoom = project.default_map_zoom
+        projectStore.currentProject.default_map_center =
+          project.default_map_center;
+        projectStore.currentProject.default_map_zoom = project.default_map_zoom;
       }
       mapStore.resetMapPosition(project);
       saving.value = "done";
@@ -137,7 +140,7 @@ function saveProjectMapLocation(project: Project | undefined) {
 function selectProject(project: Project) {
   if (selectedProject.value?.id !== project.id) {
     selectedProject.value = project;
-    projectStore.refreshAllDatasets()
+    projectStore.refreshAllDatasets();
     refreshProjectDatasets(null);
   }
 }
@@ -148,24 +151,24 @@ function loadSelectedProject() {
 }
 
 function addDatasetToProject(dataset: Dataset) {
-  savingId.value = dataset.id
-  const projDatasetIds = projDatasets.value?.map((d) => d.id)
+  savingId.value = dataset.id;
+  const projDatasetIds = projDatasets.value?.map((d) => d.id);
   if (!projDatasetIds?.includes(dataset.id)) {
-    projDatasetIds?.push(dataset.id)
+    projDatasetIds?.push(dataset.id);
   }
   if (projDatasetIds) {
-    saveDatasetsToProject(projDatasetIds)
+    saveDatasetsToProject(projDatasetIds);
   }
 }
 
 function removeDatasetFromProject(dataset: Dataset) {
-  savingId.value = dataset.id
-  let projDatasetIds = projDatasets.value?.map((d) => d.id)
+  savingId.value = dataset.id;
+  let projDatasetIds = projDatasets.value?.map((d) => d.id);
   if (projDatasetIds?.includes(dataset.id)) {
-    projDatasetIds = projDatasetIds.filter((id) => id !== dataset.id)
+    projDatasetIds = projDatasetIds.filter((id) => id !== dataset.id);
   }
   if (projDatasetIds) {
-    saveDatasetsToProject(projDatasetIds)
+    saveDatasetsToProject(projDatasetIds);
   }
 }
 
@@ -175,8 +178,8 @@ function saveDatasetsToProject(ids: number[]) {
       datasets: ids,
     }).then(() => {
       refreshProjectDatasets(() => {
-        savingId.value = undefined
-      })
+        savingId.value = undefined;
+      });
     });
   }
 }
@@ -189,7 +192,7 @@ function updateSelectedProject(newProjectData: Project) {
 function refreshProjectDatasets(callback: (() => void) | null) {
   if (selectedProject.value) {
     getProjectDatasets(selectedProject.value.id).then(async (datasets) => {
-      projDatasets.value = datasets
+      projDatasets.value = datasets;
       if (callback) callback();
     });
   }
@@ -209,8 +212,8 @@ function handleEditFocus(focused: boolean) {
 }
 
 function datasetUploaded() {
-  projectStore.refreshAllDatasets()
-  refreshProjectDatasets(null)
+  projectStore.refreshAllDatasets();
+  refreshProjectDatasets(null);
 }
 
 onMounted(() => {
@@ -223,13 +226,16 @@ onMounted(() => {
 
 watch(selectedProject, resetProjectEdit);
 
-watch(() => projectStore.projectConfigMode, () => {
-  if (projectStore.currentProject && !projectStore.projectConfigMode) {
-    projectStore.currentProject = projectStore.availableProjects.find(
-      (p) => p.id === projectStore.currentProject?.id
-    )  // trigger project reload
-  }
-})
+watch(
+  () => projectStore.projectConfigMode,
+  () => {
+    if (projectStore.currentProject && !projectStore.projectConfigMode) {
+      projectStore.currentProject = projectStore.availableProjects.find(
+        (p) => p.id === projectStore.currentProject?.id,
+      ); // trigger project reload
+    }
+  },
+);
 </script>
 
 <template>
@@ -274,7 +280,10 @@ watch(() => projectStore.projectConfigMode, () => {
       </v-btn>
     </div>
     <v-card
-      v-if="!projectStore.loadingProjects && projectStore.availableProjects.length === 0"
+      v-if="
+        !projectStore.loadingProjects &&
+        projectStore.availableProjects.length === 0
+      "
       class="tutorial-popup"
     >
       <v-card-text>
@@ -313,10 +322,16 @@ watch(() => projectStore.projectConfigMode, () => {
         </template>
         <v-card width="250">
           <v-list selectable>
-            <v-list-item @click="() => mapStore.resetMapPosition(projectStore.currentProject)">
+            <v-list-item
+              @click="
+                () => mapStore.resetMapPosition(projectStore.currentProject)
+              "
+            >
               Go to project default map position
             </v-list-item>
-            <v-list-item @click="() => saveProjectMapLocation(projectStore.currentProject)">
+            <v-list-item
+              @click="() => saveProjectMapLocation(projectStore.currentProject)"
+            >
               Set current map position as project default
               <v-icon
                 v-if="saving === 'done'"
@@ -335,7 +350,12 @@ watch(() => projectStore.projectConfigMode, () => {
         </v-card>
       </v-menu>
     </div>
-    <v-card v-if="projectStore.projectConfigMode" flat class="config" color="background">
+    <v-card
+      v-if="projectStore.projectConfigMode"
+      flat
+      class="config"
+      color="background"
+    >
       <v-card-title class="pa-3">
         Projects Configuration
         <v-btn
@@ -349,7 +369,12 @@ watch(() => projectStore.projectConfigMode, () => {
       </v-card-title>
       <v-card-text class="d-flex pa-0" style="height: 100%">
         <div class="sidebar">
-          <v-card flat class="position-sticky top-0 pa-3" style="z-index: 2" color="background">
+          <v-card
+            flat
+            class="position-sticky top-0 pa-3"
+            style="z-index: 2"
+            color="background"
+          >
             <v-text-field
               v-model="searchText"
               label="Search Projects"
@@ -359,64 +384,65 @@ watch(() => projectStore.projectConfigMode, () => {
               hide-details
             />
           </v-card>
-          <v-list
-            class="transparent"
-            color="primary"
-            selectable
-          >
+          <v-list class="transparent" color="primary" selectable>
             <v-list-item
               v-for="project in filteredProjects"
               :title="project.name"
               :active="project.id === selectedProject?.id"
               @click="() => selectProject(project)"
             >
-            <template v-slot:title="{ title }">
-              <v-text-field
-                v-if="projectToEdit?.id === project.id"
-                v-model="newProjectName"
-                :placeholder="project.name"
-                label="Project Name"
-                density="compact"
-                hide-details
-                autofocus
-                @keydown.stop
-                @keydown.esc="resetProjectEdit"
-                @keydown.enter="saveProjectName"
-                @update:focused="handleEditFocus"
-              />
-              <span v-else>{{ title }}</span>
-            </template>
-            <template v-slot:append>
-              <div
-                v-if="['owner', 'collaborator'].includes(permissions[project.id])"
-              >
-                <v-icon
-                  icon="mdi-pencil"
-                  v-if="!projectToEdit && !projectToDelete"
-                  @click.stop="projectToEdit = project"
+              <template v-slot:title="{ title }">
+                <v-text-field
+                  v-if="projectToEdit?.id === project.id"
+                  v-model="newProjectName"
+                  :placeholder="project.name"
+                  label="Project Name"
+                  density="compact"
+                  hide-details
+                  autofocus
+                  @keydown.stop
+                  @keydown.esc="resetProjectEdit"
+                  @keydown.enter="saveProjectName"
+                  @update:focused="handleEditFocus"
                 />
-                <v-btn
-                  v-else-if="projectToEdit?.id === project.id"
-                  color="primary"
-                  variant="flat"
-                  style="min-width: 40px; min-height: 40px"
-                  :disabled="!newProjectName"
-                  @click="saveProjectName"
+                <span v-else>{{ title }}</span>
+              </template>
+              <template v-slot:append>
+                <div
+                  v-if="
+                    ['owner', 'collaborator'].includes(permissions[project.id])
+                  "
                 >
-                  <v-icon icon="mdi-content-save" />
-                </v-btn>
-              </div>
-              <div v-if="['owner'].includes(permissions[project.id])">
-                <v-icon
-                  icon="mdi-trash-can"
-                  v-if="!projectToEdit && !projectToDelete"
-                  @click.stop="projectToDelete = project"
-                />
-              </div>
-            </template>
+                  <v-icon
+                    icon="mdi-pencil"
+                    v-if="!projectToEdit && !projectToDelete"
+                    @click.stop="projectToEdit = project"
+                  />
+                  <v-btn
+                    v-else-if="projectToEdit?.id === project.id"
+                    color="primary"
+                    variant="flat"
+                    style="min-width: 40px; min-height: 40px"
+                    :disabled="!newProjectName"
+                    @click="saveProjectName"
+                  >
+                    <v-icon icon="mdi-content-save" />
+                  </v-btn>
+                </div>
+                <div v-if="['owner'].includes(permissions[project.id])">
+                  <v-icon
+                    icon="mdi-trash-can"
+                    v-if="!projectToEdit && !projectToDelete"
+                    @click.stop="projectToDelete = project"
+                  />
+                </div>
+              </template>
             </v-list-item>
           </v-list>
-          <div class="pa-2 d-flex" v-if="projectStore.projectConfigMode === 'new'">
+          <div
+            class="pa-2 d-flex"
+            v-if="projectStore.projectConfigMode === 'new'"
+          >
             <v-text-field
               v-model="newProjectName"
               label="Project Name"
@@ -457,10 +483,14 @@ watch(() => projectStore.projectConfigMode, () => {
             <v-tab value="datasets">Dataset Selection</v-tab>
             <v-tab value="users">Access Control</v-tab>
           </v-tabs>
-          <div
-            v-if="currentTab === 'datasets'"
-          >
-            <v-progress-linear v-if="projectStore.loadingDatasets || projectStore.allDatasets === undefined" indeterminate></v-progress-linear>
+          <div v-if="currentTab === 'datasets'">
+            <v-progress-linear
+              v-if="
+                projectStore.loadingDatasets ||
+                projectStore.allDatasets === undefined
+              "
+              indeterminate
+            ></v-progress-linear>
             <div v-else class="py-3 px-6 d-flex">
               <div style="width: 45%">
                 <v-card-text>Project Datasets</v-card-text>

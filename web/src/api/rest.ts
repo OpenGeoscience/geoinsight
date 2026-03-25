@@ -25,28 +25,28 @@ import type {
 } from "@/types";
 
 export async function getUsers(): Promise<User[]> {
-  return (await apiClient.get('users/')).data.results;
+  return (await apiClient.get("users/")).data.results;
 }
 
 export async function getBasemaps(): Promise<Basemap[]> {
-  return (await apiClient.get('basemaps/')).data.results;
+  return (await apiClient.get("basemaps/")).data.results;
 }
 
 export async function createBasemap(basemap: Basemap): Promise<Basemap> {
-  return (await apiClient.post('basemaps/', basemap)).data;
+  return (await apiClient.post("basemaps/", basemap)).data;
 }
 
 export async function getProjects(): Promise<Project[]> {
-  return (await apiClient.get('projects/')).data.results;
+  return (await apiClient.get("projects/")).data.results;
 }
 
 export async function createProject(
   name: string,
   default_map_center: number[],
-  default_map_zoom: number
+  default_map_zoom: number,
 ): Promise<Project> {
   return (
-    await apiClient.post('projects/', {
+    await apiClient.post("projects/", {
       name,
       default_map_center,
       default_map_zoom,
@@ -56,14 +56,14 @@ export async function createProject(
 
 export async function patchProject(
   projectId: number,
-  data: ProjectPatch
+  data: ProjectPatch,
 ): Promise<Project> {
   return (await apiClient.patch(`projects/${projectId}/`, data)).data;
 }
 
 export async function updateProjectPermissions(
   projectId: number,
-  data: ProjectPermissions
+  data: ProjectPermissions,
 ): Promise<Project> {
   return (await apiClient.put(`projects/${projectId}/permissions/`, data)).data;
 }
@@ -73,7 +73,7 @@ export async function deleteProject(projectId: number): Promise<Project> {
 }
 
 export async function getProjectDatasets(
-  projectId: number
+  projectId: number,
 ): Promise<Dataset[]> {
   return (await apiClient.get(`datasets/?project=${projectId}`)).data.results;
 }
@@ -91,14 +91,13 @@ export async function getProjectCharts(projectId: number): Promise<Chart[]> {
 }
 
 export async function getProjectAnalysisTypes(
-  projectId: number
+  projectId: number,
 ): Promise<AnalysisType[]> {
-  return (await apiClient.get(`analytics/project/${projectId}/types/`))
-    .data;
+  return (await apiClient.get(`analytics/project/${projectId}/types/`)).data;
 }
 
 export async function getDatasets(): Promise<Dataset[]> {
-  return (await apiClient.get('datasets/')).data.results;
+  return (await apiClient.get("datasets/")).data.results;
 }
 
 export async function getDataset(datasetId: number): Promise<Dataset> {
@@ -106,7 +105,7 @@ export async function getDataset(datasetId: number): Promise<Dataset> {
 }
 
 export async function createDataset(data: any): Promise<Dataset> {
-  return (await apiClient.post('datasets/', data)).data;
+  return (await apiClient.post("datasets/", data)).data;
 }
 
 export async function deleteDataset(datasetId: number): Promise<Dataset> {
@@ -114,11 +113,15 @@ export async function deleteDataset(datasetId: number): Promise<Dataset> {
 }
 
 export async function getDatasetTags(): Promise<string[]> {
-  return (await apiClient.get('datasets/tags/')).data;
+  return (await apiClient.get("datasets/tags/")).data;
 }
 
-export async function spawnDatasetConversion(datasetId: number, options: any): Promise<Dataset> {
-  return (await apiClient.post(`datasets/${datasetId}/convert/`, options || {})).data;
+export async function spawnDatasetConversion(
+  datasetId: number,
+  options: any,
+): Promise<Dataset> {
+  return (await apiClient.post(`datasets/${datasetId}/convert/`, options || {}))
+    .data;
 }
 
 export async function getDatasetLayers(datasetId: number): Promise<Layer[]> {
@@ -137,25 +140,29 @@ export async function getDatasetFiles(datasetId: number): Promise<FileItem[]> {
   return (await apiClient.get(`datasets/${datasetId}/files/`)).data;
 }
 
-export async function getFileDataObjects(fileId: number): Promise<(RasterData | VectorData)[]> {
+export async function getFileDataObjects(
+  fileId: number,
+): Promise<(RasterData | VectorData)[]> {
   return (await apiClient.get(`files/${fileId}/data/`)).data;
 }
 
-export async function uploadFile(file:File): Promise<string> {
-  return await s3ffClient.uploadFile(
-    file, 'core.FileItem.file',
-  )
+export async function uploadFile(file: File): Promise<string> {
+  return await s3ffClient.uploadFile(file, "core.FileItem.file");
 }
 
 export async function createFileItem(data: any): Promise<FileItem> {
-  return (await apiClient.post('files/', data)).data;
+  return (await apiClient.post("files/", data)).data;
 }
 
-export async function getDatasetNetworks(datasetId: number): Promise<Network[]> {
+export async function getDatasetNetworks(
+  datasetId: number,
+): Promise<Network[]> {
   return (await apiClient.get(`datasets/${datasetId}/networks/`)).data;
 }
 
-export async function getProjectNetworks(projectId: number): Promise<Network[]> {
+export async function getProjectNetworks(
+  projectId: number,
+): Promise<Network[]> {
   return (await apiClient.get(`networks/?project=${projectId}`)).data.results;
 }
 
@@ -163,28 +170,50 @@ export async function getNetwork(networkId: number): Promise<Network> {
   return (await apiClient.get(`networks/${networkId}/`)).data;
 }
 
-export async function getNetworkNodes(networkId: number, limit: number, offset: number): Promise<NetworkNode[]> {
-  return (await apiClient.get(`networks/${networkId}/nodes/?limit=${limit}&offset=${offset}`)).data;
+export async function getNetworkNodes(
+  networkId: number,
+  limit: number,
+  offset: number,
+): Promise<NetworkNode[]> {
+  return (
+    await apiClient.get(
+      `networks/${networkId}/nodes/?limit=${limit}&offset=${offset}`,
+    )
+  ).data;
 }
 
-export async function getNetworkEdges(networkId: number, limit: number, offset: number): Promise<NetworkEdge[]> {
-  return (await apiClient.get(`networks/${networkId}/edges/?limit=${limit}&offset=${offset}`)).data;
+export async function getNetworkEdges(
+  networkId: number,
+  limit: number,
+  offset: number,
+): Promise<NetworkEdge[]> {
+  return (
+    await apiClient.get(
+      `networks/${networkId}/edges/?limit=${limit}&offset=${offset}`,
+    )
+  ).data;
 }
 
 export async function getNetworkGCC(
   networkId: number,
-  exclude_nodes: number[]
+  exclude_nodes: number[],
 ): Promise<number[]> {
   return (
-    await apiClient.get(`networks/${networkId}/gcc/?exclude_nodes=${exclude_nodes.toString()}`)
+    await apiClient.get(
+      `networks/${networkId}/gcc/?exclude_nodes=${exclude_nodes.toString()}`,
+    )
   ).data;
 }
 
-export async function getVectorSummary(vectorId: number): Promise<VectorSummary> {
+export async function getVectorSummary(
+  vectorId: number,
+): Promise<VectorSummary> {
   return (await apiClient.get(`vectors/${vectorId}/summary/`)).data;
 }
 
-export async function getRasterDataValues(rasterId: number): Promise<RasterDataValues> {
+export async function getRasterDataValues(
+  rasterId: number,
+): Promise<RasterDataValues> {
   const resolution = 0.1;
   const data = (
     await apiClient.get(`rasters/${rasterId}/raster-data/${resolution}/`)
@@ -200,23 +229,20 @@ export async function getRasterDataValues(rasterId: number): Promise<RasterDataV
 export async function runAnalysis(
   analysisType: string,
   projectId: number,
-  args: object
+  args: object,
 ) {
   return (
     await apiClient.post(
       `analytics/project/${projectId}/types/${analysisType}/run/`,
-      args
+      args,
     )
   ).data;
 }
 
-export async function getTaskResults(
-  analysisType: string,
-  projectId: number
-) {
+export async function getTaskResults(analysisType: string, projectId: number) {
   return (
     await apiClient.get(
-      `analytics/project/${projectId}/types/${analysisType}/results/`
+      `analytics/project/${projectId}/types/${analysisType}/results/`,
     )
   ).data;
 }
@@ -225,12 +251,15 @@ export async function getTaskResult(resultId: number): Promise<TaskResult> {
   return (await apiClient.get(`analytics/${resultId}`)).data;
 }
 
-export async function subscribeToTaskResult(resultId: number): Promise<TaskResult> {
-  return (await apiClient.post(
-    `analytics/${resultId}/subscribe/`,
-    undefined,
-    {errorMsg: 'Failed to subscribe to task result. Task may already be completed.'}
-  )).data;
+export async function subscribeToTaskResult(
+  resultId: number,
+): Promise<TaskResult> {
+  return (
+    await apiClient.post(`analytics/${resultId}/subscribe/`, undefined, {
+      errorMsg:
+        "Failed to subscribe to task result. Task may already be completed.",
+    })
+  ).data;
 }
 
 export async function getVectorDataBounds(vectorId: number): Promise<number[]> {
@@ -242,10 +271,13 @@ export async function getLayerStyles(layerId: number): Promise<LayerStyle[]> {
 }
 
 export async function createLayerStyle(data: LayerStyle): Promise<LayerStyle> {
-  return (await apiClient.post('layer-styles/', data)).data;
+  return (await apiClient.post("layer-styles/", data)).data;
 }
 
-export async function updateLayerStyle(styleId: number, data: LayerStyle): Promise<LayerStyle> {
+export async function updateLayerStyle(
+  styleId: number,
+  data: LayerStyle,
+): Promise<LayerStyle> {
   return (await apiClient.patch(`layer-styles/${styleId}/`, data)).data;
 }
 
@@ -253,7 +285,9 @@ export async function deleteLayerStyle(styleId: number): Promise<LayerStyle> {
   return (await apiClient.delete(`layer-styles/${styleId}/`)).data;
 }
 
-export async function getProjectColormaps(projectId: number): Promise<Colormap[]> {
+export async function getProjectColormaps(
+  projectId: number,
+): Promise<Colormap[]> {
   return (await apiClient.get(`colormaps/?project=${projectId}`)).data.results;
 }
 
@@ -270,20 +304,24 @@ export async function deleteColormap(colormapId: number): Promise<Colormap> {
 }
 
 export async function getViewState(viewStateId: number): Promise<ViewState> {
-  return (await apiClient.get(
-    `view-states/${viewStateId}`,
-    {errorMsg: 'Could not load view state. Ensure that ID in URL is correct.'},
-  )).data;
+  return (
+    await apiClient.get(`view-states/${viewStateId}`, {
+      errorMsg: "Could not load view state. Ensure that ID in URL is correct.",
+    })
+  ).data;
 }
 
-export async function getProjectViewStates(projectId: number): Promise<ViewState[]> {
-  return (await apiClient.get(`view-states/?project=${projectId}`)).data.results;
+export async function getProjectViewStates(
+  projectId: number,
+): Promise<ViewState[]> {
+  return (await apiClient.get(`view-states/?project=${projectId}`)).data
+    .results;
 }
 
 export async function createViewState(viewState: ViewState): Promise<any> {
-  return (await apiClient.post('view-states/', viewState)).data;
+  return (await apiClient.post("view-states/", viewState)).data;
 }
 
 export async function deleteViewState(viewState: ViewState): Promise<any> {
-  return (await apiClient.delete(`view-states/${viewState.id}/`,)).data;
+  return (await apiClient.delete(`view-states/${viewState.id}/`)).data;
 }

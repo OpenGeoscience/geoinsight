@@ -7,7 +7,12 @@ import ToggleCompareMap from "./components/map/ToggleCompareMap.vue";
 import SideBars from "./components/sidebars/SideBars.vue";
 import ControlsBar from "./components/ControlsBar.vue";
 
-import { useAppStore, usePanelStore, useProjectStore, useConversionStore } from "@/store";
+import {
+  useAppStore,
+  usePanelStore,
+  useProjectStore,
+  useConversionStore,
+} from "@/store";
 const appStore = useAppStore();
 const panelStore = usePanelStore();
 const projectStore = useProjectStore();
@@ -16,7 +21,7 @@ const conversionStore = useConversionStore();
 const showError = computed(() => appStore.currentError !== undefined);
 
 // useTheme must be called within a setup function
-appStore.themeManager = useTheme()
+appStore.themeManager = useTheme();
 
 function onReady() {
   if (appStore.currentUser) {
@@ -32,7 +37,6 @@ const login = () => {
 
 onMounted(onReady);
 watch(() => appStore.currentUser, onReady);
-
 </script>
 
 <template>

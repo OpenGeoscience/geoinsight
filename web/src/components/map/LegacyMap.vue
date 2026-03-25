@@ -58,9 +58,9 @@ function createMap() {
     preserveDrawingBuffer: true, // allows screenshots
     // transformRequest adds auth headers to tile requests
     transformRequest: (url) => {
-      let headers = {}
+      let headers = {};
       if (url.includes(import.meta.env.VITE_APP_API_ROOT)) {
-        headers = oauthClient?.authHeaders
+        headers = oauthClient?.authHeaders;
       }
       return { url, headers };
     },
@@ -77,9 +77,9 @@ function createMap() {
   newMap.on("load", () => {
     mapContainer.classList.remove("spinner");
   });
-  newMap.on('error', (response) => {
+  newMap.on("error", (response) => {
     // AbortErrors are raised when updating style of raster layers; ignore these
-    if (response.error.message !== 'AbortError') console.error(response.error)
+    if (response.error.message !== "AbortError") console.error(response.error);
   });
 
   /**
@@ -89,7 +89,9 @@ function createMap() {
    * this only has a real effect when the base map is clicked, as that means that no other
    * feature layer can "catch" the event, and the tooltip stays hidden.
    */
-  newMap.on("click", () => { mapStore.clickedFeature = undefined });
+  newMap.on("click", () => {
+    mapStore.clickedFeature = undefined;
+  });
 
   // Order is important as the following function relies on the ref being set
   mapStore.map = newMap;
@@ -120,33 +122,42 @@ onMounted(() => {
   mapStore.fetchAvailableBasemaps().then(() => {
     createMap();
     mapStore.resetMapPosition(undefined, true);
-  })
+  });
 });
 
-watch(() => mapStore.currentBasemap, () => {
-  if (mapStore.map && mapStore.currentBasemap) {
-    const visible = mapStore.currentBasemap.id !== undefined
-    mapStore.setBasemapVisibility(visible);
-    if (visible) {
-      const map = mapStore.getMap();
-      if (mapStore.currentBasemap.style) {
-        map.setStyle(mapStore.currentBasemap.style);
+watch(
+  () => mapStore.currentBasemap,
+  () => {
+    if (mapStore.map && mapStore.currentBasemap) {
+      const visible = mapStore.currentBasemap.id !== undefined;
+      mapStore.setBasemapVisibility(visible);
+      if (visible) {
+        const map = mapStore.getMap();
+        if (mapStore.currentBasemap.style) {
+          map.setStyle(mapStore.currentBasemap.style);
+        }
+        map.once("idle", () => {
+          layerStore.updateLayersShown();
+        });
       }
-      map.once('idle', () => {
-        layerStore.updateLayersShown();
-      });
     }
-  }
-})
+  },
+);
 
-watch(() => appStore.theme, () => {
-  mapStore.setBasemapToDefault();
-  setAttributionControlStyle();
-});
+watch(
+  () => appStore.theme,
+  () => {
+    mapStore.setBasemapToDefault();
+    setAttributionControlStyle();
+  },
+);
 
-watch(() => appStore.openSidebars, () => {
-  setAttributionControlStyle();
-});
+watch(
+  () => appStore.openSidebars,
+  () => {
+    setAttributionControlStyle();
+  },
+);
 </script>
 
 <template>

@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import DatasetList from '@/components/DatasetList.vue'
-import DetailView from '@/components/DetailView.vue'
-import type { Dataset } from '@/types';
-import { deleteDataset } from '@/api/rest';
+import { computed, ref } from "vue";
+import DatasetList from "@/components/DatasetList.vue";
+import DetailView from "@/components/DetailView.vue";
+import type { Dataset } from "@/types";
+import { deleteDataset } from "@/api/rest";
 
-import { useLayerStore, useConversionStore, useAppStore, useProjectStore } from '@/store';
+import {
+  useLayerStore,
+  useConversionStore,
+  useAppStore,
+  useProjectStore,
+} from "@/store";
 const layerStore = useLayerStore();
 const conversionStore = useConversionStore();
 const appStore = useAppStore();
@@ -15,7 +20,7 @@ const props = defineProps<{
   datasets: Dataset[] | undefined;
   savingId: number | undefined;
   addedIds?: number[] | undefined;
-  buttonIcon: string
+  buttonIcon: string;
   showDelete: boolean;
 }>();
 const emit = defineEmits(["buttonClick", "onDelete"]);
@@ -25,31 +30,35 @@ const datasetsWithLayers = computed(() => {
   return props.datasets?.map((dataset) => {
     return {
       ...dataset,
-      layers: layerStore.availableLayers.filter((l) => l.dataset === dataset.id)
-    }
-  })
-})
+      layers: layerStore.availableLayers.filter(
+        (l) => l.dataset === dataset.id,
+      ),
+    };
+  });
+});
 
 function expandDataset(expanded: any) {
   expanded.forEach((datasetId: number) => {
     if (!layerStore.availableLayers.some((l) => l.dataset === datasetId)) {
-      layerStore.fetchAvailableLayersForDataset(datasetId)
+      layerStore.fetchAvailableLayersForDataset(datasetId);
     }
-  })
+  });
 }
 
 function getDatasetProjects(datasetId: number) {
-  return projectStore.availableProjects.filter((p) => p.datasets.includes(datasetId))
+  return projectStore.availableProjects.filter((p) =>
+    p.datasets.includes(datasetId),
+  );
 }
 
 function submitDelete() {
   if (datasetToDelete.value) {
     deleteDataset(datasetToDelete.value.id).then(() => {
-      datasetToDelete.value = undefined
-      projectStore.refreshAllDatasets()
-      projectStore.fetchProjectDatasets()
-      emit("onDelete")
-    })
+      datasetToDelete.value = undefined;
+      projectStore.refreshAllDatasets();
+      projectStore.fetchProjectDatasets();
+      emit("onDelete");
+    });
   }
 }
 </script>
@@ -70,11 +79,17 @@ function submitDelete() {
           :value="dataset.id"
         >
           <v-expansion-panel-title>
-            <div style="display: flex; justify-content: space-between; width: 100%;">
+            <div
+              style="display: flex; justify-content: space-between; width: 100%"
+            >
               <div class="d-flex">
                 <div style="min-width: 24px">
                   <v-icon
-                    v-if="showDelete && dataset.owner && dataset.owner.id === appStore.currentUser?.id"
+                    v-if="
+                      showDelete &&
+                      dataset.owner &&
+                      dataset.owner.id === appStore.currentUser?.id
+                    "
                     icon="mdi-delete-outline"
                     color="error"
                     @click.stop="datasetToDelete = dataset"
@@ -82,18 +97,29 @@ function submitDelete() {
                 </div>
                 <div class="mr-2">
                   <div
-                    v-if="conversionStore.datasetConversionTasks[dataset.id] && !conversionStore.datasetConversionTasks[dataset.id].completed"
+                    v-if="
+                      conversionStore.datasetConversionTasks[dataset.id] &&
+                      !conversionStore.datasetConversionTasks[dataset.id]
+                        .completed
+                    "
                     style="display: inline-block"
                   >
                     <v-icon
-                      v-if="conversionStore.datasetConversionTasks[dataset.id].error"
-                      v-tooltip="conversionStore.datasetConversionTasks[dataset.id].error"
+                      v-if="
+                        conversionStore.datasetConversionTasks[dataset.id].error
+                      "
+                      v-tooltip="
+                        conversionStore.datasetConversionTasks[dataset.id].error
+                      "
                       icon="mdi-alert-outline"
                       color="error"
                     />
                     <v-progress-circular
                       v-else
-                      v-tooltip="conversionStore.datasetConversionTasks[dataset.id].status"
+                      v-tooltip="
+                        conversionStore.datasetConversionTasks[dataset.id]
+                          .status
+                      "
                       size="24"
                       indeterminate
                     />
@@ -104,22 +130,22 @@ function submitDelete() {
                     indeterminate
                   />
                   <v-icon
-                    v-else-if="!props.addedIds || !props.addedIds.includes(dataset.id)"
+                    v-else-if="
+                      !props.addedIds || !props.addedIds.includes(dataset.id)
+                    "
                     :icon="props.buttonIcon"
                     color="primary"
                     class="icon-button"
                     @click.stop="emit('buttonClick', dataset)"
                   />
-                  <v-icon
-                    v-else
-                    icon="mdi-check"
-                    color="success"
-                    @click.stop
-                  />
+                  <v-icon v-else icon="mdi-check" color="success" @click.stop />
                 </div>
                 {{ dataset.name }}
               </div>
-              <div v-if="dataset.layers" style="min-width: 75px; text-align: right">
+              <div
+                v-if="dataset.layers"
+                style="min-width: 75px; text-align: right"
+              >
                 <v-icon
                   icon="mdi-layers"
                   size="small"
@@ -133,7 +159,10 @@ function submitDelete() {
                   v-tooltip="dataset.description"
                   class="mx-1"
                 ></v-icon>
-                <DetailView v-if="dataset" :details="{...dataset, type: 'dataset'}"/>
+                <DetailView
+                  v-if="dataset"
+                  :details="{ ...dataset, type: 'dataset' }"
+                />
               </div>
             </div>
           </v-expansion-panel-title>
@@ -146,15 +175,12 @@ function submitDelete() {
                 size="small"
               />
             </div>
-            <div
-              v-for="layer in dataset.layers"
-              class="item-title"
-            >
+            <div v-for="layer in dataset.layers" class="item-title">
               <div style="text-wrap: wrap; align-items: center; width: 100%">
                 {{ layer.name }}
               </div>
-              <div  class="pr-5">
-                <DetailView :details="{...layer, type: 'layer'}"/>
+              <div class="pr-5">
+                <DetailView :details="{ ...layer, type: 'layer' }" />
               </div>
             </div>
           </v-expansion-panel-text>
@@ -174,8 +200,13 @@ function submitDelete() {
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-card-title>
-          <v-card-text class="d-flex" style="flex-direction: column; row-gap: 5px">
-            <div>Are you sure you want to delete "{{ datasetToDelete.name }}"?</div>
+          <v-card-text
+            class="d-flex"
+            style="flex-direction: column; row-gap: 5px"
+          >
+            <div>
+              Are you sure you want to delete "{{ datasetToDelete.name }}"?
+            </div>
             <div>This Dataset will be removed from the following projects:</div>
             <div>
               <v-chip
@@ -184,13 +215,8 @@ function submitDelete() {
               />
             </div>
           </v-card-text>
-          <v-card-actions style="text-align: right;">
-            <v-btn
-              color="red"
-              @click="submitDelete"
-            >
-              Delete
-            </v-btn>
+          <v-card-actions style="text-align: right">
+            <v-btn color="red" @click="submitDelete"> Delete </v-btn>
             <v-btn
               color="primary"
               @click="datasetToDelete = undefined"

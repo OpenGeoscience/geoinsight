@@ -1,6 +1,6 @@
 import { createApp } from "vue";
 import App from "./App.vue";
-import { createPinia } from 'pinia';
+import { createPinia } from "pinia";
 // Vuetify
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
@@ -12,9 +12,8 @@ import { useAppStore } from "@/store";
 import "@mdi/font/css/materialdesignicons.css";
 import { THEMES } from "./themes";
 
-import JsonEditorVue from 'json-editor-vue';
-import { createRouter, createWebHistory } from 'vue-router';
-
+import JsonEditorVue from "json-editor-vue";
+import { createRouter, createWebHistory } from "vue-router";
 
 // Must first initialize pinia, so we can set the default theme
 const app = createApp(App);
@@ -27,26 +26,28 @@ const vuetify = createVuetify({
   directives,
   theme: {
     defaultTheme,
-    themes: THEMES
+    themes: THEMES,
   },
 });
-app.use(vuetify)
+app.use(vuetify);
 app.use(JsonEditorVue);
 
 // Initialize router
 const router = createRouter({
   history: createWebHistory(),
-  routes: [{
-    path: '/:pathMatch(.*)*',
-    name: 'Home',
-    component: App
-  },],
+  routes: [
+    {
+      path: "/:pathMatch(.*)*",
+      name: "Home",
+      component: App,
+    },
+  ],
 });
 app.use(router);
-await router.isReady()
+await router.isReady();
 
 // Attempt login restoration
-await restoreLogin()
+await restoreLogin();
 
 // Finally, mount the app
 app.mount("#app");

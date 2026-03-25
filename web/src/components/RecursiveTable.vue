@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
 const props = defineProps<{
   data: any;
@@ -25,7 +25,12 @@ function formatIfDate(key: string, value: string) {
       >
         <td class="font-weight-bold">{{ key.replaceAll("_", " ") }}</td>
         <td v-if="!value">NULL</td>
-        <td v-else-if="Array.isArray(value) && typeof value.filter((v) => v)[0] === 'object'">
+        <td
+          v-else-if="
+            Array.isArray(value) &&
+            typeof value.filter((v) => v)[0] === 'object'
+          "
+        >
           <v-card v-for="item in value" :key="item" class="mb-3">
             <RecursiveTable :data="item" />
           </v-card>
@@ -38,7 +43,9 @@ function formatIfDate(key: string, value: string) {
             <RecursiveTable :data="value" />
           </v-card>
         </td>
-        <td v-else-if="typeof value === 'string'">{{ formatIfDate(key, value) }}</td>
+        <td v-else-if="typeof value === 'string'">
+          {{ formatIfDate(key, value) }}
+        </td>
         <td v-else>{{ value }}</td>
       </tr>
     </tbody>

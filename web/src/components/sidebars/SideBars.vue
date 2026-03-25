@@ -46,35 +46,73 @@ function togglePanelVisibility(id: string) {
 
 <template>
   <div>
-    <v-navigation-drawer floating width="300" location="left" color="background" :class="appStore.openSidebars.includes('left') ? 'sidebar left' : 'sidebar left closed'">
+    <v-navigation-drawer
+      floating
+      width="300"
+      location="left"
+      color="background"
+      :class="
+        appStore.openSidebars.includes('left')
+          ? 'sidebar left'
+          : 'sidebar left closed'
+      "
+    >
       <v-toolbar class="toolbar px-5" color="background">
         <v-toolbar-title>
           <img width="15px" class="mr-1" :src="KitwareLogo" />
           <span class="secondary-text">GeoDatalytics</span>
-          <v-menu activator="parent" :open-on-hover="true" :close-on-content-click="false"
-            @update:model-value="copied = undefined">
+          <v-menu
+            activator="parent"
+            :open-on-hover="true"
+            :close-on-content-click="false"
+            @update:model-value="copied = undefined"
+          >
             <v-card class="pa-3" style="width: fit-content">
               <v-card-subtitle>
-                <a href="https://github.com/OpenGeoscience/geodatalytics" target="_blank" style="text-decoration: none">
+                <a
+                  href="https://github.com/OpenGeoscience/geodatalytics"
+                  target="_blank"
+                  style="text-decoration: none"
+                >
                   <v-icon icon="mdi-github" />
                   Source
                 </a>
               </v-card-subtitle>
               <v-card-subtitle>
-                <v-icon :icon="copied === version ? 'mdi-check' : 'mdi-content-copy'"
-                  :color="copied === version ? 'success' : 'primary'" @click="copyToClipboard(version)" />
+                <v-icon
+                  :icon="copied === version ? 'mdi-check' : 'mdi-content-copy'"
+                  :color="copied === version ? 'success' : 'primary'"
+                  @click="copyToClipboard(version)"
+                />
                 Version: {{ version }}
               </v-card-subtitle>
             </v-card>
           </v-menu>
         </v-toolbar-title>
-        <v-icon icon="mdi-dock-left" class="ml-5" v-tooltip="'Toggle Sidebar'" @click="toggleSidebar('left')"></v-icon>
+        <v-icon
+          icon="mdi-dock-left"
+          class="ml-5"
+          v-tooltip="'Toggle Sidebar'"
+          @click="toggleSidebar('left')"
+        ></v-icon>
       </v-toolbar>
       <ProjectConfig />
       <div class="panel-set">
-        <FloatingPanel v-for="panel, index in panelStore.panelArrangement.filter((p) => p.dock == 'left')"
-          :id="panel.id" :bottom="index == panelStore.panelArrangement.filter((p) => p.dock == 'left').length - 1">
-          <DatasetsPanel v-if="panel.id === 'datasets'" :datasets="projectStore.availableDatasets" />
+        <FloatingPanel
+          v-for="(panel, index) in panelStore.panelArrangement.filter(
+            (p) => p.dock == 'left',
+          )"
+          :id="panel.id"
+          :bottom="
+            index ==
+            panelStore.panelArrangement.filter((p) => p.dock == 'left').length -
+              1
+          "
+        >
+          <DatasetsPanel
+            v-if="panel.id === 'datasets'"
+            :datasets="projectStore.availableDatasets"
+          />
           <LayersPanel v-else-if="panel.id === 'layers'" />
           <LegendPanel v-else-if="panel.id === 'legend'" />
           <ChartsPanel v-else-if="panel.id === 'charts'" />
@@ -84,13 +122,31 @@ function togglePanelVisibility(id: string) {
       </div>
     </v-navigation-drawer>
 
-    <v-navigation-drawer floating width="300" location="right" color="background" :class="appStore.openSidebars.includes('right')
-      ? 'sidebar right'
-      : 'sidebar right closed'
-      ">
-      <v-toolbar :class="appStore.openSidebars.includes('right') ? 'toolbar px-5' : 'toolbar px-5 right'" color="background">
-        <v-icon icon="mdi-dock-right" class="mr-5" v-tooltip="'Toggle Sidebar'"
-          @click="toggleSidebar('right')"></v-icon>
+    <v-navigation-drawer
+      floating
+      width="300"
+      location="right"
+      color="background"
+      :class="
+        appStore.openSidebars.includes('right')
+          ? 'sidebar right'
+          : 'sidebar right closed'
+      "
+    >
+      <v-toolbar
+        :class="
+          appStore.openSidebars.includes('right')
+            ? 'toolbar px-5'
+            : 'toolbar px-5 right'
+        "
+        color="background"
+      >
+        <v-icon
+          icon="mdi-dock-right"
+          class="mr-5"
+          v-tooltip="'Toggle Sidebar'"
+          @click="toggleSidebar('right')"
+        ></v-icon>
         <div v-if="appStore.currentUser">
           {{ appStore.currentUser.first_name }}
 
@@ -113,7 +169,9 @@ function togglePanelVisibility(id: string) {
                     color="primary"
                     class="ml-5"
                     hide-details
-                    @update:model-value="(v) => appStore.theme = v ? 'dark' : 'light'"
+                    @update:model-value="
+                      (v) => (appStore.theme = v ? 'dark' : 'light')
+                    "
                   ></v-switch>
                 </template>
               </v-list-item>
@@ -124,23 +182,51 @@ function togglePanelVisibility(id: string) {
       <div :style="{ height: '30px', 'text-align': 'right' }">
         <v-menu :close-on-content-click="false">
           <template v-slot:activator="{ props }">
-            <v-icon v-bind="props" icon="mdi-menu" class="mr-3 mt-1" v-tooltip="'Panel Visibility'"></v-icon>
+            <v-icon
+              v-bind="props"
+              icon="mdi-menu"
+              class="mr-3 mt-1"
+              v-tooltip="'Panel Visibility'"
+            ></v-icon>
           </template>
-          <v-list :items="panelStore.panelArrangement.filter((p) => p.closeable)" item-title="label" item-value="id"
-            selectable :selected="panelStore.panelArrangement.filter((p) => p.visible)"
-            @click:select="(item) => togglePanelVisibility(item.id as string)" select-strategy="leaf" return-object>
+          <v-list
+            :items="panelStore.panelArrangement.filter((p) => p.closeable)"
+            item-title="label"
+            item-value="id"
+            selectable
+            :selected="panelStore.panelArrangement.filter((p) => p.visible)"
+            @click:select="(item) => togglePanelVisibility(item.id as string)"
+            select-strategy="leaf"
+            return-object
+          >
             <template v-slot:prepend="{ item, isSelected }">
               <v-list-item-action start>
-                <v-checkbox-btn :model-value="isSelected" @change="togglePanelVisibility(item.id)"></v-checkbox-btn>
+                <v-checkbox-btn
+                  :model-value="isSelected"
+                  @change="togglePanelVisibility(item.id)"
+                ></v-checkbox-btn>
               </v-list-item-action>
             </template>
           </v-list>
         </v-menu>
       </div>
       <div class="panel-set">
-        <FloatingPanel v-for="panel, index in panelStore.panelArrangement.filter((p) => p.dock == 'right')"
-          :id="panel.id" :bottom="index == panelStore.panelArrangement.filter((p) => p.dock == 'right').length - 1">
-          <DatasetsPanel v-if="panel.id === 'datasets'" :datasets="projectStore.availableDatasets" />
+        <FloatingPanel
+          v-for="(panel, index) in panelStore.panelArrangement.filter(
+            (p) => p.dock == 'right',
+          )"
+          :id="panel.id"
+          :bottom="
+            index ==
+            panelStore.panelArrangement.filter((p) => p.dock == 'right')
+              .length -
+              1
+          "
+        >
+          <DatasetsPanel
+            v-if="panel.id === 'datasets'"
+            :datasets="projectStore.availableDatasets"
+          />
           <LayersPanel v-else-if="panel.id === 'layers'" />
           <LegendPanel v-else-if="panel.id === 'legend'" />
           <ChartsPanel v-else-if="panel.id === 'charts'" />
@@ -160,7 +246,7 @@ function togglePanelVisibility(id: string) {
   max-height: calc(100% - 20px);
 }
 
-.sidebar>.v-navigation-drawer__content {
+.sidebar > .v-navigation-drawer__content {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -175,7 +261,7 @@ function togglePanelVisibility(id: string) {
   border-bottom: 1px solid rgb(var(--v-theme-border)) !important;
 }
 
-.toolbar>.v-toolbar__content {
+.toolbar > .v-toolbar__content {
   display: flex;
   height: 50px !important;
   justify-content: space-between;
@@ -187,7 +273,10 @@ function togglePanelVisibility(id: string) {
   position: absolute !important;
 }
 
-.sidebar.closed>.v-navigation-drawer__content>.toolbar>.v-toolbar__content {
+.sidebar.closed
+  > .v-navigation-drawer__content
+  > .toolbar
+  > .v-toolbar__content {
   height: 3rem !important;
 }
 
@@ -200,7 +289,7 @@ function togglePanelVisibility(id: string) {
   height: 4rem !important;
 }
 
-.v-toolbar__content>.v-toolbar-title {
+.v-toolbar__content > .v-toolbar-title {
   margin-inline-start: 0px !important;
 }
 
@@ -224,6 +313,6 @@ function togglePanelVisibility(id: string) {
 }
 
 .v-text-field {
-  background-color: rgb(var(--v-theme-background))
+  background-color: rgb(var(--v-theme-background));
 }
 </style>
