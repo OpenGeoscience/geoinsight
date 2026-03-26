@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import { createPinia } from "pinia";
+import * as Sentry from "@sentry/vue";
 // Vuetify
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
@@ -44,6 +45,15 @@ const router = createRouter({
   ],
 });
 app.use(router);
+
+Sentry.init({
+  app,
+  // This is only defined in the release build environment
+  dsn: import.meta.env.VITE_APP_SENTRY_DSN,
+  sendDefaultPii: true,
+  integrations: [Sentry.browserTracingIntegration({ router })],
+});
+
 await router.isReady();
 
 // Attempt login restoration

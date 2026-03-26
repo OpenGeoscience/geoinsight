@@ -18,6 +18,7 @@
   "dependencies": {
     "@mdi/font": "7.4.47",
     "@resonant/oauth-client": "1.0.4",
+    "@sentry/vue": "10.46.0",
     "@turf/turf": "7.3.4",
     "axios": "1.13.6",
     "chroma-js": "3.2.0",
@@ -39,6 +40,7 @@
     "vuetify": "3.12.3"
   },
   "devDependencies": {
+    "@sentry/vite-plugin": "5.1.1",
     "@tsconfig/node24": "24.0.4",
     "@types/chroma-js": "3.1.2",
     "@types/lodash": "4.17.24",
