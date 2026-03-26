@@ -1,6 +1,7 @@
 // Plugins
 import Vue from "@vitejs/plugin-vue";
 import Vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 
 // Utilities
 import { defineConfig } from "vite";
@@ -19,6 +20,15 @@ export default defineConfig({
     Vuetify({
       autoImport: true,
     }),
+    sentryVitePlugin({
+      org: "kitware-data",
+      project: "geodatalytics-client",
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      release: {
+        // Defined by: https://developers.cloudflare.com/pages/configuration/build-configuration/#environment-variables
+        name: process.env.CF_PAGES_COMMIT_SHA,
+      },
+    }),
   ],
   resolve: {
     alias: {
@@ -27,5 +37,8 @@ export default defineConfig({
   },
   server: {
     port: 8080,
+  },
+  build: {
+    sourcemap: true,
   },
 });
