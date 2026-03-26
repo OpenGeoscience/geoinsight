@@ -14,7 +14,7 @@ const props = defineProps<{
 
 const startDrag = panelStore.startDrag;
 const panel = computed(() =>
-  panelStore.panelArrangement.find((p) => p.id === props.id)
+  panelStore.panelArrangement.find((p) => p.id === props.id),
 );
 
 const element = ref();
@@ -28,7 +28,7 @@ function getPanelContainerClass() {
 
 function getPanelContainerStyle() {
   const styleObj: Record<string, string> = {};
-  styleObj.order = panel.value?.order.toString() || '0';
+  styleObj.order = panel.value?.order.toString() || "0";
   if (!panel.value?.position) {
     if (panel.value?.height && !panel.value.collapsed) {
       styleObj.height = panel.value?.height + "px";
@@ -95,8 +95,10 @@ function panelUpdated() {
   >
     <div class="panel" :style="getPanelStyle()" ref="element">
       <v-card class="fill-height">
-        <div style="display: flex; align-items: center;">
-          <v-card-text class="pa-3" style="font-size: 18px;">{{ panel.label }}</v-card-text>
+        <div style="display: flex; align-items: center">
+          <v-card-text class="pa-3" style="font-size: 18px">{{
+            panel.label
+          }}</v-card-text>
           <div class="mr-3">
             <v-icon
               v-if="panel.id === 'datasets' && projectStore.currentProject"
@@ -106,23 +108,43 @@ function panelUpdated() {
               @mousedown="projectStore.projectConfigMode = 'existing'"
             />
             <v-menu
-              v-if="panel.id === 'layers' && projectStore.currentProject && compareStore.isComparing"
+              v-if="
+                panel.id === 'layers' &&
+                projectStore.currentProject &&
+                compareStore.isComparing
+              "
               :open-on-hover="true"
               location="bottom"
               :close-on-content-click="true"
             >
               <template v-slot:activator="{ props: menuProps }">
-                <div v-bind="menuProps" style="position: relative; display: inline-block;">
+                <div
+                  v-bind="menuProps"
+                  style="position: relative; display: inline-block"
+                >
                   <v-icon
                     v-tooltip="'Compare Layers'"
                     icon="mdi-compare"
                     color="primary"
-                    @click="compareStore.isComparing = !compareStore.isComparing"
+                    @click="
+                      compareStore.isComparing = !compareStore.isComparing
+                    "
                   />
                   <v-icon
-                    :icon="compareStore.orientation === 'vertical' ? 'mdi-arrow-split-vertical' : 'mdi-arrow-split-horizontal'"
+                    :icon="
+                      compareStore.orientation === 'vertical'
+                        ? 'mdi-arrow-split-vertical'
+                        : 'mdi-arrow-split-horizontal'
+                    "
                     size="small"
-                    style="position: absolute; bottom: -10px; right: -10px; background-color: rgb(var(--v-theme-background)); border-radius: 50%; padding: 1px;"
+                    style="
+                      position: absolute;
+                      bottom: -10px;
+                      right: -10px;
+                      background-color: rgb(var(--v-theme-background));
+                      border-radius: 50%;
+                      padding: 1px;
+                    "
                   />
                 </div>
               </template>
@@ -157,10 +179,12 @@ function panelUpdated() {
             <v-icon
               icon="mdi-drag"
               class="draggable"
-              @mousedown="(e: any) => {
-                updatePanelElement();
-                startDrag(e, panel, ['position'])
-              }"
+              @mousedown="
+                (e: any) => {
+                  updatePanelElement();
+                  startDrag(e, panel, ['position']);
+                }
+              "
             ></v-icon>
             <v-icon
               v-if="panel.closeable"
@@ -244,10 +268,10 @@ function panelUpdated() {
   cursor: nw-resize;
 }
 .panel-content-outer {
-  height: 100%
+  height: 100%;
 }
 .panel-content-outer.with-search {
-  height: calc(100% - 40px)
+  height: calc(100% - 40px);
 }
 .panel-content-inner {
   padding: 0px !important;
@@ -256,7 +280,7 @@ function panelUpdated() {
   background-color: rgb(var(--v-theme-background)) !important;
 }
 .help-text {
-  color: rgb(var(--v-theme-helper-text))
+  color: rgb(var(--v-theme-helper-text));
 }
 .primary-button {
   vertical-align: inherit;

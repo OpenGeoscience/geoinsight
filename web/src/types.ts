@@ -53,15 +53,15 @@ export interface LayerFrame {
 export interface VectorSummary {
   feature_types: string[];
   properties: Record<string, PropertySummary>;
-  color_props_coverage: 'full' | 'partial' | 'none';
+  color_props_coverage: "full" | "partial" | "none";
 }
 
 export interface PropertySummary {
-  value_set: (number | string | null)[],
+  value_set: (number | string | null)[];
   count: number;
-  types: string[],
-  range?: [number, number],
-  sample_label: string,
+  types: string[];
+  range?: [number, number];
+  sample_label: string;
 }
 
 export interface Colormap {
@@ -71,7 +71,7 @@ export interface Colormap {
   markers?: {
     color: string;
     value: number;
-  }[]
+  }[];
 }
 
 export interface AppliedColormap {
@@ -79,8 +79,8 @@ export interface AppliedColormap {
   discrete?: boolean;
   n_colors?: number;
   color_by?: string;
-  range?: [number, number],
-  clamp?: boolean,
+  range?: [number, number];
+  clamp?: boolean;
   null_color?: string;
 }
 
@@ -102,8 +102,8 @@ export interface StyleSpec {
     visible: boolean;
     use_feature_props: boolean;
     single_color?: string;
-    colormap?: AppliedColormap,
-  }[],
+    colormap?: AppliedColormap;
+  }[];
   sizes: {
     name: string;
     zoom_scaling: boolean;
@@ -111,14 +111,14 @@ export interface StyleSpec {
     size_range?: {
       size_by?: string;
       null_size?: {
-        transparency: boolean,
-        size: number,
+        transparency: boolean;
+        size: number;
       };
       minimum: number;
       maximum: number;
-    }
-  }[],
-  filters: StyleFilter[]
+    };
+  }[];
+  filters: StyleFilter[];
 }
 
 export interface LayerStyle {
@@ -137,9 +137,8 @@ export interface VectorData {
   geojson_data: string | null;
   source_file: null | number;
   file_size: number;
-  summary?: VectorSummary,
+  summary?: VectorSummary;
   metadata?: Record<string, any>;
-
 }
 
 export interface RasterData {
@@ -154,19 +153,22 @@ export interface RasterData {
 
 export interface RasterMetadata {
   bandCount: number;
-  bands: Record<number, {
-    interpretation: string;
-    max: number;
-    min: number;
-    mean: number;
-    stdev: number;
-  }>;
+  bands: Record<
+    number,
+    {
+      interpretation: string;
+      max: number;
+      min: number;
+      mean: number;
+      stdev: number;
+    }
+  >;
   bounds: {
     srs: string;
-    ll: {x: number; y: number};
-    lr: {x: number; y: number};
-    ul: {x: number; y: number};
-    ur: {x: number; y: number};
+    ll: { x: number; y: number };
+    lr: { x: number; y: number };
+    ul: { x: number; y: number };
+    ur: { x: number; y: number };
     xmin: number;
     xmax: number;
     ymin: number;
@@ -174,10 +176,10 @@ export interface RasterMetadata {
   };
   sourceBounds: {
     srs: string;
-    ll: {x: number; y: number};
-    lr: {x: number; y: number};
-    ul: {x: number; y: number};
-    ur: {x: number; y: number};
+    ll: { x: number; y: number };
+    lr: { x: number; y: number };
+    ul: { x: number; y: number };
+    ur: { x: number; y: number };
     xmin: number;
     xmax: number;
     ymin: number;
@@ -262,7 +264,7 @@ export interface Feature {
 }
 
 export interface ClickedFeatureData {
-  pos: { lng: number; lat: number; };
+  pos: { lng: number; lat: number };
   feature: MapGeoJSONFeature;
 }
 
@@ -275,7 +277,7 @@ export interface MapLibreLayerMetadata {
 
 export type MapLibreLayerWithMetadata = MapGeoJSONFeature["layer"] & {
   metadata: MapLibreLayerMetadata;
-}
+};
 
 export interface Network {
   id: number;
@@ -312,22 +314,22 @@ export interface NetworkEdge {
 
 export interface NetworkStyle {
   opacity: {
-    inactive: number,
-  },
+    inactive: number;
+  };
   color: {
-    inactive: string,
-    deactivate: string,
-    activate: string,
-    gcc: string,
-    selected: string,
-  }
+    inactive: string;
+    deactivate: string;
+    activate: string;
+    gcc: string;
+    selected: string;
+  };
 }
 
 export interface NetworkState {
   selected?: {
     nodes: number[];
     edges: number[];
-  },
+  };
   deactivated?: {
     nodes: number[];
     edges: number[];
@@ -335,7 +337,7 @@ export interface NetworkState {
   changes?: {
     deactivate_nodes: number[];
     activate_nodes: number[];
-  }
+  };
   gcc: number[] | null;
 }
 
@@ -431,7 +433,7 @@ export interface FloatingPanelConfig {
   visible: boolean;
   closeable: boolean;
   collapsed?: boolean;
-  dock: 'left' | 'right';
+  dock: "left" | "right";
   order: number;
   position?: { x: number; y: number } | undefined;
   width?: number | undefined;
@@ -458,19 +460,19 @@ export interface ViewState {
   name?: string;
   project: number;
   thumbnail?: string;
-  current_analysis_type: string | undefined,
-  current_result: number | undefined,
-  current_chart: number | undefined,
-  current_basemap: number | undefined,
-  current_network: number | undefined,
-  selected_layers: (number | undefined)[],
-  selected_layer_current_frames: Record<string, number>,
-  selected_layer_order: string[],
-  selected_layer_styles: Record<string, LayerStyle>,
-  left_sidebar_open: boolean,
-  right_sidebar_open: boolean,
-  panel_arrangement: FloatingPanelConfig[],
-  theme: "dark" | "light",
-  map_center: number[],
-  map_zoom: number,
+  current_analysis_type: string | undefined;
+  current_result: number | undefined;
+  current_chart: number | undefined;
+  current_basemap: number | undefined;
+  current_network: number | undefined;
+  selected_layers: (number | undefined)[];
+  selected_layer_current_frames: Record<string, number>;
+  selected_layer_order: string[];
+  selected_layer_styles: Record<string, LayerStyle>;
+  left_sidebar_open: boolean;
+  right_sidebar_open: boolean;
+  panel_arrangement: FloatingPanelConfig[];
+  theme: "dark" | "light";
+  map_center: number[];
+  map_zoom: number;
 }

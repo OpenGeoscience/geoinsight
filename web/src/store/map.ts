@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia';
-import { ref, shallowRef, watch } from 'vue';
+import { defineStore } from "pinia";
+import { ref, shallowRef, watch } from "vue";
 import type {
   ClickedFeatureData,
   Project,
@@ -12,20 +12,17 @@ import type {
   Layer,
   StyleFilter,
   Basemap,
-} from '@/types';
+} from "@/types";
 import type {
   MapLayerMouseEvent,
   Source,
   LayerSpecification,
 } from "maplibre-gl";
-import {
-  Map,
-  Popup,
-} from "maplibre-gl";
-import { getBasemaps, getRasterDataValues } from '@/api/rest';
-import { baseURL } from '@/api/auth';
-import proj4 from 'proj4';
-import { useStyleStore, useLayerStore, useAppStore, useProjectStore } from '.';
+import { Map, Popup } from "maplibre-gl";
+import { getBasemaps, getRasterDataValues } from "@/api/rest";
+import { baseURL } from "@/api/auth";
+import proj4 from "proj4";
+import { useStyleStore, useLayerStore, useAppStore, useProjectStore } from ".";
 
 function getLayerIsVisible(layer: MapLibreLayerWithMetadata) {
   // Since visibility must be 'visible' for a feature click to even be registered,
@@ -39,14 +36,18 @@ function getLayerIsVisible(layer: MapLibreLayerWithMetadata) {
     throw new Error("Layer paint property is undefined");
   }
 
-  const opacityKeys = Object.keys(layer.paint).filter((key) => key.endsWith('-opacity'));
-  const opaque = opacityKeys.every((key) => layer.paint![key as keyof MapLibreLayerWithMetadata["paint"]] > 0);
+  const opacityKeys = Object.keys(layer.paint).filter((key) =>
+    key.endsWith("-opacity"),
+  );
+  const opaque = opacityKeys.every(
+    (key) => layer.paint![key as keyof MapLibreLayerWithMetadata["paint"]] > 0,
+  );
 
   return opaque;
 }
 
 function sourceIdFromMapLayerId(mapLayerId: string) {
-  return mapLayerId.split('.').slice(0, -1).join('.');
+  return mapLayerId.split(".").slice(0, -1).join(".");
 }
 
 function uniqueLayerIdFromLayer(layer: Layer) {
@@ -59,25 +60,22 @@ function uniqueLayerIdFromLayer(layer: Layer) {
  * function, as it's rarely accessed directly.
  */
 function sourceIdFromLayerFrame(layer: Layer, frame: LayerFrame) {
-  const parts: (number | string)[] = [
-    uniqueLayerIdFromLayer(layer),
-    frame.id,
-  ]
+  const parts: (number | string)[] = [uniqueLayerIdFromLayer(layer), frame.id];
 
   if (frame.vector) {
-    parts.push('vector');
+    parts.push("vector");
     parts.push(frame.vector.id);
   } else if (frame.raster) {
-    parts.push('raster');
+    parts.push("raster");
     parts.push(frame.raster.id);
   } else {
     throw new Error("Layer frame is neither raster nor vector!");
   }
 
-  return parts.join('.');
+  return parts.join(".");
 }
 
-type SourceType = 'vector' | 'raster' | 'bounds';
+type SourceType = "vector" | "raster" | "bounds";
 interface SourceDescription {
   layerId: number;
   layerCopyId: number;
@@ -90,7 +88,7 @@ interface SourceDescription {
  * Source format is <layerId>.<layerCopyId>.<frameId>.<type>.<typeId>
  */
 function parseSourceString(sourceId: string): SourceDescription {
-  const parts = sourceId.split('.');
+  const parts = sourceId.split(".");
   if (parts.length !== 5) {
     throw new Error(`Source string incompatible: ${sourceId}`);
   }
@@ -102,11 +100,11 @@ function parseSourceString(sourceId: string): SourceDescription {
     frameId: parseInt(frameId),
     type: type as SourceType,
     typeId: parseInt(typeId),
-  }
+  };
 }
 
 interface LayerDescription extends SourceDescription {
-  layerType: LayerSpecification['type']
+  layerType: LayerSpecification["type"];
 }
 
 /**
@@ -115,20 +113,20 @@ interface LayerDescription extends SourceDescription {
  * "mapLayerType" is the maplibre layer type, e.g. raster, fill, etc.
  */
 function parseLayerString(layerId: string): LayerDescription {
-  const parts = layerId.split('.');
+  const parts = layerId.split(".");
   if (parts.length !== 6) {
     throw new Error(`Layer string incompatible: ${layerId}`);
   }
 
-  const layerType = parts[parts.length - 1] as LayerDescription['layerType'];
+  const layerType = parts[parts.length - 1] as LayerDescription["layerType"];
   const sourceDesc = parseSourceString(sourceIdFromMapLayerId(layerId));
   return {
     ...sourceDesc,
     layerType,
-  }
+  };
 }
 
-export const useMapStore = defineStore('map', () => {
+export const useMapStore = defineStore("map", () => {
   const map = shallowRef<Map>();
   const compareMap = shallowRef<Map>();
   const availableBasemaps = ref<Basemap[]>([]);
@@ -137,7 +135,9 @@ export const useMapStore = defineStore('map', () => {
   const compareTooltipOverlay = ref<Popup>();
   const clickedFeature = ref<ClickedFeatureData>();
   const compareClickedFeature = ref<ClickedFeatureData>();
-  const rasterTooltipDataCache = ref<Record<number, RasterDataValues | undefined>>({});
+  const rasterTooltipDataCache = ref<
+    Record<number, RasterDataValues | undefined>
+  >({});
   const rasterSourceTileURLs = ref<Record<string, string>>({});
 
   const styleStore = useStyleStore();
@@ -146,18 +146,18 @@ export const useMapStore = defineStore('map', () => {
   const projectStore = useProjectStore();
 
   async function fetchAvailableBasemaps() {
-    availableBasemaps.value = [
-      {name: 'None'},
-      ...await getBasemaps()
-    ];
+    availableBasemaps.value = [{ name: "None" }, ...(await getBasemaps())];
     setBasemapToDefault();
   }
 
   function setBasemapToDefault() {
-    if (!currentBasemap.value || currentBasemap.value.name.toLowerCase().includes('basic')) {
+    if (
+      !currentBasemap.value ||
+      currentBasemap.value.name.toLowerCase().includes("basic")
+    ) {
       currentBasemap.value = availableBasemaps.value.find((basemap) => {
-        return basemap.name.toLowerCase() === 'basic ' + appStore.theme
-      })
+        return basemap.name.toLowerCase() === "basic " + appStore.theme;
+      });
     }
   }
 
@@ -167,11 +167,7 @@ export const useMapStore = defineStore('map', () => {
     map.getLayersOrder().forEach((id) => {
       const layer = map.getLayer(id);
       if (layer && baseLayerSourceIds.includes(layer.source)) {
-        map.setLayoutProperty(
-          id,
-          "visibility",
-          visible ? "visible" : "none"
-        );
+        map.setLayoutProperty(id, "visibility", visible ? "visible" : "none");
       }
     });
   }
@@ -184,11 +180,13 @@ export const useMapStore = defineStore('map', () => {
     handleLayerClick(e, true);
   }
 
-  function handleLayerClick(e: MapLayerMouseEvent, compare=false) {
+  function handleLayerClick(e: MapLayerMouseEvent, compare = false) {
     const map = getMap(compare);
-    const clickedFeatures = map.queryRenderedFeatures(e.point).filter(
-      (feat) => getLayerIsVisible(feat.layer as MapLibreLayerWithMetadata)
-    );
+    const clickedFeatures = map
+      .queryRenderedFeatures(e.point)
+      .filter((feat) =>
+        getLayerIsVisible(feat.layer as MapLibreLayerWithMetadata),
+      );
 
     if (!clickedFeatures.length) {
       return;
@@ -196,12 +194,10 @@ export const useMapStore = defineStore('map', () => {
 
     // Sort features that were clicked on by their reverse layer ordering,
     // since the last element in the list (the top one) should be the first one clicked.
-    const featQuery = clickedFeatures.toSorted(
-      (feat1, feat2) => {
-        const order = map.getLayersOrder();
-        return order.indexOf(feat2.layer.id) - order.indexOf(feat1.layer.id);
-      }
-    );
+    const featQuery = clickedFeatures.toSorted((feat1, feat2) => {
+      const order = map.getLayersOrder();
+      return order.indexOf(feat2.layer.id) - order.indexOf(feat1.layer.id);
+    });
 
     // Select the first feature in this ordering, since this is the one that should be clicked on
     const feature = featQuery[0];
@@ -231,26 +227,44 @@ export const useMapStore = defineStore('map', () => {
 
   function getMapSources() {
     const map = getMap();
-    return [...new Set(map.getLayersOrder().map((layerId) => map.getLayer(layerId)!.source))];
+    return [
+      ...new Set(
+        map.getLayersOrder().map((layerId) => map.getLayer(layerId)!.source),
+      ),
+    ];
   }
 
   function getBaseLayerSourceIds() {
-    return getMapSources()
-      .filter((sourceId) => (
-        !sourceId || !(sourceId.includes('.vector.') || sourceId.includes('.raster.') || sourceId.includes('.bounds.'))
-      ));
+    return getMapSources().filter(
+      (sourceId) =>
+        !sourceId ||
+        !(
+          sourceId.includes(".vector.") ||
+          sourceId.includes(".raster.") ||
+          sourceId.includes(".bounds.")
+        ),
+    );
   }
 
   function getBaseLayerIds() {
     const map = getMap();
-    return [...new Set(map.getLayersOrder().filter((layerId) => !layerId.includes('.vector.') && !layerId.includes('.raster.')))];
+    return [
+      ...new Set(
+        map
+          .getLayersOrder()
+          .filter(
+            (layerId) =>
+              !layerId.includes(".vector.") && !layerId.includes(".raster."),
+          ),
+      ),
+    ];
   }
 
   function getUserMapLayers() {
     const map = getMap();
     const baseLayerSourceIds = getBaseLayerSourceIds();
     return map.getLayersOrder().filter((id) => {
-      if (id === 'background') return false;
+      if (id === "background") return false;
       const layer = map.getLayer(id);
       return layer && !baseLayerSourceIds.includes(layer.source);
     });
@@ -281,7 +295,7 @@ export const useMapStore = defineStore('map', () => {
   function setMapPosition(
     center: [number, number],
     zoom: number,
-    jump = false
+    jump = false,
   ) {
     const map = getMap();
     if (jump) {
@@ -293,7 +307,7 @@ export const useMapStore = defineStore('map', () => {
 
   function resetMapPosition(
     project: Project | undefined = undefined,
-    jump = false
+    jump = false,
   ) {
     let center: [number, number] = [0, 30];
     let zoom = 1;
@@ -301,7 +315,7 @@ export const useMapStore = defineStore('map', () => {
       center = project.default_map_center;
       zoom = project.default_map_zoom;
     }
-    setMapPosition(center, zoom, jump)
+    setMapPosition(center, zoom, jump);
   }
 
   function clearMapLayers() {
@@ -317,12 +331,14 @@ export const useMapStore = defineStore('map', () => {
     const updatedLayerIds: string[] = [];
     layerIds.forEach((id) => {
       // Rasters have implicit bounds layers that also need to be removed
-      if (id.includes('.raster.')) {
-        updatedLayerIds.push(id.replace('.raster.', '.bounds.'));
+      if (id.includes(".raster.")) {
+        updatedLayerIds.push(id.replace(".raster.", ".bounds."));
       }
       updatedLayerIds.push(id);
     });
-    const layersToRemove = getUserMapLayers().filter((id) => updatedLayerIds.includes(id));
+    const layersToRemove = getUserMapLayers().filter((id) =>
+      updatedLayerIds.includes(id),
+    );
     layersToRemove.forEach((id) => {
       sourceIdsToRemove.add(map.getLayer(id)!.source);
       map.removeLayer(id);
@@ -335,9 +351,9 @@ export const useMapStore = defineStore('map', () => {
   }
 
   /**
- * Returns the description of the most recently added instance of a
- * layer to the map, or undefined if it's not on the map.
- */
+   * Returns the description of the most recently added instance of a
+   * layer to the map, or undefined if it's not on the map.
+   */
   function getLatestLayerInstance(layer: Layer): LayerDescription | undefined {
     const matchingLayers = getUserMapLayers()
       .map((layerId) => parseLayerString(layerId))
@@ -355,11 +371,11 @@ export const useMapStore = defineStore('map', () => {
       layer_copy_id: layerCopyId,
       frame_id: frameId,
       multiFrame,
-    }
+    };
 
     // Fill Layer
     map.addLayer({
-      id: source.id + '.fill',
+      id: source.id + ".fill",
       type: "fill",
       source: source.id,
       metadata,
@@ -382,7 +398,7 @@ export const useMapStore = defineStore('map', () => {
 
     // Line Layer
     map.addLayer({
-      id: source.id + '.line',
+      id: source.id + ".line",
       type: "line",
       source: source.id,
       metadata,
@@ -401,12 +417,18 @@ export const useMapStore = defineStore('map', () => {
 
     // Circle Layer
     map.addLayer({
-      id: source.id + '.circle',
+      id: source.id + ".circle",
       type: "circle",
       source: source.id,
       metadata,
       "source-layer": "default",
-      filter: ["match", ["geometry-type"], ["Point", "MultiPoint"], true, false],
+      filter: [
+        "match",
+        ["geometry-type"],
+        ["Point", "MultiPoint"],
+        true,
+        false,
+      ],
       paint: {
         "circle-color": "black",
         "circle-opacity": 1,
@@ -422,14 +444,21 @@ export const useMapStore = defineStore('map', () => {
     setupVectorLayerClickHandlers(map, source.id, handleBaseLayerClick);
   }
 
-  function setupVectorLayerClickHandlers(map: Map,sourceId: string, handler: (e: MapLayerMouseEvent) => void) {
-      map.on("click", sourceId + '.fill', handler);
-      map.on("click", sourceId + '.line', handler);
-      map.on("click", sourceId + '.circle', handler);
+  function setupVectorLayerClickHandlers(
+    map: Map,
+    sourceId: string,
+    handler: (e: MapLayerMouseEvent) => void,
+  ) {
+    map.on("click", sourceId + ".fill", handler);
+    map.on("click", sourceId + ".line", handler);
+    map.on("click", sourceId + ".circle", handler);
   }
 
-
-  function createRasterFeatureMapLayers(tileSource: Source, boundsSource: Source, multiFrame: boolean) {
+  function createRasterFeatureMapLayers(
+    tileSource: Source,
+    boundsSource: Source,
+    multiFrame: boolean,
+  ) {
     const map = getMap();
     const { layerId, layerCopyId, frameId } = parseSourceString(tileSource.id);
     const metadata: MapLibreLayerMetadata = {
@@ -437,18 +466,18 @@ export const useMapStore = defineStore('map', () => {
       layer_copy_id: layerCopyId,
       frame_id: frameId,
       multiFrame,
-    }
+    };
 
     // Tile Layer
     map.addLayer({
-      id: tileSource.id + '.raster',
+      id: tileSource.id + ".raster",
       type: "raster",
       source: tileSource.id,
       metadata,
     });
 
     map.addLayer({
-      id: boundsSource.id + '.fill',
+      id: boundsSource.id + ".fill",
       type: "fill",
       source: boundsSource.id,
       paint: {
@@ -471,7 +500,11 @@ export const useMapStore = defineStore('map', () => {
     rasterTooltipDataCache.value[raster.id] = data;
   }
 
-  function createVectorTileSource(vector: VectorData, sourceId: string, multiFrame: boolean): Source | undefined {
+  function createVectorTileSource(
+    vector: VectorData,
+    sourceId: string,
+    multiFrame: boolean,
+  ): Source | undefined {
     const map = getMap();
     map.addSource(sourceId, {
       type: "vector",
@@ -484,17 +517,28 @@ export const useMapStore = defineStore('map', () => {
     }
   }
 
-  function createRasterTileSource(raster: RasterData, sourceId: string, multiFrame: boolean): Source | undefined {
+  function createRasterTileSource(
+    raster: RasterData,
+    sourceId: string,
+    multiFrame: boolean,
+  ): Source | undefined {
     const map = getMap();
 
-    const queryParams: { projection: string, style?: string } = { projection: 'epsg:3857' }
+    const queryParams: { projection: string; style?: string } = {
+      projection: "epsg:3857",
+    };
     const { layerId, layerCopyId } = parseSourceString(sourceId);
-    const styleSpec = styleStore.selectedLayerStyles[`${layerId}.${layerCopyId}`].style_spec;
-    let filters: StyleFilter[] = []
-    const layer = layerStore.selectedLayers.find((l: Layer) => l.id === layerId)
+    const styleSpec =
+      styleStore.selectedLayerStyles[`${layerId}.${layerCopyId}`].style_spec;
+    let filters: StyleFilter[] = [];
+    const layer = layerStore.selectedLayers.find(
+      (l: Layer) => l.id === layerId,
+    );
     if (layer) {
-      const frames = layerStore.layerFrames(layer)
-      const frame = frames.find((f: LayerFrame) => f.index === layer.current_frame_index)
+      const frames = layerStore.layerFrames(layer);
+      const frame = frames.find(
+        (f: LayerFrame) => f.index === layer.current_frame_index,
+      );
       if (frame?.source_filters) {
         filters = Object.entries(frame.source_filters).map(([k, v]) => ({
           filter_by: k,
@@ -502,15 +546,19 @@ export const useMapStore = defineStore('map', () => {
           include: true,
           transparency: true,
           apply: true,
-        }))
+        }));
       }
     }
     if (styleSpec) {
-      const styleParams = styleStore.getRasterTilesQuery({...styleSpec, filters}, styleStore.colormaps)
-      if (styleParams) queryParams.style = JSON.stringify(styleParams)
+      const styleParams = styleStore.getRasterTilesQuery(
+        { ...styleSpec, filters },
+        styleStore.colormaps,
+      );
+      if (styleParams) queryParams.style = JSON.stringify(styleParams);
     }
-    const query = new URLSearchParams(queryParams)
-    rasterSourceTileURLs.value[sourceId] = `${baseURL}rasters/${raster.id}/tiles/{z}/{x}/{y}.png/?${query}`
+    const query = new URLSearchParams(queryParams);
+    rasterSourceTileURLs.value[sourceId] =
+      `${baseURL}rasters/${raster.id}/tiles/{z}/{x}/{y}.png/?${query}`;
     map.addSource(sourceId, {
       type: "raster",
       tiles: [rasterSourceTileURLs.value[sourceId]],
@@ -518,7 +566,7 @@ export const useMapStore = defineStore('map', () => {
     const tileSource = map.getSource(sourceId);
 
     const bounds = raster.metadata.bounds;
-    const boundsSourceId = sourceId.replace('raster', 'bounds');
+    const boundsSourceId = sourceId.replace("raster", "bounds");
     const { srs } = bounds;
     let { xmin, xmax, ymin, ymax } = bounds;
     [xmin, ymin] = proj4(srs, "EPSG:4326", [xmin, ymin]);
@@ -527,10 +575,16 @@ export const useMapStore = defineStore('map', () => {
       type: "geojson",
       data: {
         type: "Polygon",
-        coordinates: [[
-          [xmin, ymin], [xmin, ymax], [xmax, ymax], [xmax, ymin], [xmin, ymin],
-        ]]
-      }
+        coordinates: [
+          [
+            [xmin, ymin],
+            [xmin, ymax],
+            [xmax, ymax],
+            [xmax, ymin],
+            [xmin, ymin],
+          ],
+        ],
+      },
     });
     const boundsSource = map.getSource(boundsSourceId);
 
@@ -541,7 +595,11 @@ export const useMapStore = defineStore('map', () => {
     }
   }
 
-  function addLayerFrameToMap(frame: LayerFrame, sourceId: string, multiFrame: boolean) {
+  function addLayerFrameToMap(
+    frame: LayerFrame,
+    sourceId: string,
+    multiFrame: boolean,
+  ) {
     if (getMapSources().includes(sourceId)) {
       return;
     }
@@ -551,16 +609,16 @@ export const useMapStore = defineStore('map', () => {
     } else if (frame.raster) {
       createRasterTileSource(frame.raster, sourceId, multiFrame);
     } else {
-      throw new Error('Layer Frame is neither raster nor vector!');
+      throw new Error("Layer Frame is neither raster nor vector!");
     }
   }
 
   watch(map, () => {
     // Once map is initialized, attempt to load URL view
     if (map.value) {
-      projectStore.loadViewStateFromURL()
+      projectStore.loadViewStateFromURL();
     }
-  })
+  });
 
   return {
     // Data
@@ -605,5 +663,5 @@ export const useMapStore = defineStore('map', () => {
     getLatestLayerInstance,
     getUserMapLayers,
     setupVectorLayerClickHandlers,
-  }
+  };
 });

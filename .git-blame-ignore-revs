@@ -1,5 +1,6 @@
 # Switch to double quotes
 052ad665aceaf8ef10ffc3eba8111799517e2cae
-
 # Revert internal name to "uvdat"
 4db15705dbcb5c2b1be39e96990804cdf03fbf1b
+# Format with Prettier
+c5e40b27cd426c9665e28db54dc092d3997eb718

@@ -21,7 +21,7 @@ const userToRemove: Ref<User | undefined> = ref();
 function savePermissions() {
   let owner: number = props.project.owner.id;
   const collaborators = new Set(
-    props.project.collaborators.map((u: User) => u.id)
+    props.project.collaborators.map((u: User) => u.id),
   );
   const followers = new Set(props.project.followers.map((u: User) => u.id));
   if (userToRemove.value) {

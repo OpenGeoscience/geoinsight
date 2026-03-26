@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import DatasetList from '@/components/DatasetList.vue'
-import DetailView from '@/components/DetailView.vue'
-import type { Dataset, Layer } from '@/types';
+import { computed } from "vue";
+import DatasetList from "@/components/DatasetList.vue";
+import DetailView from "@/components/DetailView.vue";
+import type { Dataset, Layer } from "@/types";
 
-import { useLayerStore, useConversionStore } from '@/store';
+import { useLayerStore, useConversionStore } from "@/store";
 const layerStore = useLayerStore();
 const conversionStore = useConversionStore();
 
@@ -16,24 +16,26 @@ const datasetsWithLayers = computed(() => {
   return props.datasets?.map((dataset) => {
     return {
       ...dataset,
-      layers: layerStore.availableLayers.filter((l) => l.dataset === dataset.id)
-    }
-  })
-})
+      layers: layerStore.availableLayers.filter(
+        (l) => l.dataset === dataset.id,
+      ),
+    };
+  });
+});
 
 function expandDataset(expanded: any) {
   expanded.forEach((datasetId: number) => {
     if (!layerStore.availableLayers.some((l) => l.dataset === datasetId)) {
-      layerStore.fetchAvailableLayersForDataset(datasetId)
+      layerStore.fetchAvailableLayersForDataset(datasetId);
     }
-  })
+  });
 }
 
 function toggleSelected(items: Layer[]) {
   items.forEach((item) => {
     const layer = item as Layer;
     layerStore.addLayer(layer);
-  })
+  });
 }
 </script>
 
@@ -54,23 +56,36 @@ function toggleSelected(items: Layer[]) {
           :value="dataset.id"
         >
           <v-expansion-panel-title>
-            <div style="display: flex; justify-content: space-between; width: 100%;">
+            <div
+              style="display: flex; justify-content: space-between; width: 100%"
+            >
               <div class="item-title" style="margin-left: 12px">
                 <div>
                   <div
-                    v-if="conversionStore.datasetConversionTasks[dataset.id] && !conversionStore.datasetConversionTasks[dataset.id].completed"
+                    v-if="
+                      conversionStore.datasetConversionTasks[dataset.id] &&
+                      !conversionStore.datasetConversionTasks[dataset.id]
+                        .completed
+                    "
                     style="display: inline-block"
                   >
                     <v-icon
-                      v-if="conversionStore.datasetConversionTasks[dataset.id].error"
-                      v-tooltip="conversionStore.datasetConversionTasks[dataset.id].error"
+                      v-if="
+                        conversionStore.datasetConversionTasks[dataset.id].error
+                      "
+                      v-tooltip="
+                        conversionStore.datasetConversionTasks[dataset.id].error
+                      "
                       icon="mdi-alert-outline"
                       color="error"
                       class="mr-2"
                     />
                     <v-progress-circular
                       v-else
-                      v-tooltip="conversionStore.datasetConversionTasks[dataset.id].status"
+                      v-tooltip="
+                        conversionStore.datasetConversionTasks[dataset.id]
+                          .status
+                      "
                       size="18"
                       class="mr-2"
                       indeterminate
@@ -78,7 +93,10 @@ function toggleSelected(items: Layer[]) {
                   </div>
                   {{ dataset.name }}
                 </div>
-                <div style="min-width: 75px; text-align: right" v-if="dataset.layers">
+                <div
+                  style="min-width: 75px; text-align: right"
+                  v-if="dataset.layers"
+                >
                   <v-icon
                     icon="mdi-layers-outline"
                     size="small"
@@ -94,7 +112,7 @@ function toggleSelected(items: Layer[]) {
                   ></v-icon>
                 </div>
               </div>
-              <DetailView :details="{...dataset, type: 'dataset'}"/>
+              <DetailView :details="{ ...dataset, type: 'dataset' }" />
             </div>
           </v-expansion-panel-title>
           <v-expansion-panel-text class="pb-2">
@@ -107,12 +125,14 @@ function toggleSelected(items: Layer[]) {
                 class="ml-3 mb-2"
               />
             </div>
-            <div
-              v-for="layer in dataset.layers"
-              class="item-title"
-            >
+            <div v-for="layer in dataset.layers" class="item-title">
               <div
-                style="text-wrap: wrap; align-items: center; width: 90%; cursor: pointer"
+                style="
+                  text-wrap: wrap;
+                  align-items: center;
+                  width: 90%;
+                  cursor: pointer;
+                "
                 @click.stop="() => toggleSelected([layer])"
               >
                 <span>
@@ -130,7 +150,7 @@ function toggleSelected(items: Layer[]) {
                 {{ layer.name }}
               </div>
               <div class="pr-5">
-                <DetailView :details="{...layer, type: 'layer'}"/>
+                <DetailView :details="{ ...layer, type: 'layer' }" />
               </div>
             </div>
           </v-expansion-panel-text>
