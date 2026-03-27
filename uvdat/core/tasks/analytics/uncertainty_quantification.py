@@ -13,7 +13,7 @@ from .flood_simulation import FloodSimulation
 class UncertaintyQuantification(AnalysisType):
     def __init__(self):
         super().__init__()
-        self.name = "Uncertainty Quantification"
+        self.name = "Flood Uncertainty Quantification"
         self.description = "Select simulated floods and calculate their standard error."
         self.db_value = "uncertainty_quant"
         self.input_types = {
