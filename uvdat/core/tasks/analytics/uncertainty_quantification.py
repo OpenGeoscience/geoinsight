@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-import numpy as np
-import tempfile
-
 from celery import shared_task
 from django.conf import settings
+import numpy as np
 
 from uvdat.core.models import TaskResult
 
-from .analysis_type import AnalysisType, AnalysisTask
+from .analysis_type import AnalysisTask, AnalysisType
 from .flood_simulation import FloodSimulation
 
 
@@ -63,8 +61,6 @@ class UncertaintyQuantification(AnalysisType):
         pass
 
 
-
-
 @shared_task(base=AnalysisTask)
 def uncertainty_quantification(result_id):
     result = TaskResult.objects.get(id=result_id)
@@ -77,10 +73,10 @@ def uncertainty_quantification(result_id):
 
     # Update name
     result.name = (
-        f"Uncertainty Quantification for Flood Results {flood_sim_1.id}, {flood_sim_2.id}, {flood_sim_3.id}"
+        "Uncertainty Quantification for Flood Results "
+        f"{flood_sim_1.id}, {flood_sim_2.id}, {flood_sim_3.id}"
     )
     result.save()
-
 
     precip1 = flood_sim_1.outputs.get("precipitation_level_mm")
     discharge1 = flood_sim_1.outputs.get("discharge_ft3_per_second")
@@ -89,10 +85,7 @@ def uncertainty_quantification(result_id):
     precip3 = flood_sim_3.outputs.get("precipitation_level_mm")
     discharge3 = flood_sim_3.outputs.get("discharge_ft3_per_second")
 
-
-    result.write_status(
-        f"Calculating uncertainty..."
-    )
+    result.write_status("Calculating uncertainty...")
 
     precip_mean = np.mean([precip1, precip2, precip3])
     precip_stde = np.std([precip1, precip2, precip3])
@@ -105,18 +98,19 @@ def uncertainty_quantification(result_id):
     discharge_min = np.min([discharge1, discharge2, discharge3])
     discharge_range = discharge_max - discharge_min
 
-
     result.write_status("Saving result to database")
 
-    result.write_outputs({
-        "mean_precipitation_level_mm": precip_mean,
-        "standard_error_precipitation_level_mm": precip_stde,
-        "min_precipitation_level_mm": precip_min,
-        "max_precipitation_level_mm": precip_max,
-        "range_precipitation_level_mm": precip_range,
-        "mean_discharge_ft3_per_second": discharge_mean,
-        "standard_error_discharge_ft3_per_second": discharge_stde,
-        "min_discharge_ft3_per_second": discharge_min,
-        "max_discharge_ft3_per_second": discharge_max,
-        "range_discharge_ft3_per_second": discharge_range,
-        })
+    result.write_outputs(
+        {
+            "mean_precipitation_level_mm": precip_mean,
+            "standard_error_precipitation_level_mm": precip_stde,
+            "min_precipitation_level_mm": precip_min,
+            "max_precipitation_level_mm": precip_max,
+            "range_precipitation_level_mm": precip_range,
+            "mean_discharge_ft3_per_second": discharge_mean,
+            "standard_error_discharge_ft3_per_second": discharge_stde,
+            "min_discharge_ft3_per_second": discharge_min,
+            "max_discharge_ft3_per_second": discharge_max,
+            "range_discharge_ft3_per_second": discharge_range,
+        }
+    )
