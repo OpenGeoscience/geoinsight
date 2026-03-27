@@ -108,7 +108,7 @@ def uncertainty_quantification(result_id):
 
     result.write_status("Saving result to database")
 
-    result.write_outputs = {
+    result.write_outputs({
         "mean_precipitation_level_mm": precip_mean,
         "standard_error_precipitation_level_mm": precip_stde,
         "min_precipitation_level_mm": precip_min,
@@ -119,4 +119,4 @@ def uncertainty_quantification(result_id):
         "min_discharge_ft3_per_second": discharge_min,
         "max_discharge_ft3_per_second": discharge_max,
         "range_discharge_ft3_per_second": discharge_range,
-        }
+        })
