@@ -173,6 +173,9 @@ UVDAT_ENABLE_GEOAI_SEGMENTATION: bool = env.bool(
 UVDAT_ENABLE_CREATE_ROAD_NETWORK: bool = env.bool(
     "DJANGO_UVDAT_ENABLE_CREATE_ROAD_NETWORK", default=True
 )
+UVDAT_ENABLE_UNCERTAINTY_QUANTIFICATION: bool = env.bool(
+    "DJANGO_UVDAT_ENABLE_UNCERTAINTY_QUANTIFICATION", default=True
+)
 
 logging.getLogger("pyvips").setLevel(logging.ERROR)
 logging.getLogger("rasterio").setLevel(logging.ERROR)
