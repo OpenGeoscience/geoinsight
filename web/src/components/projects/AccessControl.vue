@@ -165,7 +165,7 @@ onMounted(() => {
       <v-list-item
         v-if="!project.collaborators.length"
         subtitle="No collaborators"
-        class="mx-4"
+        class="mx-4 help-text"
       />
       <v-list-subheader>
         Followers
@@ -212,7 +212,7 @@ onMounted(() => {
       <v-list-item
         v-if="!project.followers.length"
         subtitle="No followers"
-        class="mx-4"
+        class="mx-4 help-text"
       />
     </v-list>
     <v-btn

@@ -81,7 +81,8 @@ watch(filteredDatasets, expandAllGroups);
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
-    <v-card
+    <v-divider v-if="props.datasets?.length" class="mb-2" />
+    <div
       :class="
         showFilter
           ? 'panel-content-inner with-tag-filter-open'
@@ -91,9 +92,7 @@ watch(filteredDatasets, expandAllGroups);
       <v-expansion-panels
         v-if="props.datasets?.length"
         v-model="expandedGroups"
-        variant="accordion"
         class="dataset-list"
-        style="height: fit-content"
         multiple
         flat
       >
@@ -115,17 +114,15 @@ watch(filteredDatasets, expandAllGroups);
         v-else-if="projectStore.loadingDatasets"
         indeterminate
       ></v-progress-linear>
-      <v-card-text class="help-text" v-else>No available Datasets.</v-card-text>
-    </v-card>
+      <div class="help-text pa-4" v-else>No available Datasets.</div>
+    </div>
   </div>
 </template>
 
 <style>
 .dataset-list {
   height: 100%;
-  width: calc(100% - 20px) !important;
   overflow-y: auto;
-  overflow-x: hidden;
 }
 .dataset-list .v-expansion-panel-title {
   min-height: 0 !important;
@@ -162,7 +159,6 @@ watch(filteredDatasets, expandAllGroups);
   justify-content: space-between;
   font-size: 0.875rem;
   margin-left: 24px;
-  width: 100%;
 }
 .item-title + .v-expansion-panel-title__icon {
   position: absolute !important;
