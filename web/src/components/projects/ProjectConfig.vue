@@ -239,7 +239,7 @@ watch(
 </script>
 
 <template>
-  <div>
+  <div class="mx-2">
     <div class="project-row my-5">
       <v-select
         placeholder="Select a Project"
@@ -292,17 +292,32 @@ watch(
     </v-card>
     <div class="project-row" v-if="projectStore.currentProject">
       <span class="item-counts">
-        <v-icon icon="mdi-database-outline" v-tooltip="'Datasets'"></v-icon>
+        <v-icon
+          icon="mdi-database-outline"
+          v-tooltip="'Datasets'"
+          color="secondary-text"
+        ></v-icon>
         {{ projectStore.currentProject.item_counts.datasets || 0 }}
         <v-icon
           icon="mdi-border-none-variant"
           v-tooltip="'Regions'"
           class="ml-3"
+          color="secondary-text"
         ></v-icon>
         {{ projectStore.currentProject.item_counts.regions || 0 }}
-        <v-icon icon="mdi-poll" v-tooltip="'Charts'" class="ml-3"></v-icon>
+        <v-icon
+          icon="mdi-poll"
+          v-tooltip="'Charts'"
+          class="ml-3"
+          color="secondary-text"
+        ></v-icon>
         {{ projectStore.currentProject.item_counts.charts || 0 }}
-        <v-icon icon="mdi-earth" v-tooltip="'Analyses'" class="ml-3"></v-icon>
+        <v-icon
+          icon="mdi-earth"
+          v-tooltip="'Analyses'"
+          class="ml-3"
+          color="secondary-text"
+        ></v-icon>
         {{ projectStore.currentProject.item_counts.analyses || 0 }}
       </span>
       <v-menu
@@ -464,11 +479,15 @@ watch(
           </div>
           <v-btn
             v-else
-            variant="tonal"
+            color="background"
+            class="text-primary"
+            flat
             width="100%"
             @click="projectStore.projectConfigMode = 'new'"
-            >+ New</v-btn
           >
+            <v-icon icon="mdi-plus" color="primary" />
+            New
+          </v-btn>
           <v-btn
             v-if="selectedProject"
             class="options"
@@ -491,8 +510,8 @@ watch(
               "
               indeterminate
             ></v-progress-linear>
-            <div v-else class="py-3 px-6 d-flex">
-              <div style="width: 45%">
+            <v-row v-else class="py-3 px-6" :gap="4">
+              <v-col class="border-e">
                 <v-card-text>Project Datasets</v-card-text>
                 <div class="dataset-card">
                   <DatasetSelect
@@ -504,9 +523,8 @@ watch(
                     @onDelete="refreshProjectDatasets"
                   />
                 </div>
-              </div>
-              <v-divider class="mx-5" vertical></v-divider>
-              <div style="width: 45%">
+              </v-col>
+              <v-col>
                 <div class="d-flex">
                   <v-card-text>All Datasets</v-card-text>
                   <DatasetUpload
@@ -527,8 +545,8 @@ watch(
                     @onDelete="refreshProjectDatasets"
                   />
                 </div>
-              </div>
-            </div>
+              </v-col>
+            </v-row>
           </div>
           <div v-if="currentTab === 'users'" class="py-3 px-6">
             <AccessControl
@@ -574,7 +592,6 @@ watch(
 <style>
 .project-row {
   display: flex;
-  margin: 0px 8px;
   align-items: center;
   justify-content: space-between;
 }
@@ -626,5 +643,6 @@ watch(
   max-height: calc(100vh - 300px);
   overflow: auto !important;
   position: relative;
+  padding: 0 12px;
 }
 </style>

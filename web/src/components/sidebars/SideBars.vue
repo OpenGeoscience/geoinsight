@@ -297,19 +297,7 @@ function togglePanelVisibility(id: string) {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  max-height: calc(100% - 175px);
-}
-
-.right .panel-set {
-  max-height: calc(100% - 100px);
-}
-
-.v-icon {
-  color: rgb(var(--v-theme-secondary-text)) !important;
-}
-
-.v-btn.bg-primary .v-icon {
-  color: rgb(var(--v-theme-button-text)) !important;
+  min-height: 0;
 }
 
 .v-text-field {

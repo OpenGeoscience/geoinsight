@@ -242,8 +242,8 @@ watch(
 
 const swiperColor = computed(() => {
   return {
-    swiper: theme.global.current.value.colors.primary,
-    arrow: theme.global.current.value.colors["button-text"],
+    swiper: String(theme.global.current.value.colors.primary),
+    arrow: String(theme.global.current.value.colors["button-text"]),
   };
 });
 </script>
@@ -321,7 +321,7 @@ const swiperColor = computed(() => {
 
 .tooltip {
   border-radius: 5px;
-  padding: 10px 20px;
+  padding: 0;
   word-break: break-word;
   text-wrap: wrap;
   width: fit-content;

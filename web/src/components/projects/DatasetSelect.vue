@@ -68,8 +68,8 @@ function submitDelete() {
     <template v-slot:list="{ data }">
       <v-expansion-panels
         multiple
+        flat
         variant="accordion"
-        elevation="0"
         bg-color="transparent"
         @update:model-value="expandDataset"
       >
@@ -79,10 +79,8 @@ function submitDelete() {
           :value="dataset.id"
         >
           <v-expansion-panel-title>
-            <div
-              style="display: flex; justify-content: space-between; width: 100%"
-            >
-              <div class="d-flex">
+            <div class="d-flex justify-space-between w-100">
+              <div class="d-flex align-center">
                 <div style="min-width: 24px">
                   <v-icon
                     v-if="
@@ -129,16 +127,24 @@ function submitDelete() {
                     size="24"
                     indeterminate
                   />
-                  <v-icon
+                  <v-btn
                     v-else-if="
                       !props.addedIds || !props.addedIds.includes(dataset.id)
                     "
                     :icon="props.buttonIcon"
                     color="primary"
-                    class="icon-button"
+                    variant="tonal"
+                    size="x-small"
                     @click.stop="emit('buttonClick', dataset)"
                   />
-                  <v-icon v-else icon="mdi-check" color="success" @click.stop />
+                  <v-btn
+                    v-else
+                    icon="mdi-check"
+                    color="success"
+                    variant="tonal"
+                    size="x-small"
+                    @click.stop
+                  />
                 </div>
                 {{ dataset.name }}
               </div>
@@ -151,6 +157,7 @@ function submitDelete() {
                   size="small"
                   v-tooltip="dataset.n_layers + ' layers'"
                   class="ml-2"
+                  color="secondary-text"
                 ></v-icon>
                 <span class="secondary-text">{{ dataset.n_layers }}</span>
                 <v-icon
@@ -158,6 +165,7 @@ function submitDelete() {
                   size="small"
                   v-tooltip="dataset.description"
                   class="mx-1"
+                  color="secondary-text"
                 ></v-icon>
                 <DetailView
                   v-if="dataset"
@@ -167,12 +175,13 @@ function submitDelete() {
             </div>
           </v-expansion-panel-title>
           <v-expansion-panel-text class="pb-2">
-            <div class="mb-2 ml-2">
+            <div class="d-flex flex-wrap ga-1 mb-1 ml-6">
               <v-chip
                 v-for="tag in dataset.tags"
                 :text="tag"
                 variant="outlined"
                 size="small"
+                color="grey"
               />
             </div>
             <div v-for="layer in dataset.layers" class="item-title">
@@ -230,10 +239,3 @@ function submitDelete() {
     </template>
   </DatasetList>
 </template>
-
-<style>
-.icon-button {
-  background-color: rgb(var(--v-theme-secondary));
-  border-radius: 4px;
-}
-</style>

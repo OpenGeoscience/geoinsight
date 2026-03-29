@@ -165,7 +165,7 @@ onMounted(() => {
       <v-list-item
         v-if="!project.collaborators.length"
         subtitle="No collaborators"
-        class="mx-4"
+        class="mx-4 help-text"
       />
       <v-list-subheader>
         Followers
@@ -212,7 +212,7 @@ onMounted(() => {
       <v-list-item
         v-if="!project.followers.length"
         subtitle="No followers"
-        class="mx-4"
+        class="mx-4 help-text"
       />
     </v-list>
     <v-btn
@@ -272,15 +272,17 @@ onMounted(() => {
               }
             "
           >
-            <template v-slot:item="{ props, item }">
+            <template v-slot:item="{ props, internalItem }">
               <v-list-item
                 v-bind="props"
                 :title="
-                  item.raw.first_name && item.raw.last_name
-                    ? item.raw.first_name + ' ' + item.raw.last_name
-                    : item.raw.username
+                  internalItem.raw.first_name && internalItem.raw.last_name
+                    ? internalItem.raw.first_name +
+                      ' ' +
+                      internalItem.raw.last_name
+                    : internalItem.raw.username
                 "
-                :subtitle="item.raw.email"
+                :subtitle="internalItem.raw.email"
               ></v-list-item>
             </template>
           </v-select>

@@ -46,7 +46,6 @@ function toggleSelected(items: Layer[]) {
         multiple
         flat
         variant="accordion"
-        elevation="0"
         bg-color="transparent"
         @update:model-value="expandDataset"
       >
@@ -59,7 +58,7 @@ function toggleSelected(items: Layer[]) {
             <div
               style="display: flex; justify-content: space-between; width: 100%"
             >
-              <div class="item-title" style="margin-left: 12px">
+              <div class="item-title flex-grow-1">
                 <div>
                   <div
                     v-if="
@@ -93,15 +92,13 @@ function toggleSelected(items: Layer[]) {
                   </div>
                   {{ dataset.name }}
                 </div>
-                <div
-                  style="min-width: 75px; text-align: right"
-                  v-if="dataset.layers"
-                >
+                <div v-if="dataset.layers" class="text-no-wrap flex-shrink-0">
                   <v-icon
                     icon="mdi-layers-outline"
                     size="small"
                     v-tooltip="dataset.n_layers + ' layers'"
                     class="ml-2"
+                    color="secondary-text"
                   ></v-icon>
                   <span class="secondary-text">{{ dataset.n_layers }}</span>
                   <v-icon
@@ -109,6 +106,7 @@ function toggleSelected(items: Layer[]) {
                     size="small"
                     v-tooltip="dataset.description"
                     class="mx-1"
+                    color="secondary-text"
                   ></v-icon>
                 </div>
               </div>
@@ -116,13 +114,13 @@ function toggleSelected(items: Layer[]) {
             </div>
           </v-expansion-panel-title>
           <v-expansion-panel-text class="pb-2">
-            <div>
+            <div class="d-flex flex-wrap ga-1 ml-6 mb-1">
               <v-chip
                 v-for="tag in dataset.tags"
                 :text="tag"
                 variant="outlined"
                 size="small"
-                class="ml-3 mb-2"
+                color="grey"
               />
             </div>
             <div v-for="layer in dataset.layers" class="item-title">
