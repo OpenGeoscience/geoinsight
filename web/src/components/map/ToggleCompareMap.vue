@@ -242,8 +242,8 @@ watch(
 
 const swiperColor = computed(() => {
   return {
-    swiper: theme.global.current.value.colors.primary,
-    arrow: theme.global.current.value.colors["button-text"],
+    swiper: String(theme.global.current.value.colors.primary),
+    arrow: String(theme.global.current.value.colors["button-text"]),
   };
 });
 </script>
