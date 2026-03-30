@@ -12,6 +12,3 @@ services:
   web:
     # npm will be started via launch.json or the terminal.
     profiles: ["web"]
-
-volumes:
-  web_node_modules: !reset {}
