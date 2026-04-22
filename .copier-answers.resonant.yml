@@ -7,3 +7,5 @@ project_slug: geodatalytics
 python_package_name: uvdat
 site_domain: api.geodatalytics.kitware.com
 use_asgi: true
+
+#copier updated
