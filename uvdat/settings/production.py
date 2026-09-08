@@ -25,13 +25,11 @@ STORAGES["default"] = {
     "BACKEND": "storages.backends.s3.S3Storage",
 }
 
-LARGE_IMAGE_FORCE_GDAL_VSIS3 = True
-# GDAL /vsis3/ access for S3. Use the same values as S3 storage config.
-# https://gdal.org/en/stable/user/virtual_file_systems.html#vsis3-aws-s3-files
-# Django Resonant S3 storage config:
-# https://github.com/kitware-resonant/cookiecutter-resonant/blob/master/django-resonant-settings/resonant_settings/production/s3_storage.py
-# the default values for AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_DEFAULT_REGION
-# are already set in the .env file so don't need to be set here
+# Do not set LARGE_IMAGE_FORCE_GDAL_VSIS3 here. That flag maps HTTPS FieldFile
+# URLs to /vsis3/{url.path}, which drops the bucket for AWS virtual-hosted URLs
+# (https://bucket.s3.../key → /vsis3/key) and breaks raster tiles. Keep it only
+# for MinIO path-style URLs in development. Production uses /vsicurl/ with the
+# signed S3 URL from django-storages instead.
 
 # sentry_sdk is able to directly use environment variables like 'SENTRY_DSN', but prefix them
 # with 'DJANGO_' to avoid conflicts with other Sentry-using services.
