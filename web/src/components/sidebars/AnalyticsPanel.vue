@@ -109,12 +109,7 @@ function getInputOptionalLabel(key: string) {
 function getPreviousValuesForInput(key: string) {
   return [
     ...new Set(
-      analysisStore.availableResults
-        .toSorted(
-          (a, b) =>
-            new Date(b.created).getTime() - new Date(a.created).getTime(),
-        )
-        .map((result) => result.inputs[key].toLocaleLowerCase()),
+      newestFirstResults.value.map((result) => result.inputs[key].toLocaleLowerCase()),
     ),
   ];
 }
