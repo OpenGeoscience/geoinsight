@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import * as turf from "@turf/turf";
 import { ref, watch, computed } from "vue";
 import {
   runAnalysis,
@@ -40,6 +41,7 @@ const filteredAnalysisTypes = computed(() => {
     );
   });
 });
+const filteredInputOptions = ref({});
 const newestFirstResults = computed(() => {
   return analysisStore.availableResults.toSorted((a, b) => {
     const aCreated = new Date(a.created);
@@ -109,7 +111,9 @@ function getInputOptionalLabel(key: string) {
 function getPreviousValuesForInput(key: string) {
   return [
     ...new Set(
-      newestFirstResults.value.map((result) => result.inputs[key].toLocaleLowerCase()),
+      newestFirstResults.value.map((result) =>
+        result.inputs[key].toLocaleLowerCase(),
+      ),
     ),
   ];
 }
@@ -133,6 +137,24 @@ function run() {
       });
     }
   });
+}
+
+function filterInputOptions(key: string) {
+  const type = analysisStore.currentAnalysisType.input_types[key];
+  if (type.toLocaleLowerCase() === "region") {
+    const map = mapStore.getMap();
+    const bounds = map.getBounds();
+    const turfBounds = turf.bboxPolygon([
+      bounds.getWest(),
+      bounds.getSouth(),
+      bounds.getEast(),
+      bounds.getNorth(),
+    ]);
+    filteredInputOptions.value[key] =
+      analysisStore.currentAnalysisType.input_options[key].filter((opt) =>
+        turf.booleanIntersects(turfBounds, turf.multiPolygon(opt.boundary)),
+      );
+  }
 }
 
 function inputOptionHover(key: string, option: any) {
@@ -263,6 +285,7 @@ watch(
     if (analysisStore.currentAnalysisTab === "old") {
       analysisStore.fetchResults();
     }
+    filteredInputOptions.value = {};
   },
 );
 
@@ -389,7 +412,7 @@ watch(
                   v-else-if="value"
                   :model-value="analysisStore.selectedInputs[key]"
                   :label="key.replaceAll('_', ' ') + getInputOptionalLabel(key)"
-                  :items="value"
+                  :items="filteredInputOptions[key] || value"
                   :rules="getInputSelectionRules(key)"
                   :clearable="
                     analysisStore.currentAnalysisType.optional_inputs?.includes(
@@ -424,6 +447,11 @@ watch(
                         'Region'
                       "
                     >
+                      <v-icon
+                        v-tooltip="'Filter options by current viewport'"
+                        icon="mdi-filter-outline"
+                        @click="filterInputOptions(key)"
+                      ></v-icon>
                       <v-icon
                         v-if="
                           analysisStore.drawingRegion ||
