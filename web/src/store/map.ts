@@ -42,7 +42,7 @@ import { THEMES } from "@/themes";
 function getLayerIsVisible(layer: MapLibreLayerWithMetadata) {
   // Since visibility must be 'visible' for a feature click to even be registered,
   // we know that if it's not multiFrame, then it is indeed visible
-  if (!layer.metadata.multiFrame) {
+  if (!layer.metadata?.multiFrame) {
     return true;
   }
 
