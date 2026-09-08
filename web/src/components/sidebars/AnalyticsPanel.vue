@@ -41,7 +41,7 @@ const filteredAnalysisTypes = computed(() => {
     );
   });
 });
-const filteredInputOptions = ref({});
+const filteredInputOptions = ref<Record<string, any>>({});
 const newestFirstResults = computed(() => {
   return analysisStore.availableResults.toSorted((a, b) => {
     const aCreated = new Date(a.created);
@@ -140,6 +140,7 @@ function run() {
 }
 
 function filterInputOptions(key: string) {
+  if (!analysisStore.currentAnalysisType) return;
   const type = analysisStore.currentAnalysisType.input_types[key];
   if (type.toLocaleLowerCase() === "region") {
     const map = mapStore.getMap();
@@ -151,18 +152,19 @@ function filterInputOptions(key: string) {
       bounds.getNorth(),
     ]);
     filteredInputOptions.value[key] =
-      analysisStore.currentAnalysisType.input_options[key].filter((opt) =>
+      analysisStore.currentAnalysisType.input_options[key].filter((opt: any) =>
         turf.booleanIntersects(turfBounds, turf.multiPolygon(opt.boundary)),
       );
   }
 }
 
 function inputOptionHover(key: string, option: any) {
+  if (!analysisStore.currentAnalysisType) return;
   const type = analysisStore.currentAnalysisType.input_types[key];
   if (type.toLocaleLowerCase() === "region") {
     const options = analysisStore.currentAnalysisType.input_options[key];
     const selectedId = analysisStore.selectedInputs[key];
-    const selected = options.find((opt) => opt.id === selectedId);
+    const selected = options.find((opt: any) => opt.id === selectedId);
     if (option === undefined && selected !== undefined) {
       mapStore.showRegion(selected);
     } else {
