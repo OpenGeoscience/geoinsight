@@ -143,40 +143,13 @@ function togglePanelVisibility(id: string) {
           class="mr-5"
           @click="toggleSidebar('right')"
         ></v-icon>
-        <div v-if="appStore.currentUser">
+        <div v-if="appStore.currentUser?.id">
           {{ appStore.currentUser.first_name }}
-
-          <v-menu :close-on-content-click="false">
-            <template #activator="{ props }">
-              <v-icon v-bind="props" icon="mdi-cog" class="px-3"></v-icon>
-            </template>
-            <v-list>
-              <v-list-item
-                v-if="appStore.authenticated"
-                density="compact"
-                @click="logout"
-              >
-                Logout
-                <template #append>
-                  <v-icon icon="mdi-logout"></v-icon>
-                </template>
-              </v-list-item>
-              <v-list-item density="compact">
-                Dark Mode
-                <template #append>
-                  <v-switch
-                    :model-value="appStore.theme === 'dark'"
-                    color="primary"
-                    class="ml-5"
-                    hide-details
-                    @update:model-value="
-                      (v) => (appStore.theme = v ? 'dark' : 'light')
-                    "
-                  ></v-switch>
-                </template>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+          <v-icon
+            v-tooltip="'Log Out'"
+            icon="mdi-logout"
+            @click="logout"
+          ></v-icon>
         </div>
       </v-toolbar>
       <div :style="{ height: '30px', 'text-align': 'right' }">

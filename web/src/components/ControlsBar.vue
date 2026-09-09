@@ -487,6 +487,14 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
       </v-menu>
     </v-btn>
     <v-btn class="control-btn" variant="flat">
+      <v-icon
+        v-tooltip="'Toggle Light/Dark Mode'"
+        icon="mdi-theme-light-dark"
+        @click="appStore.theme = appStore.theme === 'dark' ? 'light' : 'dark'"
+      >
+      </v-icon>
+    </v-btn>
+    <v-btn class="control-btn" variant="flat">
       <v-icon icon="mdi-help-circle-outline"></v-icon>
       <v-menu
         activator="parent"
