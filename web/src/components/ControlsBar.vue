@@ -322,8 +322,17 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
   >
     <v-btn class="control-btn" variant="flat">
       <v-icon>mdi-map-outline</v-icon>
-      <v-menu activator="parent" :close-on-content-click="false" open-on-hover>
-        <v-card style="max-height: 400px; overflow-y: auto">
+      <v-menu
+        activator="parent"
+        open-on-hover
+        open-delay="100"
+        :close-on-content-click="false"
+      >
+        <v-card
+          class="control-menu"
+          style="max-height: 400px; overflow-y: auto"
+        >
+          <div class="control-menu-title">Base Map Options</div>
           <v-list
             ref="basemapList"
             :selected="[mapStore.currentBasemap]"
@@ -334,7 +343,6 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
               (selected) => (mapStore.currentBasemap = selected[0])
             "
           >
-            <v-list-subheader>Base Map Options</v-list-subheader>
             <v-list-item
               v-if="appStore.authenticated"
               key="new"
@@ -376,20 +384,13 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
         </v-card>
       </v-menu>
     </v-btn>
-    <v-btn class="control-btn" variant="flat" @click="fitMap">
-      <v-progress-circular v-if="loadingBounds" indeterminate />
-      <v-icon
-        v-else
-        v-tooltip="'Fit Map to Visible Layers'"
-        icon="mdi-fit-to-page-outline"
-      ></v-icon>
-    </v-btn>
     <v-btn v-if="!isComparing" class="control-btn" variant="flat">
       <v-icon icon="mdi-camera"></v-icon>
       <v-menu
         v-model="copyMenuShown"
         activator="parent"
-        :open-on-hover="true"
+        open-on-hover
+        open-delay="100"
         :close-on-content-click="false"
       >
         <v-card class="control-menu">
@@ -401,6 +402,7 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
                 label="Map Only"
                 density="compact"
                 hide-details
+                color="secondary-text"
               />
             </div>
             <v-btn class="control-menu-row" @click="copyScreenshot">
@@ -425,7 +427,8 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
       ></v-icon>
       <v-menu
         activator="parent"
-        :open-on-hover="true"
+        open-on-hover
+        open-delay="100"
         :close-on-content-click="false"
         width="450"
       >
@@ -469,6 +472,7 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
                     icon="mdi-delete"
                     flat
                     variant="text"
+                    color="secondary-text"
                     @click.stop.prevent="viewStateToDelete = viewState"
                   ></v-btn>
                   <v-btn
@@ -476,6 +480,7 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
                     icon="mdi-share"
                     flat
                     variant="text"
+                    color="secondary-text"
                     @click.stop.prevent="copyViewStateLink(viewState)"
                   ></v-btn>
                 </template>
@@ -485,6 +490,14 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
           </v-card-text>
         </v-card>
       </v-menu>
+    </v-btn>
+    <v-btn class="control-btn" variant="flat" @click="fitMap">
+      <v-progress-circular v-if="loadingBounds" indeterminate />
+      <v-icon
+        v-else
+        v-tooltip="'Fit Map to Visible Layers'"
+        icon="mdi-fit-to-page-outline"
+      ></v-icon>
     </v-btn>
     <v-btn class="control-btn" variant="flat">
       <v-icon
@@ -498,7 +511,8 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
       <v-icon icon="mdi-help-circle-outline"></v-icon>
       <v-menu
         activator="parent"
-        :open-on-hover="true"
+        open-on-hover
+        open-delay="0"
         :close-on-content-click="false"
       >
         <v-card class="control-menu">
@@ -509,8 +523,8 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
               <thead>
                 <tr>
                   <td>Map Controls</td>
-                  <td><v-icon icon="mdi-keyboard"></v-icon></td>
-                  <td><v-icon icon="mdi-mouse"></v-icon></td>
+                  <td><v-icon icon="mdi-keyboard" color="secondary-text"></v-icon></td>
+                  <td><v-icon icon="mdi-mouse" color="secondary-text"></v-icon></td>
                 </tr>
               </thead>
               <tbody>
@@ -727,12 +741,11 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
 
 <style>
 .controls-bar {
-  padding: 3px 8px;
+  padding: 6px 8px;
   position: absolute;
   top: 10px;
   left: 250px;
-  opacity: 80%;
-  background-color: rgb(var(--v-theme-surface));
+  background-color: rgb(var(--v-theme-surface-bright));
   display: flex;
   border-radius: 8px;
   z-index: 3;
@@ -749,12 +762,18 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
 .control-btn {
   min-width: 0 !important;
   width: 40px;
+  background-color: rgb(var(--v-theme-surface-bright));
+  color: rgb(var(--v-theme-secondary-text));
 }
 
 .control-menu {
   min-width: 200px;
   border-radius: 10px;
-  background-color: rgb(var(--v-theme-surface-variant)) !important;
+  background-color: rgb(var(--v-theme-surface)) !important;
+}
+
+.control-menu .v-btn:not(.v-btn--flat) {
+  background-color: rgb(var(--v-theme-surface-bright));
 }
 
 .control-menu-title {
