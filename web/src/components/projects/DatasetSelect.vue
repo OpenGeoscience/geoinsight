@@ -91,7 +91,7 @@ function submitDelete() {
                       dataset.owner &&
                       dataset.owner.id === appStore.currentUser?.id
                     "
-                    icon="mdi-delete-outline"
+                    icon="mdi-delete"
                     color="error"
                     @click.stop="datasetToDelete = dataset"
                   />

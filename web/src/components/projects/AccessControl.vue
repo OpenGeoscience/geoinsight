@@ -130,7 +130,7 @@ onMounted(() => {
         <template #append>
           <v-icon
             v-if="editMode"
-            icon="mdi-trash-can"
+            icon="mdi-delete"
             @click="userToRemove = collaborator"
           />
         </template>
@@ -155,7 +155,7 @@ onMounted(() => {
         <template #append>
           <v-icon
             v-if="editMode"
-            icon="mdi-trash-can"
+            icon="mdi-delete"
             @click="userToRemove = follower"
           />
         </template>

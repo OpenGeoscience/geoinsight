@@ -426,7 +426,7 @@ watch(
                 >
                   <v-icon
                     v-if="!projectToEdit && !projectToDelete"
-                    icon="mdi-trash-can"
+                    icon="mdi-delete"
                     @click.stop="projectToDelete = project"
                   />
                 </div>
