@@ -91,6 +91,7 @@ function submitDelete() {
                       dataset.owner &&
                       dataset.owner.id === appStore.currentUser?.id
                     "
+                    v-tooltip="'Delete Dataset'"
                     icon="mdi-delete"
                     color="error"
                     @click.stop="datasetToDelete = dataset"
@@ -133,6 +134,11 @@ function submitDelete() {
                   <v-icon
                     v-else-if="
                       !props.addedIds || !props.addedIds.includes(dataset.id)
+                    "
+                    v-tooltip="
+                      props.buttonIcon === 'mdi-plus'
+                        ? 'Add dataset to project'
+                        : 'Remove dataset from project'
                     "
                     :icon="props.buttonIcon"
                     color="primary"

@@ -107,6 +107,7 @@ onMounted(() => {
         <template #prepend>
           <v-icon
             v-if="editMode"
+            v-tooltip="'Transfer ownership'"
             icon="mdi-pencil"
             @click="
               showUserSelectDialog = true;
@@ -130,6 +131,7 @@ onMounted(() => {
         <template #prepend>
           <v-icon
             v-if="editMode"
+            v-tooltip="'Remove user from project'"
             icon="mdi-delete"
             @click="userToRemove = collaborator"
           />
@@ -155,6 +157,7 @@ onMounted(() => {
         <template #prepend>
           <v-icon
             v-if="editMode"
+            v-tooltip="'Remove user from project'"
             icon="mdi-delete"
             @click="userToRemove = follower"
           />

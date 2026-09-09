@@ -258,6 +258,7 @@ watch(
       ></v-select>
       <v-btn
         v-if="appStore.authenticated"
+        v-tooltip="'Create New Project'"
         color="primary"
         variant="flat"
         style="min-width: 30px; height: 30px"
@@ -265,12 +266,10 @@ watch(
         @click="() => openProjectConfig(true)"
       >
         <v-icon icon="mdi-plus" size="large" />
-        <v-tooltip activator="parent" location="end">
-          Create New Project
-        </v-tooltip>
       </v-btn>
       <v-btn
         v-if="appStore.authenticated"
+        v-tooltip="'Configure Projects'"
         color="secondary"
         variant="flat"
         style="min-width: 30px; height: 30px"
@@ -278,9 +277,6 @@ watch(
         @click="() => openProjectConfig(false)"
       >
         <v-icon icon="mdi-cog" size="large" color="primary" />
-        <v-tooltip activator="parent" location="end">
-          Configure Projects
-        </v-tooltip>
       </v-btn>
     </div>
     <v-card
@@ -405,6 +401,7 @@ watch(
                 >
                   <v-icon
                     v-if="!projectToEdit && !projectToDelete"
+                    v-tooltip="'Rename Project'"
                     icon="mdi-pencil"
                     @click.stop="projectToEdit = project"
                   />
@@ -426,6 +423,7 @@ watch(
                 >
                   <v-icon
                     v-if="!projectToEdit && !projectToDelete"
+                    v-tooltip="'Delete Project'"
                     icon="mdi-delete"
                     @click.stop="projectToDelete = project"
                   />

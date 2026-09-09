@@ -495,13 +495,13 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
       <v-progress-circular v-if="loadingBounds" indeterminate />
       <v-icon
         v-else
-        v-tooltip="'Fit Map to Visible Layers'"
+        v-tooltip:bottom="'Fit Map to Visible Layers'"
         icon="mdi-fit-to-page-outline"
       ></v-icon>
     </v-btn>
     <v-btn class="control-btn" variant="flat">
       <v-icon
-        v-tooltip="'Toggle Light/Dark Mode'"
+        v-tooltip:bottom="'Toggle Light/Dark Mode'"
         icon="mdi-theme-light-dark"
         @click="appStore.theme = appStore.theme === 'dark' ? 'light' : 'dark'"
       >
@@ -523,8 +523,12 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
               <thead>
                 <tr>
                   <td>Map Controls</td>
-                  <td><v-icon icon="mdi-keyboard" color="secondary-text"></v-icon></td>
-                  <td><v-icon icon="mdi-mouse" color="secondary-text"></v-icon></td>
+                  <td>
+                    <v-icon icon="mdi-keyboard" color="secondary-text"></v-icon>
+                  </td>
+                  <td>
+                    <v-icon icon="mdi-mouse" color="secondary-text"></v-icon>
+                  </td>
                 </tr>
               </thead>
               <tbody>
