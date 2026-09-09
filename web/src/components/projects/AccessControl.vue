@@ -104,7 +104,7 @@ onMounted(() => {
         />
       </v-list-subheader>
       <user-profile :user="project.owner">
-        <template #append>
+        <template #prepend>
           <v-icon
             v-if="editMode"
             icon="mdi-pencil"
@@ -127,7 +127,7 @@ onMounted(() => {
         :key="collaborator.id"
         :user="collaborator"
       >
-        <template #append>
+        <template #prepend>
           <v-icon
             v-if="editMode"
             icon="mdi-delete"
@@ -152,7 +152,7 @@ onMounted(() => {
         :key="follower.id"
         :user="follower"
       >
-        <template #append>
+        <template #prepend>
           <v-icon
             v-if="editMode"
             icon="mdi-delete"
