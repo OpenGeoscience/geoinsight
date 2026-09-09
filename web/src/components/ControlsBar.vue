@@ -320,7 +320,7 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
         : 'controls-bar'
     "
   >
-    <v-btn color="primary" class="control-btn" variant="flat">
+    <v-btn class="control-btn" variant="flat">
       <v-icon>mdi-map-outline</v-icon>
       <v-menu activator="parent" :close-on-content-click="false" open-on-hover>
         <v-card style="max-height: 400px; overflow-y: auto">
