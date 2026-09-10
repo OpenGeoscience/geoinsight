@@ -147,7 +147,10 @@ function selectProject(project: Project) {
 }
 
 function loadSelectedProject() {
-  projectStore.currentProject = selectedProject.value;
+  projectStore.loadProjects();
+  projectStore.currentProject = projectStore.availableProjects.find(
+    (p) => p.id === selectedProject.value?.id,
+  );
   projectStore.projectConfigMode = undefined;
 }
 
