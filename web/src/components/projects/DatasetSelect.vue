@@ -160,12 +160,6 @@ function submitDelete() {
                   class="ml-2"
                 ></v-icon>
                 <span class="secondary-text">{{ dataset.n_layers }}</span>
-                <v-icon
-                  v-tooltip="dataset.description"
-                  icon="mdi-information-outline"
-                  size="small"
-                  class="mx-1"
-                ></v-icon>
                 <DetailView
                   v-if="dataset"
                   :details="{ ...dataset, type: 'dataset' }"

@@ -108,12 +108,6 @@ function toggleSelected(items: Layer[]) {
                     class="ml-2"
                   ></v-icon>
                   <span class="secondary-text">{{ dataset.n_layers }}</span>
-                  <v-icon
-                    v-tooltip="dataset.description"
-                    icon="mdi-information-outline"
-                    size="small"
-                    class="mx-1"
-                  ></v-icon>
                 </div>
               </div>
               <DetailView :details="{ ...dataset, type: 'dataset' }" />
