@@ -80,10 +80,8 @@ function submitDelete() {
           :value="dataset.id"
         >
           <v-expansion-panel-title>
-            <div
-              style="display: flex; justify-content: space-between; width: 100%"
-            >
-              <div class="d-flex">
+            <div style="display: flex; align-items: center; width: 100%">
+              <div class="d-flex" style="flex: 1">
                 <div style="min-width: 24px">
                   <v-icon
                     v-if="
@@ -149,21 +147,13 @@ function submitDelete() {
                 </div>
                 {{ dataset.name }}
               </div>
-              <div
-                v-if="dataset.layers"
-                style="min-width: 75px; text-align: right"
-              >
-                <v-icon
-                  v-tooltip="dataset.n_layers + ' layers'"
-                  icon="mdi-layers"
-                  size="small"
-                  class="ml-2"
-                ></v-icon>
+              <DetailView
+                v-if="dataset"
+                :details="{ ...dataset, type: 'dataset' }"
+              />
+              <div v-if="dataset.layers" style="text-align: right">
+                <v-icon icon="mdi-layers-outline" size="small"></v-icon>
                 <span class="secondary-text">{{ dataset.n_layers }}</span>
-                <DetailView
-                  v-if="dataset"
-                  :details="{ ...dataset, type: 'dataset' }"
-                />
               </div>
             </div>
           </v-expansion-panel-title>
