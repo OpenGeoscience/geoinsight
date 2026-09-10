@@ -305,6 +305,13 @@ function showTutorial() {
   tutorialStore.showWelcomeMessage = false;
 }
 
+function togglePanelVisibility(id: string) {
+  panelStore.panelArrangement = panelStore.panelArrangement.map((p) => {
+    if (p.id == id) p.visible = !p.visible;
+    return p;
+  });
+}
+
 watch(basemapList, createBasemapPreviews);
 watch(newBasemapTab, switchBasemapCreateTab);
 watch(newBasemapTileURL, debounce(setNewBasemapStyleFromTileURL, 1000));
@@ -320,10 +327,19 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
         : 'controls-bar'
     "
   >
-    <v-btn color="primary" class="control-btn" variant="flat">
+    <v-btn class="control-btn" variant="flat">
       <v-icon>mdi-map-outline</v-icon>
-      <v-menu activator="parent" :close-on-content-click="false" open-on-hover>
-        <v-card style="max-height: 400px; overflow-y: auto">
+      <v-menu
+        activator="parent"
+        open-on-hover
+        open-delay="100"
+        :close-on-content-click="false"
+      >
+        <v-card
+          class="control-menu"
+          style="max-height: 400px; overflow-y: auto"
+        >
+          <div class="control-menu-title">Base Map Options</div>
           <v-list
             ref="basemapList"
             :selected="[mapStore.currentBasemap]"
@@ -334,7 +350,6 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
               (selected) => (mapStore.currentBasemap = selected[0])
             "
           >
-            <v-list-subheader>Base Map Options</v-list-subheader>
             <v-list-item
               v-if="appStore.authenticated"
               key="new"
@@ -376,20 +391,41 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
         </v-card>
       </v-menu>
     </v-btn>
-    <v-btn class="control-btn" variant="flat" @click="fitMap">
-      <v-progress-circular v-if="loadingBounds" indeterminate />
-      <v-icon
-        v-else
-        v-tooltip="'Fit Map to Visible Layers'"
-        icon="mdi-fit-to-page-outline"
-      ></v-icon>
+    <v-btn class="control-btn" variant="flat">
+      <v-icon icon="mdi-window-restore"></v-icon>
+      <v-menu
+        activator="parent"
+        open-on-hover
+        open-delay="100"
+        :close-on-content-click="false"
+      >
+        <v-card class="control-menu">
+          <div class="control-menu-title">Panel Visibility</div>
+          <v-card-text class="pa-3">
+            <div
+              v-for="item in panelStore.panelArrangement.filter(
+                (p) => p.closeable,
+              )"
+              :key="item.id"
+              class="control-menyu-row"
+              @click="togglePanelVisibility(item.id)"
+            >
+              <v-checkbox-btn
+                :model-value="item.visible"
+                :label="item.label"
+              ></v-checkbox-btn>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-menu>
     </v-btn>
     <v-btn v-if="!isComparing" class="control-btn" variant="flat">
       <v-icon icon="mdi-camera"></v-icon>
       <v-menu
         v-model="copyMenuShown"
         activator="parent"
-        :open-on-hover="true"
+        open-on-hover
+        open-delay="100"
         :close-on-content-click="false"
       >
         <v-card class="control-menu">
@@ -401,6 +437,7 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
                 label="Map Only"
                 density="compact"
                 hide-details
+                color="secondary-text"
               />
             </div>
             <v-btn class="control-menu-row" @click="copyScreenshot">
@@ -425,7 +462,8 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
       ></v-icon>
       <v-menu
         activator="parent"
-        :open-on-hover="true"
+        open-on-hover
+        open-delay="100"
         :close-on-content-click="false"
         width="450"
       >
@@ -469,6 +507,7 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
                     icon="mdi-delete"
                     flat
                     variant="text"
+                    color="secondary-text"
                     @click.stop.prevent="viewStateToDelete = viewState"
                   ></v-btn>
                   <v-btn
@@ -476,6 +515,7 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
                     icon="mdi-share"
                     flat
                     variant="text"
+                    color="secondary-text"
                     @click.stop.prevent="copyViewStateLink(viewState)"
                   ></v-btn>
                 </template>
@@ -486,43 +526,59 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
         </v-card>
       </v-menu>
     </v-btn>
+    <v-btn class="control-btn" variant="flat" @click="fitMap">
+      <v-progress-circular v-if="loadingBounds" indeterminate />
+      <v-icon
+        v-else
+        v-tooltip:bottom="'Fit Map to Visible Layers'"
+        icon="mdi-fit-to-page-outline"
+      ></v-icon>
+    </v-btn>
     <v-btn class="control-btn" variant="flat">
-      <v-icon icon="mdi-information-outline"></v-icon>
-      <v-menu
-        activator="parent"
-        :open-on-hover="true"
-        :close-on-content-click="false"
+      <v-icon
+        v-tooltip:bottom="'Toggle Light/Dark Mode'"
+        icon="mdi-theme-light-dark"
+        @click="appStore.theme = appStore.theme === 'dark' ? 'light' : 'dark'"
       >
-        <v-card class="control-menu">
-          <div class="control-menu-title">Input Controls</div>
-          <v-card-text class="pa-3">
-            <div style="text-align: right; width: 100%">
-              <v-icon icon="mdi-keyboard"></v-icon>,
-              <v-icon icon="mdi-mouse"></v-icon>
-            </div>
-            <div class="control-menu-row">
-              <div>Zoom</div>
-              <div>+/-, scroll</div>
-            </div>
-            <div class="control-menu-row">
-              <div>Pan</div>
-              <div>arrows, drag</div>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-menu>
+      </v-icon>
     </v-btn>
     <v-btn class="control-btn" variant="flat">
       <v-icon icon="mdi-help-circle-outline"></v-icon>
       <v-menu
         activator="parent"
-        :open-on-hover="true"
+        open-on-hover
+        open-delay="0"
         :close-on-content-click="false"
       >
         <v-card class="control-menu">
           <div class="control-menu-title">Help</div>
           <v-card-text class="pa-3">
             <v-btn block @click="showTutorial"> Show Tutorial </v-btn>
+            <table class="map-controls-table">
+              <thead>
+                <tr>
+                  <td>Map Controls</td>
+                  <td>
+                    <v-icon icon="mdi-keyboard" color="secondary-text"></v-icon>
+                  </td>
+                  <td>
+                    <v-icon icon="mdi-mouse" color="secondary-text"></v-icon>
+                  </td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Zoom</td>
+                  <td>+/-</td>
+                  <td>scroll</td>
+                </tr>
+                <tr>
+                  <td>Pan</td>
+                  <td>arrows</td>
+                  <td>drag</td>
+                </tr>
+              </tbody>
+            </table>
           </v-card-text>
         </v-card>
       </v-menu>
@@ -724,12 +780,11 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
 
 <style>
 .controls-bar {
-  padding: 3px 8px;
+  padding: 6px 8px;
   position: absolute;
   top: 10px;
   left: 250px;
-  opacity: 80%;
-  background-color: rgb(var(--v-theme-surface));
+  background-color: rgb(var(--v-theme-surface-bright));
   display: flex;
   border-radius: 8px;
   z-index: 3;
@@ -746,12 +801,18 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
 .control-btn {
   min-width: 0 !important;
   width: 40px;
+  background-color: rgb(var(--v-theme-surface-bright));
+  color: rgb(var(--v-theme-secondary-text));
 }
 
 .control-menu {
   min-width: 200px;
   border-radius: 10px;
-  background-color: rgb(var(--v-theme-surface-variant)) !important;
+  background-color: rgb(var(--v-theme-surface)) !important;
+}
+
+.control-menu .v-btn:not(.v-btn--flat) {
+  background-color: rgb(var(--v-theme-surface-bright));
 }
 
 .control-menu-title {
@@ -764,6 +825,20 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
   display: flex;
   justify-content: space-between;
   margin-bottom: 5px;
+}
+
+.map-controls-table {
+  margin-top: 8px;
+  border-collapse: collapse;
+}
+
+.map-controls-table thead {
+  border-bottom: 1px solid rgb(var(--v-theme-on-surface));
+}
+
+.map-controls-table td {
+  padding: 4px 8px;
+  text-align: center;
 }
 
 .basemap-list .v-list-item {
