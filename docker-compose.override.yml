@@ -11,6 +11,10 @@ services:
     tty: true
     working_dir: /home/vscode/geodatalytics
     env_file: ./dev/.env.docker-compose
+    environment:
+      DJANGO_UVDAT_HF_TOKEN: "${DJANGO_UVDAT_HF_TOKEN}"
+      DJANGO_UVDAT_HF_NAMESPACE: "${DJANGO_UVDAT_HF_NAMESPACE}"
+      DJANGO_UVDAT_HF_ENDPOINT_NAMES: "${DJANGO_UVDAT_HF_ENDPOINT_NAMES}"
     volumes:
       - .:/home/vscode/geodatalytics
       - pkg_cache:/home/vscode/pkg-cache
@@ -46,6 +50,10 @@ services:
     tty: false
     working_dir: /home/vscode/geodatalytics
     env_file: ./dev/.env.docker-compose
+    environment:
+      DJANGO_UVDAT_HF_TOKEN: "${DJANGO_UVDAT_HF_TOKEN}"
+      DJANGO_UVDAT_HF_NAMESPACE: "${DJANGO_UVDAT_HF_NAMESPACE}"
+      DJANGO_UVDAT_HF_ENDPOINT_NAMES: "${DJANGO_UVDAT_HF_ENDPOINT_NAMES}"
     volumes:
       - .:/home/vscode/geodatalytics
       - pkg_cache:/home/vscode/pkg-cache
