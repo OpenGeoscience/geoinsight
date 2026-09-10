@@ -599,7 +599,7 @@ watch(
                   </div>
                   <div v-if="fullOutputs">
                     <v-card-subtitle>Outputs</v-card-subtitle>
-                    <v-table class="bg-transparent">
+                    <v-table class="bg-transparent overflow-visible">
                       <tbody>
                         <tr
                           v-for="[key, value] in Object.entries(fullOutputs)"
@@ -736,5 +736,8 @@ watch(
   min-width: 100px;
   overflow-x: hidden;
   text-overflow: ellipsis;
+}
+.overflow-visible > .v-table__wrapper {
+  overflow: visible !important;
 }
 </style>
