@@ -338,7 +338,6 @@ export const useProjectStore = defineStore("project", () => {
     loadingDatasets.value = false;
   }
 
-  watch(projectConfigMode, loadProjects);
   async function loadProjects() {
     clearState();
     availableProjects.value = await getProjects();
