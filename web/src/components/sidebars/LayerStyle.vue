@@ -740,7 +740,8 @@ onMounted(resetCurrentStyle);
           appliedStyleName ? 'Style: ' + appliedStyleName : 'Configure styling'
         "
         v-bind="activatorProps"
-        icon="mdi-cog"
+        icon="mdi-palette"
+        style="opacity: 1"
       />
     </template>
     <v-card
