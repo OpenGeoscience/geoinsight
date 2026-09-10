@@ -35,13 +35,6 @@ function toggleSidebar(sidebar: "left" | "right") {
     appStore.openSidebars = [...appStore.openSidebars, sidebar];
   }
 }
-
-function togglePanelVisibility(id: string) {
-  panelStore.panelArrangement = panelStore.panelArrangement.map((p) => {
-    if (p.id == id) p.visible = !p.visible;
-    return p;
-  });
-}
 </script>
 
 <template>
@@ -152,32 +145,6 @@ function togglePanelVisibility(id: string) {
           ></v-icon>
         </div>
       </v-toolbar>
-      <div :style="{ height: '30px', 'text-align': 'right' }">
-        <v-menu :close-on-content-click="false">
-          <template #activator="{ props }">
-            <v-icon
-              v-tooltip="'Panel Visibility'"
-              v-bind="props"
-              icon="mdi-menu"
-              class="mr-3 mt-1"
-            ></v-icon>
-          </template>
-          <v-list>
-            <v-list-item
-              v-for="item in panelStore.panelArrangement.filter(
-                (p) => p.closeable,
-              )"
-              :key="item.id"
-              @click="togglePanelVisibility(item.id)"
-            >
-              <v-checkbox-btn
-                :model-value="item.visible"
-                :label="item.label"
-              ></v-checkbox-btn>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </div>
       <div class="panel-set">
         <FloatingPanel
           v-for="panel in panelStore.panelArrangement.filter(

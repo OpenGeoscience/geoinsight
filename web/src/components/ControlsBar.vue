@@ -305,6 +305,13 @@ function showTutorial() {
   tutorialStore.showWelcomeMessage = false;
 }
 
+function togglePanelVisibility(id: string) {
+  panelStore.panelArrangement = panelStore.panelArrangement.map((p) => {
+    if (p.id == id) p.visible = !p.visible;
+    return p;
+  });
+}
+
 watch(basemapList, createBasemapPreviews);
 watch(newBasemapTab, switchBasemapCreateTab);
 watch(newBasemapTileURL, debounce(setNewBasemapStyleFromTileURL, 1000));
@@ -381,6 +388,34 @@ watch(newBasemapStyleJSON, debounce(createNewBasemapPreview, 1000));
               </template>
             </v-list-item>
           </v-list>
+        </v-card>
+      </v-menu>
+    </v-btn>
+    <v-btn class="control-btn" variant="flat">
+      <v-icon icon="mdi-window-restore"></v-icon>
+      <v-menu
+        activator="parent"
+        open-on-hover
+        open-delay="100"
+        :close-on-content-click="false"
+      >
+        <v-card class="control-menu">
+          <div class="control-menu-title">Panel Visibility</div>
+          <v-card-text class="pa-3">
+            <div
+              v-for="item in panelStore.panelArrangement.filter(
+                (p) => p.closeable,
+              )"
+              :key="item.id"
+              class="control-menyu-row"
+              @click="togglePanelVisibility(item.id)"
+            >
+              <v-checkbox-btn
+                :model-value="item.visible"
+                :label="item.label"
+              ></v-checkbox-btn>
+            </div>
+          </v-card-text>
         </v-card>
       </v-menu>
     </v-btn>
