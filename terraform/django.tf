@@ -42,6 +42,11 @@ module "django" {
 
   # Disable workers; they require "tasks" dependencies, which are too large for Heroku to install
   heroku_worker_dyno_quantity = 0
+
+  # Increase web and worker sizes; web dyno needs more memory
+  heroku_web_dyno_size = "standard-2x"
+  # If one dyno is beyond basic, all must be beyond basic even though worker is scaled to 0
+  heroku_worker_dyno_size = "standard-1x"
 }
 
 resource "heroku_addon" "redis" {
