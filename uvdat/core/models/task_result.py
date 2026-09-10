@@ -92,7 +92,7 @@ class TaskResult(models.Model):
                 subject=subject,
                 message=message,
                 from_email=None,
-                recipient_list=[subscriber],
+                recipient_list=[subscriber.email],
             )
 
 
